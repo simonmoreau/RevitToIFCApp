@@ -17,12 +17,14 @@ import {
   MsalService,
   MsalAngularConfiguration
 } from '@azure/msal-angular';
+import { FileUploadModule, FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 
 import { msalConfig, msalAngularConfig } from './app-config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { UploadComponent } from './upload/upload.component';
 
 function MSALConfigFactory(): Configuration {
   return msalConfig;
@@ -37,6 +39,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
+    UploadComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +51,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatListModule,
     AppRoutingModule,
     MatCardModule,
-    MsalModule
+    MsalModule,
+    FileUploadModule
   ],
   providers: [
     {
