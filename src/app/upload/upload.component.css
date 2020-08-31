@@ -2,3 +2,20 @@
     margin: 10%;
     padding: 5%;
 }
+
+.container {
+display: flex;
+}
+
+.container .box-left {
+  flex-grow: 1;
+}
+
+.container .box-right {
+  flex-grow: 0;
+}
+
+.upload-item {
+  padding: 1em;
+  margin-bottom: 1em;
+}
