@@ -10,7 +10,7 @@
  
                 <h3>Select files</h3>
      
-                <div ng2FileDrop
+                <!-- <div ng2FileDrop
                      [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
                      (fileOver)="fileOverBase($event)"
                      [uploader]="uploader"
@@ -24,13 +24,13 @@
                      [uploader]="uploader"
                      class="well my-drop-zone">
                     Another drop zone
-                </div>
+                </div> -->
      
                 Multiple
-                <input type="file" ng2FileSelect [uploader]="uploader" multiple  /><br/>
-     
-                Single
-                <input type="file" ng2FileSelect [uploader]="uploader" />
+                <input type="file" ng2FileSelect [uploader]="uploader" multiple  /><br/> 
+
+
+
             </div>
         </div>
         <div class="row">
@@ -60,17 +60,17 @@
                         <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
                     </td>
                     <td nowrap>
-                        <button type="button" class="btn btn-success btn-xs"
-                                (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
-                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        <button mat-button color="primary" (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                          <span class="material-icons">cloud_upload</span>
+                          Upload
                         </button>
-                        <button type="button" class="btn btn-warning btn-xs"
-                                (click)="item.cancel()" [disabled]="!item.isUploading">
-                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                        <button mat-button color="primary" (click)="item.cancel()" [disabled]="!item.isUploading">
+                          <span class="material-icons">not_interested</span>
+                          Cancel
                         </button>
-                        <button type="button" class="btn btn-danger btn-xs"
-                                (click)="item.remove()">
-                            <span class="glyphicon glyphicon-trash"></span> Remove
+                        <button mat-button color="primary" (click)="item.remove()">
+                          <span class="material-icons">delete</span>
+                          Remove
                         </button>
                     </td>
                 </tr>
@@ -84,17 +84,17 @@
                         <div class="progress-bar" role="progressbar" ></div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-success btn-s"
-                        (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
-                    <span class="glyphicon glyphicon-upload"></span> Upload all
+                <button mat-button color="primary" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+                  <span class="material-icons">cloud_upload</span>
+                  Upload all
                 </button>
-                <button type="button" class="btn btn-warning btn-s"
-                        (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
-                    <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                <button mat-button color="primary" (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                  <span class="material-icons">not_interested</span>
+                  Cancel all
                 </button>
-                <button type="button" class="btn btn-danger btn-s"
-                        (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
-                    <span class="glyphicon glyphicon-trash"></span> Remove all
+                <button mat-button color="primary" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                  <span class="material-icons">delete</span>
+                  Remove all
                 </button>
             </div>
         
