@@ -1,10 +1,10 @@
 .card-section {
-    margin: 10%;
-    padding: 5%;
+  margin: 10%;
+  padding: 5%;
 }
 
 .container {
-display: flex;
+  display: flex;
 }
 
 .container .box-left {
@@ -18,4 +18,50 @@ display: flex;
 .upload-item {
   padding: 1em;
   margin-bottom: 1em;
+}
+
+mat-card-content.mat-display-2:hover {
+  color: #3f51b5;
+}
+
+.mat-display-2 .material-icons {
+  font-size: 50px;
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile+label {
+  cursor: pointer;
+}
+
+div.button {
+  appearance: button;
+  -webkit-writing-mode: horizontal-tb !important;
+  text-rendering: auto;
+  color: -internal-light-dark(buttontext, rgb(170, 170, 170));
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: default;
+  background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));
+  box-sizing: border-box;
+  margin: 0em;
+  font: 400 13.3333px Arial;
+  padding: 1px 6px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
+  border-image: initial;
 }
