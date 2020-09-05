@@ -18,11 +18,9 @@ import { UserService, IForgeToken } from './user.service';
 })
 export class InterceptorService implements HttpInterceptor {
   isRefreshingToken = false;
-  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<
-    IForgeToken
-  >(null);
+  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<IForgeToken>(null);
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService) { }
 
   intercept(
     request: HttpRequest<any>,
