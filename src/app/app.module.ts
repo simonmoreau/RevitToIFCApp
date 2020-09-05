@@ -27,6 +27,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UploadComponent } from './upload/upload.component';
+import { RevitVersionPipe } from './pipes/revit-version.pipe';
 
 function MSALConfigFactory(): Configuration {
   return msalConfig;
@@ -41,7 +42,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    UploadComponent
+    UploadComponent,
+    RevitVersionPipe
   ],
   imports: [
     BrowserModule,

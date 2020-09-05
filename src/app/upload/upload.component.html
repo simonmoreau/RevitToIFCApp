@@ -17,7 +17,7 @@
 
 <mat-card class="card-section">
     <mat-card-content *ngIf="uploader?.queue?.length == 0" class="mat-display-2">
-        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" class="inputfile" />
+        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt" class="inputfile" />
         <label for="file">
             <span class="material-icons">add_circle</span>
             Upload your Revit files
@@ -34,9 +34,8 @@
                     <div class="box-left">
                         <mat-card-content>
                             <div class="mat-body-strong">{{ item?.file?.name }}</div>
-                            <div *ngIf="uploader.options.isHTML5">
-                                {{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB
-                            </div>
+                            <div *ngIf="uploader.options.isHTML5">{{ item?.file?.rawFile | revitVersion | async}}</div>
+                            <div *ngIf="uploader.options.isHTML5">{{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB</div>
                         </mat-card-content>
                     </div>
                     <div class="box-right">
@@ -65,7 +64,7 @@
                     </div>
                 </div> -->
                 <button mat-button color="primary">
-                    <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" class="inputfile" />
+                    <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt" class="inputfile" />
                     <label for="file" class="mat-button-wrapper">
                         <span class="material-icons">add_circle</span>
                         Add files
