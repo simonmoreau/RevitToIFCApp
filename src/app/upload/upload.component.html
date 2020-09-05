@@ -34,7 +34,7 @@
                     <div class="box-left">
                         <mat-card-content>
                             <div class="mat-body-strong">{{ item?.file?.name }}</div>
-                            <div *ngIf="uploader.options.isHTML5">{{ item?.file?.rawFile | revitVersion | async}}</div>
+                            <div *ngIf="uploader.options.isHTML5">{{ item?.version}}</div>
                             <div *ngIf="uploader.options.isHTML5">{{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB</div>
                         </mat-card-content>
                     </div>

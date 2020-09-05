@@ -19,7 +19,7 @@ import {
   MsalService,
   MsalAngularConfiguration
 } from '@azure/msal-angular';
-import { FileUploadModule, FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
+import { FileUploadModule} from './file-upload/file-upload.module';
 
 import { msalConfig, msalAngularConfig } from './app-config';
 import { AppRoutingModule } from './app-routing.module';
@@ -31,10 +31,10 @@ import { ProfileComponent } from './profile/profile.component';
 import { UploadComponent } from './upload/upload.component';
 
 // Pipes
-import { RevitVersionPipe } from './pipes/revit-version.pipe';
 
 // Services
 import { InterceptorService } from './services/interceptor.service';
+import { from } from 'rxjs';
 
 
 function MSALConfigFactory(): Configuration {
@@ -50,8 +50,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    UploadComponent,
-    RevitVersionPipe
+    UploadComponent
   ],
   imports: [
     BrowserModule,

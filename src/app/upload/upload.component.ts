@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploader, FileItem } from 'ng2-file-upload';
+import { FileUploader } from '../file-upload/file-uploader.class';
 import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 
