@@ -5,3 +5,7 @@
   a.title {
     color: white;
   }
+
+  .button-spacer {
+    width: 8px;
+  }
