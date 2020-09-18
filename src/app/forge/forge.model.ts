@@ -12,4 +12,6 @@ export interface IUploadObject {
   contentType?: string;
   location?: string;
   [k: string]: unknown;
+  nbChunks?: number;
 }
+

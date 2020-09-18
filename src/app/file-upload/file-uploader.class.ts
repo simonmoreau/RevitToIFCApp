@@ -3,6 +3,11 @@ import { FileLikeObject } from './file-like-object.class';
 import { FileItem } from './file-item.class';
 import { FileType } from './file-type.class';
 
+import { ForgeService } from './../forge/forge.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { throwError } from 'rxjs';
+import { IUploadObject } from '../forge/forge.model';
+
 function isFile(value: any): boolean {
   return (File && value instanceof File);
 }
@@ -51,6 +56,7 @@ export class FileUploader {
   public autoUpload: any;
   public authTokenHeader: string;
   public response: EventEmitter<any>;
+  public forgeService: ForgeService;
 
   public options: FileUploaderOptions = {
     autoUpload: false,
@@ -64,9 +70,10 @@ export class FileUploader {
 
   protected _failFilterIndex: number;
 
-  public constructor(options: FileUploaderOptions) {
+  public constructor(options: FileUploaderOptions, forgeService: ForgeService) {
     this.setOptions(options);
     this.response = new EventEmitter<any>();
+    this.forgeService = forgeService;
   }
 
   public setOptions(options: FileUploaderOptions): void {
@@ -148,7 +155,8 @@ export class FileUploader {
   public uploadItem(value: FileItem): void {
     const index = this.getIndexOfItem(value);
     const item = this.queue[ index ];
-    const transport = this.options.isHTML5 ? '_xhrTransport' : '_iframeTransport';
+    const transport = this.options.isHTML5 ? '_restTransport' : '_iframeTransport'; // 
+    // const transport = this.options.isHTML5 ? '_xhrTransport' : '_iframeTransport'; // _restTransport
     item._prepareToUploading();
     if (this.isUploading) {
       return;
@@ -295,6 +303,44 @@ export class FileUploader {
     };
   }
 
+  protected _restTransport(item: FileItem): any {
+
+    this._onBeforeUploadItem(item);
+
+    if (typeof item._file.size !== 'number') {
+      throw new TypeError('The file specified is no longer valid');
+    }
+
+    const bucketKey = 'ifc-storage';
+    const objectName = 'input-revit-model';
+
+    let nbChunkProcessed = 0;
+
+    const processResult = (result: IUploadObject) => {
+      const headers = this._parseHeaders('');
+      if (result.nbChunks != null)
+      {
+        nbChunkProcessed = nbChunkProcessed + 1;
+        const progress = Math.round((nbChunkProcessed / result.nbChunks) * 100);
+        this._onProgressItem(item, progress);
+      }
+      else
+      {
+        const response = result;
+        const gist = this._isSuccessCode(200) ? 'Success' : 'Error';
+        const method = '_on' + gist + 'Item';
+        (this as any)[ method ](item, response, 200, headers);
+        console.log(response);
+        this._onCompleteItem(item, JSON.stringify(response), 200, headers);
+      }
+    };
+
+    // this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
+
+    this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
+
+  }
+
   protected _xhrTransport(item: FileItem): any {
     const that = this;
     const xhr = item._xhr = new XMLHttpRequest();
@@ -371,8 +417,8 @@ export class FileUploader {
     if (this.authToken) {
       xhr.setRequestHeader(this.authTokenHeader, this.authToken);
     }
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == XMLHttpRequest.DONE) {
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
         that.response.emit(xhr.responseText);
       }
     };

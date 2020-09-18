@@ -16,7 +16,7 @@ export class UploadComponent implements OnInit {
   response: string;
 
   constructor(private userService: UserService, private forgeService: ForgeService){
-    const bucketKey = 'design-storage';
+    const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
     const URL = forgeService.baseURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
@@ -36,7 +36,7 @@ export class UploadComponent implements OnInit {
           });
         });
       }
-    });
+    }, forgeService);
 
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
