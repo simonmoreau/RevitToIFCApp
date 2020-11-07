@@ -16,16 +16,19 @@ import {
   concatAll, mergeMap, mergeAll
 } from 'rxjs/operators';
 
-import { IGetActivities, IUploadObject } from './forge.model';
+import { IGetActivities, IUploadObject, IMessage } from './forge.model';
 import { mergeAnalyzedFiles } from '@angular/compiler';
+import { InteractionRequiredAuthErrorMessage } from 'msal/lib-commonjs/error/InteractionRequiredAuthError';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class ForgeService {
   // private instance variable to hold base url
-  public baseURL = 'https://developer.api.autodesk.com';
-  private dasApiRoot = this.baseURL + '/da/us-east/v3';
+  public forgeURL = 'https://developer.api.autodesk.com';
+  private dasApiRoot = this.forgeURL + '/da/us-east/v3';
+  public baseAPIURL = '/api/';
 
   constructor(private http: HttpClient) { }
 
@@ -33,12 +36,16 @@ export class ForgeService {
     return this.get<IGetActivities>(this.dasApiRoot + '/activities');
   }
 
+  getLocalAPI(): Observable<IMessage> {
+    return this.get<IMessage>(this.baseAPIURL + 'message');
+  }
+
   // uploadObject(bucketKey: string, objectName: string, file: File): Observable<IUploadObject> {
   //   // const body = { File: file };
 
   // }
   uploadObject(bucketKey: string, objectKey: string, file: File): Observable<IUploadObject> {
-    const url: string = this.baseURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}/resumable`;
+    const url: string = this.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}/resumable`;
 
     if (file.size > 100 * 1024 * 1024) {
       const chunkSize = 5 * 1024 * 1024;
@@ -62,7 +69,7 @@ export class ForgeService {
 
     } else {
       return this.put<IUploadObject>(
-        this.baseURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}`,
+        this.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}`,
         file
       );
     }

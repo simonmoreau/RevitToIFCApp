@@ -18,7 +18,7 @@ export class UploadComponent implements OnInit {
   constructor(private userService: UserService, private forgeService: ForgeService){
     const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
-    const URL = forgeService.baseURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
+    const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
     this.uploader = new FileUploader({
       url: URL,

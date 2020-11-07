@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 
@@ -14,8 +15,9 @@ export class HomeComponent implements OnInit {
 
   profile: any;
   callContent: string;
+  rootURL = '/api';
   
-  constructor(private authService: MsalService, private forgeService: ForgeService) { }
+  constructor(private authService: MsalService, private forgeService: ForgeService, private http: HttpClient) { }
 
   ngOnInit() {
 
@@ -23,6 +25,16 @@ export class HomeComponent implements OnInit {
   }
 
   onForgeCall(){
-    this.forgeService.getActivities().subscribe(a => this.callContent = JSON.stringify(a));
+    // this.forgeService.getActivities().subscribe(a => this.callContent = JSON.stringify(a));
+
+    this.forgeService.getLocalAPI().subscribe(a => this.callContent = JSON.stringify(a));
+
+    // this.getTasks().subscribe(r => console.log(r));
+
+
+  }
+
+  getTasks() {
+    return this.http.get(this.rootURL + '/message');
   }
 }

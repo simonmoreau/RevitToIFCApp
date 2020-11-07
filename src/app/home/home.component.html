@@ -6,7 +6,7 @@
     <mat-card-content>This simple sample demonstrates how to use the Microsoft Authentication Library for JavaScript (msal.js) to get an access token and call an API secured by Azure AD B2C.</mat-card-content>
     <mat-card-actions>
       <a mat-raised-button [routerLink]="['profile']">Call API</a>
-      <a mat-raised-button (click)="onForgeCall()">Call Forge API</a>
+      <button mat-raised-button (click)="onForgeCall()">Call Forge API</button>
     </mat-card-actions>
     <mat-card-content>{{callContent}}</mat-card-content>
   </mat-card>
