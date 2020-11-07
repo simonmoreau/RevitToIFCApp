@@ -19,15 +19,23 @@ import {
   MsalService,
   MsalAngularConfiguration
 } from '@azure/msal-angular';
-import { FileUploadModule, FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
+import { FileUploadModule} from './file-upload/file-upload.module';
 
 import { msalConfig, msalAngularConfig } from './app-config';
 import { AppRoutingModule } from './app-routing.module';
+
+// Components
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UploadComponent } from './upload/upload.component';
-import { RevitVersionPipe } from './pipes/revit-version.pipe';
+
+// Pipes
+
+// Services
+import { InterceptorService } from './services/interceptor.service';
+import { from } from 'rxjs';
+
 
 function MSALConfigFactory(): Configuration {
   return msalConfig;
@@ -42,8 +50,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    UploadComponent,
-    RevitVersionPipe
+    UploadComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +71,11 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorService,
       multi: true
     },
     {

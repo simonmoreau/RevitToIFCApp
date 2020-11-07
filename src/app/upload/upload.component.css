@@ -41,27 +41,10 @@ mat-card-content.mat-display-2:hover {
   cursor: pointer;
 }
 
-div.button {
-  appearance: button;
-  -webkit-writing-mode: horizontal-tb !important;
-  text-rendering: auto;
-  color: -internal-light-dark(buttontext, rgb(170, 170, 170));
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-transform: none;
-  text-indent: 0px;
-  text-shadow: none;
-  display: inline-block;
-  text-align: center;
-  align-items: flex-start;
-  cursor: default;
-  background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));
-  box-sizing: border-box;
-  margin: 0em;
-  font: 400 13.3333px Arial;
-  padding: 1px 6px;
-  border-width: 2px;
-  border-style: outset;
-  border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
-  border-image: initial;
+.mat-body-strong {
+  font-size: 16px;
+}
+
+mat-card-content.file-detail {
+  margin-bottom: 2px;
 }

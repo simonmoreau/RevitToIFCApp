@@ -10,7 +10,7 @@ import { isIE, b2cPolicies } from './app-config';
 })
 
 export class AppComponent implements OnInit {
-  title = 'Azure AD B2C';
+  title = 'Revit To IFC';
   isIframe = false;
   loggedIn = false;
   user: any;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploader, FileItem } from 'ng2-file-upload';
-
-const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
+import { FileUploader } from '../file-upload/file-uploader.class';
+import { ForgeService } from '../forge/forge.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-upload',
@@ -15,9 +15,15 @@ export class UploadComponent implements OnInit {
   hasAnotherDropZoneOver: boolean;
   response: string;
 
-  constructor(){
+  constructor(private userService: UserService, private forgeService: ForgeService){
+    const bucketKey = 'ifc-storage';
+    const objectName = 'input-revit-model';
+    const URL = forgeService.baseURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
+
     this.uploader = new FileUploader({
       url: URL,
+      method: 'PUT',
+      headers: [{ name: 'Authorization', value: `Bearer ${userService.currentTokenValue.value}` }],
       disableMultipart: true, // 'DisableMultipart' must be 'true' for formatDataFunction to be called.
       formatDataFunctionIsAsync: true,
       formatDataFunction: async (item) => {
@@ -30,19 +36,14 @@ export class UploadComponent implements OnInit {
           });
         });
       }
-    });
+    }, forgeService);
 
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
 
     this.response = '';
 
-    // this.uploader.onAfterAddingFile = (file: FileItem) => {
-    //    console.log(file.file.rawFile);
-    //    this.readSingleFile(file);
-    // };
-
-    this.uploader.response.subscribe( res => this.response = res );
+    this.uploader.response.subscribe( res => {this.response = res ; console.log(res); } );
   }
 
   public fileOverBase(e: any): void {
