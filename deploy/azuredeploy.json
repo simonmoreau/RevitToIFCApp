@@ -172,6 +172,7 @@
             "RepoUrl": "[parameters('repositoryUrl')]",
             "branch": "[parameters('branch')]",
             "repositoryToken": "[parameters('repositoryToken')]",
+            "scmType": "Github",
             "IsManualIntegration": "[parameters('sourceCodeManualIntegration')]"
           }
         }

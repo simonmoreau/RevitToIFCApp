@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   profile: any;
   callContent: string;
   rootURL = '/api';
-  
+
   constructor(private authService: MsalService, private forgeService: ForgeService, private http: HttpClient) { }
 
   ngOnInit() {
@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
   onForgeCall(){
     // this.forgeService.getActivities().subscribe(a => this.callContent = JSON.stringify(a));
 
-    this.forgeService.getLocalAPI().subscribe(a => this.callContent = JSON.stringify(a));
+    this.forgeService.getLocalAPI().subscribe(a => this.callContent = a.name);
 
     // this.getTasks().subscribe(r => console.log(r));
 

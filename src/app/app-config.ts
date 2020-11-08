@@ -1,5 +1,6 @@
 import { Configuration } from 'msal';
 import { MsalAngularConfiguration } from '@azure/msal-angular';
+import { environment } from 'src/environments/environment';
 
 // this checks if the app is running on IE
 export const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
@@ -57,8 +58,8 @@ export const msalConfig: Configuration = {
     auth: {
         clientId: "cf4d263d-0c0b-4dc2-978b-bd3746416330",
         authority: b2cPolicies.authorities.signUpSignIn.authority,
-        redirectUri: "http://localhost:6420/",
-        postLogoutRedirectUri: "http://localhost:6420/",
+        redirectUri: environment.localUri,
+        postLogoutRedirectUri: environment.localUri,
         navigateToLoginRequestUrl: true,
         validateAuthority: false,
       },
