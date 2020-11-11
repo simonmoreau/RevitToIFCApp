@@ -9,6 +9,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
+import { tokenName } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -20,22 +21,26 @@ export class UserService {
   public baseAPIURL = '/api/';
 
   constructor(private authService: MsalService, private http: HttpClient) {
-    let token: IForgeToken = JSON.parse(localStorage.getItem('forgeToken'));
+    // let token: IForgeToken = JSON.parse(localStorage.getItem('forgeToken'));
 
-    if (!token) {
+    // if (!token) {
 
-      const newToken: IForgeToken = {
-        access_token: '',
-        expires_in: 3600,
-        token_type: 'bearer',
-      };
+    //   const newToken: IForgeToken = {
+    //     access_token: '',
+    //     expires_in: 3600,
+    //     token_type: 'bearer',
+    //   };
 
-      token = newToken;
-    }
+    //   token = newToken;
+    // }
 
-    this.forgeTokenSubject = new BehaviorSubject<IForgeToken>(token);
+    // this.forgeTokenSubject = new BehaviorSubject<IForgeToken>(token);
+    // this.currentForgeToken = this.forgeTokenSubject.asObservable();
+
+    this.forgeTokenSubject = new BehaviorSubject<IForgeToken>(
+      JSON.parse(localStorage.getItem('forgeToken'))
+    );
     this.currentForgeToken = this.forgeTokenSubject.asObservable();
-
   }
 
   public get currentTokenValue(): IForgeToken {
@@ -45,7 +50,10 @@ export class UserService {
   public refreshToken(): Observable<IForgeToken> {
     // We must refresh the token before using the user
     return this.getForgeUploadToken().pipe(
-      tap(t => localStorage.setItem('forgeToken', JSON.stringify(t)))
+      tap(t => {
+        localStorage.setItem('forgeToken', JSON.stringify(t));
+        this.forgeTokenSubject.next(t);
+      })
     );
   }
 
@@ -65,6 +73,8 @@ export class UserService {
 
   Logout() {
     this.authService.logout();
+    localStorage.removeItem('forgeToken');
+    this.forgeTokenSubject.next(null);
   }
 
   private getForgeUploadToken(): Observable<IForgeToken> {

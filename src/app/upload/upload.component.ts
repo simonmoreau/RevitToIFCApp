@@ -23,7 +23,7 @@ export class UploadComponent implements OnInit {
     this.uploader = new FileUploader({
       url: URL,
       method: 'PUT',
-      headers: [{ name: 'Authorization', value: `Bearer ${userService.currentTokenValue?.access_token}` }],
+      // headers: [{ name: 'Authorization', value: `Bearer ${userService.currentTokenValue?.access_token}` }],
       disableMultipart: true, // 'DisableMultipart' must be 'true' for formatDataFunction to be called.
       formatDataFunctionIsAsync: true,
       formatDataFunction: async (item) => {
@@ -55,6 +55,7 @@ export class UploadComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userService.refreshToken().subscribe(t => console.log("Get a Forge Token"));
   }
 
 }
