@@ -43,6 +43,18 @@
         "description": "Token to the Github repository"
       }
     },
+    "RevitToIFCForgeClientID": {
+      "type": "string",
+      "metadata": {
+        "description": "RevitToIFC Forge Client ID"
+      }
+    },
+    "RevitToIFCForgeSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "RevitToIFC Forge Client Secret"
+      }
+    },
     "branch": {
       "type": "string",
       "defaultValue": "master",
@@ -158,7 +170,9 @@
             "FUNCTIONS_EXTENSION_VERSION": "~3",
             "WEBSITE_NODE_DEFAULT_VERSION": "8.11.1",
             "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
-            "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]"
+            "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]",
+            "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
+            "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]"
           }
         },
         {

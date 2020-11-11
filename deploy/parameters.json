@@ -5,21 +5,37 @@
         "repositoryToken": {
             "reference": {
                 "keyVault": {
-                "id": "/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/GeneralRessources/providers/Microsoft.KeyVault/vaults/bim42mailkeyvault"
+                    "id": "/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/GeneralRessources/providers/Microsoft.KeyVault/vaults/bim42mailkeyvault"
                 },
                 "secretName": "GithubRepositoryToken"
-              }
+            }
+        },
+        "RevitToIFCForgeClientID": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/GeneralRessources/providers/Microsoft.KeyVault/vaults/bim42mailkeyvault"
+                },
+                "secretName": "RevitToIFCForgeClientID"
+            }
+        },
+        "RevitToIFCForgeSecret": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/GeneralRessources/providers/Microsoft.KeyVault/vaults/bim42mailkeyvault"
+                },
+                "secretName": "RevitToIFCForgeSecret"
+            }
         },
         "repositoryUrl": {
             "value": "https://github.com/simonmoreau/RevitToIFCApp"
         },
-        "appName":{
+        "appName": {
             "value": "RevitToIFC"
         },
-        "apiLocation":{
+        "apiLocation": {
             "value": "api"
         },
-        "appArtifactLocation":{
+        "appArtifactLocation": {
             "value": "dist/angular-basic"
         }
     }
