@@ -335,8 +335,6 @@ export class FileUploader {
       }
     };
 
-    // this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
-
     this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
 
   }
