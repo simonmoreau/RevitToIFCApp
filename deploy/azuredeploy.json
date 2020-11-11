@@ -190,24 +190,27 @@
           "appLocation": "[parameters('appLocation')]",
           "apiLocation": "[parameters('apiLocation')]",
           "appArtifactLocation": "[parameters('appArtifactLocation')]"
-        },
-                "siteConfig": {
-          "appSettings": [
-            {
-              "name": "FORGE_CLIENT_ID",
-              "value": "[parameters('RevitToIFCForgeClientID')]"
-            },
-            {
-              "name": "FORGE_CLIENT_SECRET",
-              "value": "[parameters('RevitToIFCForgeSecret')]"
-            }
-          ]
         }
       },
       "sku": {
         "Tier": "Free",
         "Name": "Free"
-      }
+      },
+      "resources": [
+        {
+          "apiVersion": "2019-12-01-preview",
+          "name": "appsettings",
+          "type": "config",
+          "location": "[parameters('location')]",
+          "properties": {
+            "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
+            "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/staticSites', parameters('appName'))]"
+          ]
+        }
+      ]
     },
     {
       "apiVersion": "2018-05-01-preview",
