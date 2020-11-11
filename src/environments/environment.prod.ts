@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  localUri: 'https://agreeable-mushroom-0652e2903.azurestaticapps.net'
+  localUri: 'https://jolly-stone-099ae9303.azurestaticapps.net/'
 };
