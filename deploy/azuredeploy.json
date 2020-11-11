@@ -157,7 +157,6 @@
           "type": "config",
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
-            "[resourceId('Microsoft.Web/sites/sourcecontrols', variables('functionAppName'), 'web')]",
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
             "[resourceId('Microsoft.Insights/components/', variables('applicationInsightsName'))]"
           ],
@@ -173,21 +172,6 @@
             "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]",
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
             "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]"
-          }
-        },
-        {
-          "apiVersion": "2015-08-01",
-          "name": "web",
-          "type": "sourcecontrols",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repositoryUrl')]",
-            "branch": "[parameters('branch')]",
-            "repositoryToken": "[parameters('repositoryToken')]",
-            "scmType": "Github",
-            "IsManualIntegration": "[parameters('sourceCodeManualIntegration')]"
           }
         }
       ]
@@ -206,6 +190,18 @@
           "appLocation": "[parameters('appLocation')]",
           "apiLocation": "[parameters('apiLocation')]",
           "appArtifactLocation": "[parameters('appArtifactLocation')]"
+        },
+                "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FORGE_CLIENT_ID",
+              "value": "[parameters('RevitToIFCForgeClientID')]"
+            },
+            {
+              "name": "FORGE_CLIENT_SECRET",
+              "value": "[parameters('RevitToIFCForgeSecret')]"
+            }
+          ]
         }
       },
       "sku": {
