@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BroadcastService, MsalService} from '@azure/msal-angular';
 import { Logger, CryptoUtils } from 'msal';
 import { isIE, b2cPolicies } from './app-config';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent implements OnInit {
   loggedIn = false;
   user: any;
 
-  constructor(private broadcastService: BroadcastService, private authService: MsalService) { }
+  constructor(private broadcastService: BroadcastService, private authService: MsalService, private userService: UserService) { }
 
   ngOnInit() {
 
@@ -35,6 +36,8 @@ export class AppComponent implements OnInit {
 
       console.log('login succeeded. id token acquired at: ' + new Date().toString());
       console.log(success);
+
+      this.userService.refreshToken().subscribe(t => console.log("Get a Forge Token"));
 
       this.checkAccount();
     });

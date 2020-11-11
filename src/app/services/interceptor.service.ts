@@ -9,7 +9,15 @@ import {
 import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
-import { filter, take, switchMap, catchError, finalize } from 'rxjs/operators';
+import {
+  filter,
+  take,
+  switchMap,
+  catchError,
+  finalize,
+  mergeMap,
+  tap
+} from 'rxjs/operators';
 
 import { UserService, IForgeToken } from './user.service';
 
@@ -18,9 +26,11 @@ import { UserService, IForgeToken } from './user.service';
 })
 export class InterceptorService implements HttpInterceptor {
   isRefreshingToken = false;
-  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<IForgeToken>(null);
+  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<
+    IForgeToken
+  >(null);
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService) {}
 
   intercept(
     request: HttpRequest<any>,
@@ -31,7 +41,7 @@ export class InterceptorService implements HttpInterceptor {
       request = this.addToken(request, this.userService.currentTokenValue);
 
       return next.handle(request).pipe(
-        catchError((error) => {
+        catchError(error => {
           if (error instanceof HttpErrorResponse) {
             const err: HttpErrorResponse = error as HttpErrorResponse;
             switch (err.status) {
@@ -42,7 +52,7 @@ export class InterceptorService implements HttpInterceptor {
                 return this.handleError(request, next, err);
             }
           } else {
-            return throwError(error);
+            return Observable.throw(error);
           }
         })
       );
