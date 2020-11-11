@@ -312,7 +312,7 @@ export class FileUploader {
     }
 
     const bucketKey = 'ifc-storage';
-    const objectName = 'input-revit-model';
+    const objectName = 'input-revit-model' + Date.now().toString();
 
     let nbChunkProcessed = 0;
 

@@ -27,6 +27,7 @@ export class InterceptorService implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     if (request.url.match(/developer.api.autodesk.com\//)) {
+
       request = this.addToken(request, this.userService.currentTokenValue);
 
       return next.handle(request).pipe(
@@ -56,7 +57,7 @@ export class InterceptorService implements HttpInterceptor {
   ): HttpRequest<any> {
     return (request = request.clone({
       setHeaders: {
-        Authorization: `Bearer ${forgeToken.value}`,
+        Authorization: `Bearer ${forgeToken?.access_token}`,
       },
     }));
   }

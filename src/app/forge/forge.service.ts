@@ -13,24 +13,26 @@ import {
   concatMap,
   toArray,
   catchError,
-  concatAll, mergeMap, mergeAll
+  concatAll,
+  mergeMap,
+  mergeAll,
 } from 'rxjs/operators';
 
 import { IGetActivities, IUploadObject, IMessage } from './forge.model';
+import { IForgeToken } from './../services/user.service';
 import { mergeAnalyzedFiles } from '@angular/compiler';
 import { InteractionRequiredAuthErrorMessage } from 'msal/lib-commonjs/error/InteractionRequiredAuthError';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class ForgeService {
   // private instance variable to hold base url
   public forgeURL = 'https://developer.api.autodesk.com';
   private dasApiRoot = this.forgeURL + '/da/us-east/v3';
   public baseAPIURL = '/api/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getActivities(): Observable<IGetActivities> {
     return this.get<IGetActivities>(this.dasApiRoot + '/activities');
@@ -44,8 +46,14 @@ export class ForgeService {
   //   // const body = { File: file };
 
   // }
-  uploadObject(bucketKey: string, objectKey: string, file: File): Observable<IUploadObject> {
-    const url: string = this.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}/resumable`;
+  uploadObject(
+    bucketKey: string,
+    objectKey: string,
+    file: File
+  ): Observable<IUploadObject> {
+    const url: string =
+      this.forgeURL +
+      `/oss/v2/buckets/${bucketKey}/objects/${objectKey}/resumable`;
 
     if (file.size > 100 * 1024 * 1024) {
       const chunkSize = 5 * 1024 * 1024;
@@ -59,14 +67,15 @@ export class ForgeService {
       const sessionId = this.Guid();
 
       return chunksMap$.pipe(
-        map((chunkId: number) => this.UploadChunk(chunkId, chunkSize, file, url, sessionId)),
+        map((chunkId: number) =>
+          this.UploadChunk(chunkId, chunkSize, file, url, sessionId)
+        ),
         mergeAll(5)
       );
 
       // return forkJoin(chunksIds.map((chunkId, index) => {
       //   return this.UploadChunk(chunkId, chunkSize, file, url, sessionId);
       // })).pipe(concatAll());
-
     } else {
       return this.put<IUploadObject>(
         this.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectKey}`,
@@ -75,8 +84,13 @@ export class ForgeService {
     }
   }
 
-  private UploadChunk(chunkIdx: number, chunkSize: number, file: File, url: string, sessionId: string): Observable<IUploadObject> {
-
+  private UploadChunk(
+    chunkIdx: number,
+    chunkSize: number,
+    file: File,
+    url: string,
+    sessionId: string
+  ): Observable<IUploadObject> {
     const nbChunks = Math.ceil(file.size / chunkSize);
 
     const start: number = chunkIdx * chunkSize;
