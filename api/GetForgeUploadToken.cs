@@ -46,7 +46,7 @@ namespace api
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(ex.Data);
+                return new BadRequestObjectResult(ex);
             }
             
         }
