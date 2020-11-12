@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.Core;
+using Autodesk.Forge.DesignAutomation.Model;
 
 namespace api
 {
@@ -23,11 +25,11 @@ namespace api
         // // Intialize the 2-legged oAuth 2.0 client.
         // private static TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
 
-        private readonly IWorkItemsApi _forgeApi;
+        private readonly IWorkItemsApi _workItemApi;
         private readonly IEnginesApi _engineApi;
-        public CreateWorkItem(IWorkItemsApi forgeApi, IEnginesApi engineApi)
+        public CreateWorkItem(IWorkItemsApi workItemApi, IEnginesApi engineApi)
         {
-            this._forgeApi = forgeApi;
+            this._workItemApi = workItemApi;
             this._engineApi = engineApi;
         }
 
@@ -40,11 +42,23 @@ namespace api
 
             try
             {
+                string downloadUrl = "https://developer.api.autodesk.com/oss/v2/signedresources/fb05b392-76d9-4324-9e06-ef2fb726d6c5?region=US";
+                string uploadURl = "https://developer.api.autodesk.com/oss/v2/signedresources/ee67a183-c8f2-42f4-a85e-58806b7414e5?region=US";
+                var workItem = new WorkItem()
+                {
+                    ActivityId = "RevitToIFC.RevitToIFCActivity+test",
+                    Arguments = new Dictionary<string, IArgument>
+                    {
+                        { "rvtFile",  new XrefTreeArgument() { Url = downloadUrl } },
+                        // { "params", new StringArgument() { Value = "{'ScheduleName':'WallSchedule.csv'}" }},
+                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadURl } }
+                    }
+                };
                 
+                ApiResponse<WorkItemStatus> workItemStatusResponse = await _workItemApi.CreateWorkItemAsync(workItem);
+                // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
 
-                ApiResponse<Autodesk.Forge.DesignAutomation.Model.Page<string>> page = await _engineApi.GetEnginesAsync();
-
-                return new OkObjectResult(page);
+                return new OkObjectResult(workItemStatusResponse.Content);
             }
             catch (Exception ex)
             {
