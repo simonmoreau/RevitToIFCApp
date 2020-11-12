@@ -20,6 +20,7 @@ namespace api
             IConfiguration configuration = configBuilder.Build(); // builder.GetContext().Configuration;
 
             builder.Services.AddDesignAutomation(configuration);
+            builder.Services.AddSingleton<Autodesk.Forge.TwoLeggedApi>();
         }
     }
 }

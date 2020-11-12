@@ -8,9 +8,12 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Autodesk.Forge.DesignAutomation.Http;
+using DA = Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.Core;
 using Autodesk.Forge.DesignAutomation.Model;
+using Autodesk.Forge;
+using Autodesk.Forge.Client;
+using Autodesk.Forge.Model;
 
 namespace api
 {
@@ -25,12 +28,18 @@ namespace api
         // // Intialize the 2-legged oAuth 2.0 client.
         // private static TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
 
-        private readonly IWorkItemsApi _workItemApi;
-        private readonly IEnginesApi _engineApi;
-        public CreateWorkItem(IWorkItemsApi workItemApi, IEnginesApi engineApi)
+        private readonly DA.IWorkItemsApi _workItemApi;
+        private readonly DA.IEnginesApi _engineApi;
+        private readonly TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
+
+        private static string FORGE_CLIENT_ID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID") ?? "your_client_id";
+        private static string FORGE_CLIENT_SECRET = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET") ?? "your_client_secret";
+        private static Scope[] _scope = new Scope[] { Scope.DataRead, Scope.DataWrite };
+        public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi)
         {
             this._workItemApi = workItemApi;
             this._engineApi = engineApi;
+            this._twoLeggedApi = new TwoLeggedApi();
         }
 
         [FunctionName("CreateWorkItem")]
@@ -42,23 +51,46 @@ namespace api
 
             try
             {
-                string downloadUrl = "https://developer.api.autodesk.com/oss/v2/signedresources/fb05b392-76d9-4324-9e06-ef2fb726d6c5?region=US";
-                string uploadURl = "https://developer.api.autodesk.com/oss/v2/signedresources/ee67a183-c8f2-42f4-a85e-58806b7414e5?region=US";
-                var workItem = new WorkItem()
+                // Get an access token
+                Autodesk.Forge.Client.ApiResponse<dynamic> bearer = await _twoLeggedApi.AuthenticateAsyncWithHttpInfo(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, oAuthConstants.CLIENT_CREDENTIALS, _scope);
+
+                Configuration.Default.AccessToken = (bearer.Data as DynamicJsonResponse).Dictionary["access_token"].ToString();
+                // Parse the body of the request
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                WorkItemDescription workItemDescription = JsonConvert.DeserializeObject<WorkItemDescription>(requestBody);
+
+                // Create two signed URLs to upload the file to the activity and download the result
+                ObjectsApi apiInstance = new ObjectsApi();
+                string bucketKey = Environment.GetEnvironmentVariable("ossBucketKey");  // string | URL-encoded bucket key
+                string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
+                string outputObjectName = inputObjectName + "-output";
+                PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
+
+                DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(bucketKey, inputObjectName, postBucketsSigned, "read"));
+                PostObjectSigned downloadSigned = dynamicJsonResponseDownload.ToObject<PostObjectSigned>();
+                DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(bucketKey, outputObjectName, postBucketsSigned, "readwrite");
+                PostObjectSigned uploadSigned = dynamicJsonResponseUpload.ToObject<PostObjectSigned>();
+
+                var workItem = new Autodesk.Forge.DesignAutomation.Model.WorkItem()
                 {
                     ActivityId = "RevitToIFC.RevitToIFCActivity+test",
                     Arguments = new Dictionary<string, IArgument>
                     {
-                        { "rvtFile",  new XrefTreeArgument() { Url = downloadUrl } },
-                        // { "params", new StringArgument() { Value = "{'ScheduleName':'WallSchedule.csv'}" }},
-                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadURl } }
+                        { "rvtFile",  new XrefTreeArgument() { Url = downloadSigned.SignedUrl } },
+                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadSigned.SignedUrl } }
                     }
                 };
-                
-                ApiResponse<WorkItemStatus> workItemStatusResponse = await _workItemApi.CreateWorkItemAsync(workItem);
+
+                Autodesk.Forge.Core.ApiResponse<WorkItemStatus> workItemResponse = await _workItemApi.CreateWorkItemAsync(workItem);
                 // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
 
-                return new OkObjectResult(workItemStatusResponse.Content);
+                WorkItemStatusResponse workItemStatusResponse = new WorkItemStatusResponse()
+                {
+                    WorkItemId = workItemResponse.Content.Id,
+                    OutputUrl = uploadSigned.SignedUrl
+                };
+
+                return new OkObjectResult(workItemStatusResponse);
             }
             catch (Exception ex)
             {
@@ -67,32 +99,14 @@ namespace api
         }
     }
 
-    public class RvtFile
-    {
-        public string url { get; set; }
-    }
-
-    public class Param
-    {
-        public string url { get; set; }
-    }
-
-    public class Result
-    {
-        public string verb { get; set; }
-        public string url { get; set; }
-    }
-
-    public class Arguments
-    {
-        public RvtFile rvtFile { get; set; }
-        public Param param { get; set; }
-        public Result result { get; set; }
-    }
-
     public class WorkItemDescription
     {
-        public string activityId { get; set; }
-        public Arguments arguments { get; set; }
+        public string inputObjectName { get; set; }
+    }
+
+    public class WorkItemStatusResponse
+    {
+        public string WorkItemId { get; set; }
+        public string OutputUrl { get; set; }
     }
 }
