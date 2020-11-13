@@ -30,16 +30,16 @@ namespace api
 
         private readonly DA.IWorkItemsApi _workItemApi;
         private readonly DA.IEnginesApi _engineApi;
-        private readonly TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
+        private readonly TwoLeggedApi _twoLeggedApi;
 
         private static string FORGE_CLIENT_ID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID") ?? "your_client_id";
         private static string FORGE_CLIENT_SECRET = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET") ?? "your_client_secret";
         private static Scope[] _scope = new Scope[] { Scope.DataRead, Scope.DataWrite };
-        public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi)
+        public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi, TwoLeggedApi twoLeggedApi)
         {
             this._workItemApi = workItemApi;
             this._engineApi = engineApi;
-            this._twoLeggedApi = new TwoLeggedApi();
+            this._twoLeggedApi = twoLeggedApi;
         }
 
         [FunctionName("CreateWorkItem")]

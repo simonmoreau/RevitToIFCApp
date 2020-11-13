@@ -13,7 +13,7 @@ using Autodesk.Forge.Model;
 
 namespace api
 {
-    public static class GetForgeUploadToken
+    public class GetForgeUploadToken
     {
         // Initialize the oAuth 2.0 client configuration fron enviroment variables
         // you can also hardcode them in the code if you want in the placeholders below
@@ -22,11 +22,15 @@ namespace api
         private static Scope[] _scope = new Scope[] { Scope.DataRead, Scope.DataWrite };
 
         // Intialize the 2-legged oAuth 2.0 client.
-        private static TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
+        private readonly TwoLeggedApi _twoLeggedApi;
 
+        public GetForgeUploadToken(TwoLeggedApi twoLeggedApi)
+        {
+            this._twoLeggedApi = twoLeggedApi;
+        }
 
         [FunctionName("GetForgeUploadToken")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "uploadToken")] HttpRequest req,
             ILogger log)
         {

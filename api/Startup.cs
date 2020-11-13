@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Autodesk.Forge.Core;
+using Autodesk.Forge;
 
 [assembly: FunctionsStartup(typeof(api.Startup))]
 namespace api
@@ -20,7 +21,7 @@ namespace api
             IConfiguration configuration = configBuilder.Build(); // builder.GetContext().Configuration;
 
             builder.Services.AddDesignAutomation(configuration);
-            builder.Services.AddSingleton<Autodesk.Forge.TwoLeggedApi>();
+            builder.Services.AddSingleton<Autodesk.Forge.TwoLeggedApi>(new TwoLeggedApi());
         }
     }
 }
