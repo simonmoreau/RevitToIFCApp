@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IForgeToken } from './api.model';
+import { IForgeToken, IWorkItemStatusResponse } from './api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,9 +22,28 @@ export class ApiService {
     return this.get<IForgeToken>(this.baseAPIURL + 'uploadToken');
   }
 
+  public CreateWorkItem(
+    objectName: string
+  ): Observable<IWorkItemStatusResponse> {
+    const body = { inputObjectName: objectName };
+    return this.post<IWorkItemStatusResponse>(
+      this.baseAPIURL + 'workitem',
+      body
+    );
+  }
+
+  // private function for REST requests
   private get<T>(url: string): Observable<T> {
     return this.http
       .get<T>(url, {
+        headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  private post<T>(url: string, body: object): Observable<T> {
+    return this.http
+      .post<T>(url, body, {
         headers: new HttpHeaders().set('Content-Type', 'application/json'),
       })
       .pipe(catchError(this.handleError));

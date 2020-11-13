@@ -4,9 +4,9 @@ import { FileItem } from './file-item.class';
 import { FileType } from './file-type.class';
 
 import { ForgeService } from './../forge/forge.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
+
 import { IUploadObject } from '../forge/forge.model';
+
 
 function isFile(value: any): boolean {
   return (File && value instanceof File);
@@ -15,6 +15,11 @@ function isFile(value: any): boolean {
 export interface Headers {
   name: string;
   value: string;
+}
+
+export interface UploadObjectResult {
+  file: FileItem;
+  uploadObject: IUploadObject;
 }
 
 export type ParsedResponseHeaders = { [ headerFieldName: string ]: string };
@@ -55,7 +60,7 @@ export class FileUploader {
   public _nextIndex = 0;
   public autoUpload: any;
   public authTokenHeader: string;
-  public response: EventEmitter<any>;
+  public response: EventEmitter<UploadObjectResult>;
   public forgeService: ForgeService;
 
   public options: FileUploaderOptions = {
@@ -72,7 +77,7 @@ export class FileUploader {
 
   public constructor(options: FileUploaderOptions, forgeService: ForgeService) {
     this.setOptions(options);
-    this.response = new EventEmitter<any>();
+    this.response = new EventEmitter<UploadObjectResult>();
     this.forgeService = forgeService;
   }
 
@@ -331,6 +336,14 @@ export class FileUploader {
         const method = '_on' + gist + 'Item';
         (this as any)[ method ](item, response, 200, headers);
         console.log(response);
+
+        const uploadObjectResult: UploadObjectResult = {
+          file: item,
+          uploadObject: response
+      };
+
+        this.response.next(uploadObjectResult);
+
         this._onCompleteItem(item, JSON.stringify(response), 200, headers);
       }
     };

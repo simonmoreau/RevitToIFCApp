@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploader } from '../file-upload/file-uploader.class';
+import { FileUploader, UploadObjectResult } from '../file-upload/file-uploader.class';
 import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
+import { ApiService } from '../services/api.service';
+
+import { IUploadObject } from '../forge/forge.model';
 
 @Component({
   selector: 'app-upload',
@@ -13,9 +16,8 @@ export class UploadComponent implements OnInit {
   uploader: FileUploader;
   hasBaseDropZoneOver: boolean;
   hasAnotherDropZoneOver: boolean;
-  response: string;
 
-  constructor(private userService: UserService, private forgeService: ForgeService){
+  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService){
     const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
@@ -41,9 +43,11 @@ export class UploadComponent implements OnInit {
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
 
-    this.response = '';
+    // this.uploader.response.subscribe( response: IUploadObject => {this.response = response ; console.log(response); } );
 
-    this.uploader.response.subscribe( res => {this.response = res ; console.log(res); } );
+    this.uploader.response.subscribe((uploadObjectResult: UploadObjectResult) => {
+      this.apiService.CreateWorkItem(uploadObjectResult.uploadObject.objectKey).subscribe(r => console.log(r));
+    });
   }
 
   public fileOverBase(e: any): void {
@@ -55,7 +59,7 @@ export class UploadComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService.refreshToken().subscribe(t => console.log("Get a Forge Token"));
+    this.userService.refreshToken().subscribe(t => console.log('Get a Forge Token'));
   }
 
 }

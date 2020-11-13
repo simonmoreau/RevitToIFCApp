@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, BehaviorSubject, throwError, from } from 'rxjs';
-import {  MsalService } from '@azure/msal-angular';
+import { MsalService } from '@azure/msal-angular';
 import { map, tap } from 'rxjs/operators';
 
 import { IForgeToken } from './api.model';
@@ -14,8 +14,10 @@ export class UserService {
   private forgeTokenSubject: BehaviorSubject<IForgeToken>;
   public currentForgeToken: Observable<IForgeToken>;
 
-  constructor(private authService: MsalService, private apiService: ApiService) {
-
+  constructor(
+    private authService: MsalService,
+    private apiService: ApiService
+  ) {
     this.forgeTokenSubject = new BehaviorSubject<IForgeToken>(
       JSON.parse(localStorage.getItem('forgeToken'))
     );
@@ -29,7 +31,7 @@ export class UserService {
   public refreshToken(): Observable<IForgeToken> {
     // We must refresh the token before using the user
     return this.apiService.getForgeUploadToken().pipe(
-      tap(t => {
+      tap((t) => {
         localStorage.setItem('forgeToken', JSON.stringify(t));
         this.forgeTokenSubject.next(t);
       })
