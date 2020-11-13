@@ -4,26 +4,8 @@ export interface IForgeToken {
   expires_in: number;
 }
 
-export interface RvtFile {
-  url: string;
-}
-
-export interface Param {
-  url: string;
-}
-
-export interface Result {
-  verb: string;
-  url: string;
-}
-
-export interface Arguments {
-  rvtFile: RvtFile;
-  param: Param;
-  result: Result;
-}
-
-export interface WorkItemDescription {
-  activityId: string;
-  arguments: Arguments;
+export interface  IWorkItemStatusResponse
+{
+    WorkItemId: string;
+    OutputUrl: string;
 }

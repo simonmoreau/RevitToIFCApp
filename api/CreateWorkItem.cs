@@ -38,7 +38,7 @@ namespace api
 
         [FunctionName("CreateWorkItem")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitems")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
             [Table("token", "token", "token")] Token token,
             ILogger log)
         {
