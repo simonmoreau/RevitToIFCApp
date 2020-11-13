@@ -5,11 +5,11 @@ az group create -n $resourceGroup -l $location
 
 # to check our deployement app
 az deployment group what-if -g $resourceGroup --template-file deploy\azuredeploy.json `
---parameters deploy\parameters.json --debug
+--parameters deploy\parameters.json
 
 # to deploy our function app
 az deployment group create -g $resourceGroup --template-file deploy\azuredeploy.json `
---parameters deploy\parameters.json --debug
+--parameters deploy\parameters.json
 
 # see what's in the resource group we just created
 az resource list -g $resourceGroup -o table
