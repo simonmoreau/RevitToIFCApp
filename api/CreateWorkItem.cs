@@ -30,31 +30,23 @@ namespace api
 
         private readonly DA.IWorkItemsApi _workItemApi;
         private readonly DA.IEnginesApi _engineApi;
-        private readonly TwoLeggedApi _twoLeggedApi;
-
-        private static string FORGE_CLIENT_ID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID") ?? "your_client_id";
-        private static string FORGE_CLIENT_SECRET = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET") ?? "your_client_secret";
-        private static Scope[] _scope = new Scope[] { Scope.DataRead, Scope.DataWrite };
-        public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi, TwoLeggedApi twoLeggedApi)
+        public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi)
         {
             this._workItemApi = workItemApi;
             this._engineApi = engineApi;
-            this._twoLeggedApi = twoLeggedApi;
         }
 
         [FunctionName("CreateWorkItem")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitems")] HttpRequest req,
+            [Table("token", "token", "token")] Token token,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");
 
             try
             {
-                // Get an access token
-                Autodesk.Forge.Client.ApiResponse<dynamic> bearer = await _twoLeggedApi.AuthenticateAsyncWithHttpInfo(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, oAuthConstants.CLIENT_CREDENTIALS, _scope);
-
-                Configuration.Default.AccessToken = (bearer.Data as DynamicJsonResponse).Dictionary["access_token"].ToString();
+                Configuration.Default.AccessToken = token.ForgeToken.access_token;
                 // Parse the body of the request
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 WorkItemDescription workItemDescription = JsonConvert.DeserializeObject<WorkItemDescription>(requestBody);
