@@ -18,6 +18,10 @@ export class FileItem {
   public isCancel = false;
   public isError = false;
   public progress = 0;
+  public status = '';
+  public isConverting = false;
+  public isConverted = false;
+  public downloadUrl = null;
   public index: number = void 0;
   public _xhr: XMLHttpRequest;
   public _form: any;

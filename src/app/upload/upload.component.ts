@@ -4,7 +4,13 @@ import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 import { ApiService } from '../services/api.service';
 
+
 import { IUploadObject } from '../forge/forge.model';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject } from '../services/api.model';
+import { concatMap, flatMap, takeWhile, switchMap, tap, map, first } from 'rxjs/operators';
+import { RtlScrollAxisType } from '@angular/cdk/platform';
+import { merge, Observable, of, timer } from 'rxjs';
+import { FileItem } from '../file-upload/file-item.class';
 
 @Component({
   selector: 'app-upload',
@@ -45,9 +51,59 @@ export class UploadComponent implements OnInit {
 
     // this.uploader.response.subscribe( response: IUploadObject => {this.response = response ; console.log(response); } );
 
-    this.uploader.response.subscribe((uploadObjectResult: UploadObjectResult) => {
-      this.apiService.CreateWorkItem(uploadObjectResult.uploadObject.objectKey).subscribe(r => console.log(r));
-    });
+    const createWorkItemObs = (conversionObject: ConversionObject): Observable<ConversionObject> => {
+      const currentFileItem: FileItem = conversionObject.uploadObjectResult.file;
+      currentFileItem.isConverting = true;
+      currentFileItem.status = 'Converting ...' + currentFileItem.file.name;
+      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey).pipe(
+        map((workItemResponse: IWorkItemResponse ) => {
+          conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
+          conversionObject.workItemResponse = workItemResponse;
+          return conversionObject;
+        })
+      );
+    };
+
+    const getworkItemStatus = (conversionObject: ConversionObject): Observable<ConversionObject> => {
+      return of (conversionObject).pipe(
+        concatMap((cO: ConversionObject) => checkStatus(cO)),
+        concatMap((cO: ConversionObject) => processConvertedObject(cO)),
+      );
+    };
+
+    const checkStatus = (conversionObject: ConversionObject): Observable<ConversionObject> => {
+      return timer(0, 2000).pipe(
+        switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse.workItemId)),
+        first(workItemStatus => workItemStatus.status === 'success'),
+        map(r => conversionObject)
+        );
+    };
+
+    const processConvertedObject = (conversionObject: ConversionObject): Observable<ConversionObject> => {
+      return  of(conversionObject).pipe(
+        map((cO: ConversionObject) => {
+          cO.uploadObjectResult.file.isConverting = false;
+          cO.uploadObjectResult.file.status = 'Converted';
+          cO.uploadObjectResult.file.isConverted = true;
+          return cO;
+        })
+      );
+    };
+
+    const test = this.uploader.response.pipe(
+      map((uor: UploadObjectResult ) =>  {
+        const conversionObject: ConversionObject = {
+          uploadObjectResult: uor,
+          workItemResponse: null
+      };
+        return conversionObject;
+      }),
+      flatMap((conversionObject: ConversionObject) => createWorkItemObs(conversionObject)),
+      flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject))
+    );
+
+    test.subscribe(r => console.log(r));
+
   }
 
   public fileOverBase(e: any): void {
@@ -63,3 +119,4 @@ export class UploadComponent implements OnInit {
   }
 
 }
+

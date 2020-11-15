@@ -6,6 +6,7 @@ import { FileType } from './file-type.class';
 import { ForgeService } from './../forge/forge.service';
 
 import { IUploadObject } from '../forge/forge.model';
+import { JsonPipe } from '@angular/common';
 
 
 function isFile(value: any): boolean {
@@ -20,6 +21,7 @@ export interface Headers {
 export interface UploadObjectResult {
   file: FileItem;
   uploadObject: IUploadObject;
+  responseText: string;
 }
 
 export type ParsedResponseHeaders = { [ headerFieldName: string ]: string };
@@ -339,7 +341,8 @@ export class FileUploader {
 
         const uploadObjectResult: UploadObjectResult = {
           file: item,
-          uploadObject: response
+          uploadObject: response,
+          responseText: JSON.stringify(response)
       };
 
         this.response.next(uploadObjectResult);
@@ -430,7 +433,13 @@ export class FileUploader {
     }
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-        that.response.emit(xhr.responseText);
+
+        const uploadObjectResult: UploadObjectResult = {
+          file: null,
+          uploadObject: null,
+          responseText: JSON.stringify(xhr.responseText)
+      };
+        that.response.emit(uploadObjectResult);
       }
     };
     if (this.options.formatDataFunctionIsAsync) {
