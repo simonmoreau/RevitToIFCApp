@@ -19,7 +19,10 @@ const routes: Routes = [
   },
   {
     path: 'upload',
-    component: UploadComponent
+    component: UploadComponent,
+    canActivate: [
+      MsalGuard
+    ]
   }
 ];
 

@@ -17,7 +17,7 @@ import { FileItem } from '../file-upload/file-item.class';
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent {
 
   uploader: FileUploader;
   hasBaseDropZoneOver: boolean;
@@ -44,7 +44,7 @@ export class UploadComponent implements OnInit {
           });
         });
       }
-    }, forgeService);
+    }, forgeService, userService);
 
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
@@ -55,7 +55,9 @@ export class UploadComponent implements OnInit {
       const currentFileItem: FileItem = conversionObject.uploadObjectResult.file;
       currentFileItem.isConverting = true;
       currentFileItem.status = 'Converting ...' + currentFileItem.file.name;
-      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey).pipe(
+      let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
+      outputName = outputName + '.ifc';
+      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
           conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
           conversionObject.workItemResponse = workItemResponse;
@@ -112,10 +114,6 @@ export class UploadComponent implements OnInit {
 
   public fileOverAnother(e: any): void {
     this.hasAnotherDropZoneOver = e;
-  }
-
-  ngOnInit(): void {
-    this.userService.refreshToken().subscribe(t => console.log('Get a Forge Token'));
   }
 
 }

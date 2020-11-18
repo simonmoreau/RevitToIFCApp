@@ -64,7 +64,21 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatCardModule,
     MatIconModule,
     MatTooltipModule,
-    MsalModule,
+    MsalModule.forRoot({
+      auth: {
+        clientId: 'cf4d263d-0c0b-4dc2-978b-bd3746416330',
+      }
+    },
+    {
+      consentScopes: [
+        'user.read',
+        'openid',
+        'profile',
+      ],
+      protectedResourceMap: [
+        ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+      ]
+    }),
     FileUploadModule
   ],
   providers: [

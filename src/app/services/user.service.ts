@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, BehaviorSubject, throwError, from } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, from, of } from 'rxjs';
 import { MsalService } from '@azure/msal-angular';
 import { map, tap } from 'rxjs/operators';
 
@@ -26,6 +26,19 @@ export class UserService {
 
   public get currentTokenValue(): IForgeToken {
     return this.forgeTokenSubject.value;
+  }
+
+  public getToken(): Observable<IForgeToken> {
+
+    const savedToken: IForgeToken = JSON.parse(localStorage.getItem('forgeToken'));
+    if (savedToken)
+    {
+      return of(savedToken);
+    }
+    else
+    {
+      return this.refreshToken();
+    }
   }
 
   public refreshToken(): Observable<IForgeToken> {

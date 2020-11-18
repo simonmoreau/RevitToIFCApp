@@ -55,7 +55,7 @@ namespace api
                 ObjectsApi apiInstance = new ObjectsApi();
                 string bucketKey = Environment.GetEnvironmentVariable("ossBucketKey");  // string | URL-encoded bucket key
                 string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
-                string outputObjectName = inputObjectName + "-output";
+                string outputObjectName = workItemDescription.outputObjectName;
                 PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
 
                 DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(bucketKey, inputObjectName, postBucketsSigned, "read"));
@@ -94,6 +94,7 @@ namespace api
     public class WorkItemDescription
     {
         public string inputObjectName { get; set; }
+        public string outputObjectName {get;set;}
     }
 
     public class WorkItemStatusResponse

@@ -4,9 +4,12 @@ import { FileItem } from './file-item.class';
 import { FileType } from './file-type.class';
 
 import { ForgeService } from './../forge/forge.service';
+import { UserService } from './../services/user.service';
 
 import { IUploadObject } from '../forge/forge.model';
 import { JsonPipe } from '@angular/common';
+import { flatMap } from 'rxjs/operators';
+import { IForgeToken } from '../services/api.model';
 
 
 function isFile(value: any): boolean {
@@ -64,6 +67,7 @@ export class FileUploader {
   public authTokenHeader: string;
   public response: EventEmitter<UploadObjectResult>;
   public forgeService: ForgeService;
+  public userService: UserService;
 
   public options: FileUploaderOptions = {
     autoUpload: false,
@@ -77,10 +81,11 @@ export class FileUploader {
 
   protected _failFilterIndex: number;
 
-  public constructor(options: FileUploaderOptions, forgeService: ForgeService) {
+  public constructor(options: FileUploaderOptions, forgeService: ForgeService, userService: UserService) {
     this.setOptions(options);
     this.response = new EventEmitter<UploadObjectResult>();
     this.forgeService = forgeService;
+    this.userService = userService;
   }
 
   public setOptions(options: FileUploaderOptions): void {
@@ -319,7 +324,7 @@ export class FileUploader {
     }
 
     const bucketKey = 'ifc-storage';
-    const objectName = 'input-revit-model' + Date.now().toString();
+    const objectName = Date.now().toString() + '-' + item.file.name;
 
     let nbChunkProcessed = 0;
 
@@ -351,7 +356,9 @@ export class FileUploader {
       }
     };
 
-    this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
+    this.userService.getToken().pipe(
+      flatMap((forgeToken: IForgeToken) => this.forgeService.uploadObject(bucketKey, objectName, item._file))
+    ).subscribe(processResult);
 
   }
 
