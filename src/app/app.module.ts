@@ -64,24 +64,19 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatCardModule,
     MatIconModule,
     MatTooltipModule,
-    MsalModule.forRoot({
-      auth: {
-        clientId: 'cf4d263d-0c0b-4dc2-978b-bd3746416330',
-      }
-    },
-    {
-      consentScopes: [
-        'user.read',
-        'openid',
-        'profile',
-      ],
-      protectedResourceMap: [
-        ['https://graph.microsoft.com/v1.0/me', ['user.read']]
-      ]
-    }),
+    MsalModule,
     FileUploadModule
   ],
   providers: [
+    MsalService,
+    {
+      provide: MSAL_CONFIG,
+      useFactory: MSALConfigFactory
+    },
+    {
+      provide: MSAL_CONFIG_ANGULAR,
+      useFactory: MSALAngularConfigFactory
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
@@ -91,16 +86,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
       multi: true
-    },
-    {
-      provide: MSAL_CONFIG,
-      useFactory: MSALConfigFactory
-    },
-    {
-      provide: MSAL_CONFIG_ANGULAR,
-      useFactory: MSALAngularConfigFactory
-    },
-    MsalService
+    }
   ],
   bootstrap: [AppComponent]
 })

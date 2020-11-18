@@ -21,15 +21,15 @@ export const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.n
  */
 export const b2cPolicies = {
     names: {
-        signUpSignIn: "B2C_1_RevitToIFCSignupsignin1",
-        resetPassword: "B2C_1_passwordreset1",
+        signUpSignIn: 'B2C_1_RevitToIFCSignupsignin1',
+        resetPassword: 'B2C_1_passwordreset1',
     },
     authorities: {
         signUpSignIn: {
-            authority: "https://revittoifc.b2clogin.com/revittoifc.onmicrosoft.com/B2C_1_RevitToIFCSignupsignin1"
+            authority: 'https://revittoifc.b2clogin.com/revittoifc.onmicrosoft.com/B2C_1_RevitToIFCSignupsignin1'
         },
         resetPassword: {
-            authority: "https://revittoifc.b2clogin.com/revittoifc.onmicrosoft.com/B2C_1_passwordreset1"
+            authority: 'https://revittoifc.b2clogin.com/revittoifc.onmicrosoft.com/B2C_1_passwordreset1'
         }
     }
 }
@@ -43,7 +43,7 @@ export const b2cPolicies = {
  */
 export const apiConfig: {b2cScopes: string[], webApi: string} = {
     b2cScopes: ['https://revittoifc.onmicrosoft.com/helloapi/demo.read'],
-    webApi: 'https://fabrikamb2chello.azurewebsites.net/hello'
+    webApi: 'https://fabrikamb2chello.azurewebsites.net/*'
 };
 // #endregion
 
@@ -56,7 +56,7 @@ export const apiConfig: {b2cScopes: string[], webApi: string} = {
  */
 export const msalConfig: Configuration = {
     auth: {
-        clientId: "cf4d263d-0c0b-4dc2-978b-bd3746416330",
+        clientId: 'cf4d263d-0c0b-4dc2-978b-bd3746416330',
         authority: b2cPolicies.authorities.signUpSignIn.authority,
         redirectUri: environment.localUri,
         postLogoutRedirectUri: environment.localUri,
@@ -64,7 +64,7 @@ export const msalConfig: Configuration = {
         validateAuthority: false,
       },
     cache: {
-        cacheLocation: "localStorage",
+        cacheLocation: 'localStorage',
         storeAuthStateInCookie: isIE, // Set this to "true" to save cache in cookies to address trusted zones limitations in IE
     },
 }
@@ -88,7 +88,8 @@ export const tokenRequest: {scopes: string[]} = {
 // #region 4) MSAL-Angular Configuration
 // here you can define the coordinates and required permissions for your protected resources
 export const protectedResourceMap: [string, string[]][] = [
-    [apiConfig.webApi, apiConfig.b2cScopes] // i.e. [https://revittoifchello.azurewebsites.net/hello, ['https://revittoifc.onmicrosoft.com/helloapi/demo.read']]
+    [apiConfig.webApi, apiConfig.b2cScopes]
+    // i.e. [https://revittoifchello.azurewebsites.net/hello, ['https://revittoifc.onmicrosoft.com/helloapi/demo.read']]
 ];
 
 /** 
@@ -101,8 +102,7 @@ export const msalAngularConfig: MsalAngularConfiguration = {
         ...loginRequest.scopes,
         ...tokenRequest.scopes,
     ],
-    unprotectedResources: [], // API calls to these coordinates will NOT activate MSALGuard
     protectedResourceMap,     // API calls to these coordinates will activate MSALGuard
-    extraQueryParameters: {}  
-}
+    extraQueryParameters: {}
+};
 // #endregion
