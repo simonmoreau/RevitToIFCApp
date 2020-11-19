@@ -19,7 +19,8 @@ import {
   tap
 } from 'rxjs/operators';
 
-import { UserService, IForgeToken } from './user.service';
+import { UserService } from './user.service';
+import { IForgeToken } from './api.model';
 
 @Injectable({
   providedIn: 'root',

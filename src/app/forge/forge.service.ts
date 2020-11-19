@@ -19,9 +19,6 @@ import {
 } from 'rxjs/operators';
 
 import { IGetActivities, IUploadObject, IMessage } from './forge.model';
-import { IForgeToken } from './../services/user.service';
-import { mergeAnalyzedFiles } from '@angular/compiler';
-import { InteractionRequiredAuthErrorMessage } from 'msal/lib-commonjs/error/InteractionRequiredAuthError';
 
 @Injectable({
   providedIn: 'root',
@@ -214,21 +211,4 @@ export class ForgeService {
       }
     );
   }
-
-  // private Guid() {
-
-  //   let d = new Date().getTime();
-
-  //   const format = 'xxxxxxxxxxxx';
-  //   return format.replace(/[xy]/g, (c: string) => {
-  //       const r = (d + Math.random() * 16) % 16 || 0;
-  //       d = Math.floor(d / 16);
-  //       return (c === 'x' ? r : (r && 0x7 || 0x8)).toString(16);
-  //     });
-  // }
-
-  /////////////////////////////////////////////////////////
-  // Uploads object to bucket using resumable endpoint
-  //
-  /////////////////////////////////////////////////////////
 }

@@ -37,6 +37,9 @@
         },
         "appArtifactLocation": {
             "value": "dist/angular-basic"
+        },
+        "ossBucketKey": {
+            "value": "ifc-storage"
         }
     }
 }

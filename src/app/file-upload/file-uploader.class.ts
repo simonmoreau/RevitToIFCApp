@@ -4,9 +4,13 @@ import { FileItem } from './file-item.class';
 import { FileType } from './file-type.class';
 
 import { ForgeService } from './../forge/forge.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
+import { UserService } from './../services/user.service';
+
 import { IUploadObject } from '../forge/forge.model';
+import { JsonPipe } from '@angular/common';
+import { flatMap } from 'rxjs/operators';
+import { IForgeToken } from '../services/api.model';
+
 
 function isFile(value: any): boolean {
   return (File && value instanceof File);
@@ -15,6 +19,12 @@ function isFile(value: any): boolean {
 export interface Headers {
   name: string;
   value: string;
+}
+
+export interface UploadObjectResult {
+  file: FileItem;
+  uploadObject: IUploadObject;
+  responseText: string;
 }
 
 export type ParsedResponseHeaders = { [ headerFieldName: string ]: string };
@@ -55,8 +65,9 @@ export class FileUploader {
   public _nextIndex = 0;
   public autoUpload: any;
   public authTokenHeader: string;
-  public response: EventEmitter<any>;
+  public response: EventEmitter<UploadObjectResult>;
   public forgeService: ForgeService;
+  public userService: UserService;
 
   public options: FileUploaderOptions = {
     autoUpload: false,
@@ -70,10 +81,11 @@ export class FileUploader {
 
   protected _failFilterIndex: number;
 
-  public constructor(options: FileUploaderOptions, forgeService: ForgeService) {
+  public constructor(options: FileUploaderOptions, forgeService: ForgeService, userService: UserService) {
     this.setOptions(options);
-    this.response = new EventEmitter<any>();
+    this.response = new EventEmitter<UploadObjectResult>();
     this.forgeService = forgeService;
+    this.userService = userService;
   }
 
   public setOptions(options: FileUploaderOptions): void {
@@ -312,7 +324,7 @@ export class FileUploader {
     }
 
     const bucketKey = 'ifc-storage';
-    const objectName = 'input-revit-model' + Date.now().toString();
+    const objectName = Date.now().toString() + '-' + item.file.name;
 
     let nbChunkProcessed = 0;
 
@@ -331,13 +343,22 @@ export class FileUploader {
         const method = '_on' + gist + 'Item';
         (this as any)[ method ](item, response, 200, headers);
         console.log(response);
+
+        const uploadObjectResult: UploadObjectResult = {
+          file: item,
+          uploadObject: response,
+          responseText: JSON.stringify(response)
+      };
+
+        this.response.next(uploadObjectResult);
+
         this._onCompleteItem(item, JSON.stringify(response), 200, headers);
       }
     };
 
-    // this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
-
-    this.forgeService.uploadObject(bucketKey, objectName, item._file).subscribe(processResult);
+    this.userService.getToken().pipe(
+      flatMap((forgeToken: IForgeToken) => this.forgeService.uploadObject(bucketKey, objectName, item._file))
+    ).subscribe(processResult);
 
   }
 
@@ -419,7 +440,13 @@ export class FileUploader {
     }
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-        that.response.emit(xhr.responseText);
+
+        const uploadObjectResult: UploadObjectResult = {
+          file: null,
+          uploadObject: null,
+          responseText: JSON.stringify(xhr.responseText)
+      };
+        that.response.emit(uploadObjectResult);
       }
     };
     if (this.options.formatDataFunctionIsAsync) {

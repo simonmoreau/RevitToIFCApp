@@ -68,6 +68,15 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     FileUploadModule
   ],
   providers: [
+    MsalService,
+    {
+      provide: MSAL_CONFIG,
+      useFactory: MSALConfigFactory
+    },
+    {
+      provide: MSAL_CONFIG_ANGULAR,
+      useFactory: MSALAngularConfigFactory
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
@@ -77,16 +86,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
       multi: true
-    },
-    {
-      provide: MSAL_CONFIG,
-      useFactory: MSALConfigFactory
-    },
-    {
-      provide: MSAL_CONFIG_ANGULAR,
-      useFactory: MSALAngularConfigFactory
-    },
-    MsalService
+    }
   ],
   bootstrap: [AppComponent]
 })

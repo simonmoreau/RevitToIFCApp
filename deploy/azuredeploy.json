@@ -84,12 +84,11 @@
         "description": "Artifact Location"
       }
     },
-    "sourceCodeManualIntegration": {
-      "type": "bool",
-      "defaultValue": true,
-      "allowedValues": [ true, false ],
+    "ossBucketKey": {
+      "type": "string",
+      "defaultValue": "forge-storage",
       "metadata": {
-        "description": "Source Code Manual Integration"
+        "description": "The Forge OSS Bucket key"
       }
     }
   },
@@ -171,7 +170,8 @@
             "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
             "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]",
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
-            "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]"
+            "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
+            "ossBucketKey":"[parameters('ossBucketKey')]"
           }
         }
       ]
@@ -190,24 +190,28 @@
           "appLocation": "[parameters('appLocation')]",
           "apiLocation": "[parameters('apiLocation')]",
           "appArtifactLocation": "[parameters('appArtifactLocation')]"
-        },
-                "siteConfig": {
-          "appSettings": [
-            {
-              "name": "FORGE_CLIENT_ID",
-              "value": "[parameters('RevitToIFCForgeClientID')]"
-            },
-            {
-              "name": "FORGE_CLIENT_SECRET",
-              "value": "[parameters('RevitToIFCForgeSecret')]"
-            }
-          ]
         }
       },
       "sku": {
         "Tier": "Free",
         "Name": "Free"
-      }
+      },
+      "resources": [
+        {
+          "apiVersion": "2019-12-01-preview",
+          "name": "appsettings",
+          "type": "config",
+          "location": "[parameters('location')]",
+          "properties": {
+            "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
+            "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
+            "ossBucketKey":"[parameters('ossBucketKey')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/staticSites', parameters('appName'))]"
+          ]
+        }
+      ]
     },
     {
       "apiVersion": "2018-05-01-preview",

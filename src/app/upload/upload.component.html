@@ -39,6 +39,8 @@
                             <div *ngIf="uploader.options.isHTML5">Revit {{ item?.version}}</div>
                             <div *ngIf="uploader.options.isHTML5">{{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB</div>
                             <div *ngIf="uploader.options.isHTML5">{{ item?.progress}} %</div>
+                            <div *ngIf="uploader.options.isHTML5">{{ item?.status}}</div>
+                            <a *ngIf="item?.isConverted" href="{{item?.downloadUrl}}" download="{{item._file.name}}">Download File</a>
                         </mat-card-content>
                     </div>
                     <div class="box-right">
