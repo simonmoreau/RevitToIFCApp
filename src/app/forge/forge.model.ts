@@ -3,10 +3,6 @@ export interface IGetActivities {
   data: string[];
 }
 
-export interface IMessage {
-  name: string;
-}
-
 export interface IUploadObject {
   bucketKey?: string;
   objectId?: string;

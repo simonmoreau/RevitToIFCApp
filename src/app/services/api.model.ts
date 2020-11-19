@@ -23,3 +23,7 @@ export interface ConversionObject {
   uploadObjectResult: UploadObjectResult;
   workItemResponse: IWorkItemResponse;
 }
+
+export interface IMessage {
+  name: string;
+}

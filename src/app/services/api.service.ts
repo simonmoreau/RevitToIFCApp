@@ -8,18 +8,23 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus } from './api.model';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage } from './api.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  public baseAPIURL = '/api/';
+  public baseAPIURL = environment.apiUri + '/api/';
 
   constructor(private http: HttpClient) {}
 
   public getForgeUploadToken(): Observable<IForgeToken> {
     return this.get<IForgeToken>(this.baseAPIURL + 'uploadToken');
+  }
+
+  public getLocalAPI(): Observable<IMessage> {
+    return this.get<IMessage>(this.baseAPIURL + 'message');
   }
 
   public CreateWorkItem(

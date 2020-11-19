@@ -18,7 +18,7 @@ import {
   mergeAll,
 } from 'rxjs/operators';
 
-import { IGetActivities, IUploadObject, IMessage } from './forge.model';
+import { IGetActivities, IUploadObject } from './forge.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,16 +27,11 @@ export class ForgeService {
   // private instance variable to hold base url
   public forgeURL = 'https://developer.api.autodesk.com';
   private dasApiRoot = this.forgeURL + '/da/us-east/v3';
-  public baseAPIURL = '/api/';
 
   constructor(private http: HttpClient) {}
 
   getActivities(): Observable<IGetActivities> {
     return this.get<IGetActivities>(this.dasApiRoot + '/activities');
-  }
-
-  getLocalAPI(): Observable<IMessage> {
-    return this.get<IMessage>(this.baseAPIURL + 'message');
   }
 
   // uploadObject(bucketKey: string, objectName: string, file: File): Observable<IUploadObject> {
