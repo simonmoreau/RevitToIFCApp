@@ -57,7 +57,11 @@ export class UploadComponent {
       currentFileItem.status = 'Converting ...' + currentFileItem.file.name;
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
       outputName = outputName + '.ifc';
-      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName).pipe(
+
+      const revitVersion: string = currentFileItem.version;
+      const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
+
+      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
           conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
           conversionObject.workItemResponse = workItemResponse;

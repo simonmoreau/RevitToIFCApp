@@ -24,9 +24,10 @@ export class ApiService {
 
   public CreateWorkItem(
     objectName: string,
-    outputName: string
+    outputName: string,
+    forgeActivityId: string
   ): Observable<IWorkItemResponse> {
-    const body = { inputObjectName: objectName, outputObjectName: outputName };
+    const body = { inputObjectName: objectName, outputObjectName: outputName, activityId: forgeActivityId };
     return this.post<IWorkItemResponse>(
       this.baseAPIURL + 'workitem',
       body

@@ -65,7 +65,7 @@ namespace api
 
                 var workItem = new Autodesk.Forge.DesignAutomation.Model.WorkItem()
                 {
-                    ActivityId = "RevitToIFC.RevitToIFCActivity+test",
+                    ActivityId = workItemDescription.activityId,
                     Arguments = new Dictionary<string, IArgument>
                     {
                         { "rvtFile",  new XrefTreeArgument() { Url = downloadSigned.SignedUrl } },
@@ -95,6 +95,7 @@ namespace api
     {
         public string inputObjectName { get; set; }
         public string outputObjectName {get;set;}
+        public string activityId {get;set;}
     }
 
     public class WorkItemStatusResponse
