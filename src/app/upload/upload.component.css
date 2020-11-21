@@ -9,10 +9,19 @@
 
 .container .box-left {
   flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .container .box-right {
   flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 121px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .upload-item {
@@ -43,8 +52,21 @@ mat-card-content.mat-display-2:hover {
 
 .mat-body-strong {
   font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1rem;
 }
 
 mat-card-content.file-detail {
   margin-bottom: 2px;
+}
+
+mat-progress-spinner {
+  margin-right: 0.5rem;
+}
+
+.horizontal {
+  display: inline-block;
+  vertical-align: middle;
+  font-style: italic;
 }

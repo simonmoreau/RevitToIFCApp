@@ -22,6 +22,7 @@ export interface IWorkItemStatus {
 export interface ConversionObject {
   uploadObjectResult: UploadObjectResult;
   workItemResponse: IWorkItemResponse;
+  worfItemStatus: IWorkItemStatus;
 }
 
 export interface IMessage {

@@ -53,8 +53,9 @@ export class UploadComponent {
 
     const createWorkItemObs = (conversionObject: ConversionObject): Observable<ConversionObject> => {
       const currentFileItem: FileItem = conversionObject.uploadObjectResult.file;
-      currentFileItem.isConverting = true;
-      currentFileItem.status = 'Converting ...' + currentFileItem.file.name;
+      currentFileItem.isProcessing = true;
+      currentFileItem.progress = null;
+      currentFileItem.status = 'Converting ...';
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
       outputName = outputName + '.ifc';
 
@@ -81,26 +82,30 @@ export class UploadComponent {
       return timer(0, 2000).pipe(
         switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse.workItemId)),
         first(workItemStatus => workItemStatus.status === 'success'),
-        map(r => conversionObject)
+        map(r => {
+          conversionObject.worfItemStatus = r;
+          return conversionObject;
+        })
         );
     };
 
     const processConvertedObject = (conversionObject: ConversionObject): Observable<ConversionObject> => {
       return  of(conversionObject).pipe(
         map((cO: ConversionObject) => {
-          cO.uploadObjectResult.file.isConverting = false;
-          cO.uploadObjectResult.file.status = 'Converted';
+          cO.uploadObjectResult.file.isProcessing = false;
+          cO.uploadObjectResult.file.status = 'Converted !';
           cO.uploadObjectResult.file.isConverted = true;
           return cO;
         })
       );
     };
 
-    const test = this.uploader.response.pipe(
+    const conversionObservable = this.uploader.response.pipe(
       map((uor: UploadObjectResult ) =>  {
         const conversionObject: ConversionObject = {
           uploadObjectResult: uor,
-          workItemResponse: null
+          workItemResponse: null,
+          worfItemStatus: null
       };
         return conversionObject;
       }),
@@ -108,7 +113,7 @@ export class UploadComponent {
       flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject))
     );
 
-    test.subscribe(r => console.log(r));
+    conversionObservable.subscribe(r => console.log(r));
 
   }
 

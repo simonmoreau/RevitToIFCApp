@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
     });
 
     this.authService.setLogger(new Logger((logLevel, message, piiEnabled) => {
-      console.log('MSAL Logging: ', message);
+      // console.log('MSAL Logging: ', message);
     }, {
       correlationId: CryptoUtils.createNewGuid(),
       piiLoggingEnabled: false

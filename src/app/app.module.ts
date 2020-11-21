@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { Configuration } from 'msal';
 import {
@@ -64,6 +65,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatCardModule,
     MatIconModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     MsalModule,
     FileUploadModule
   ],

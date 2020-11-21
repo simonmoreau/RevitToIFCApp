@@ -1,4 +1,4 @@
-                <!-- <div ng2FileDrop
+<!-- <div ng2FileDrop
                      [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
                      (fileOver)="fileOverBase($event)"
                      [uploader]="uploader"
@@ -17,7 +17,8 @@
 
 <mat-card class="card-section">
     <mat-card-content *ngIf="uploader?.queue?.length == 0" class="mat-display-2">
-        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt" class="inputfile" />
+        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt"
+            class="inputfile" />
         <label for="file">
             <span class="material-icons">add_circle</span>
             Upload your Revit files
@@ -27,36 +28,44 @@
     <mat-card-content *ngIf="uploader?.queue?.length > 0">
         <div class="row">
             <div>
-               {{uploader?.queue?.length}} Revit files added
+                {{uploader?.queue?.length}} Revit files added
             </div>
             <mat-card *ngFor="let item of uploader.queue" class="upload-item">
                 <div class="container">
                     <div class="box-left">
                         <mat-card-content>
                             <div class="mat-body-strong">{{ item?.file?.name }}</div>
+                            <div *ngIf="uploader.options.isHTML5">
+                                <span>{{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB</span>
+                                <span *ngIf="item?.version">{{' - Revit ' + item?.version}}</span>
+                            </div>
                         </mat-card-content>
                         <mat-card-content class="file-detail">
-                            <div *ngIf="uploader.options.isHTML5">Revit {{ item?.version}}</div>
-                            <div *ngIf="uploader.options.isHTML5">{{ item?.file?.size / 1024 / 1024 | number: '.2' }} MB</div>
-                            <div *ngIf="uploader.options.isHTML5">{{ item?.progress}} %</div>
-                            <div *ngIf="uploader.options.isHTML5">{{ item?.status}}</div>
-                            <a *ngIf="item?.isConverted" href="{{item?.downloadUrl}}" download="{{item._file.name}}">Download File</a>
+                            <!-- <div *ngIf="uploader.options.isHTML5">{{ item?.progress}} %</div> -->
+                            <div *ngIf="uploader.options.isHTML5">
+                                <span *ngIf="item?.isProcessing" class="horizontal">
+                                    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+                                </span>
+                                <span class="horizontal">{{ item?.status}}</span>
+                                <span class="horizontal" *ngIf="item?.progress">{{ item?.progress}} % </span>
+                            </div>
                         </mat-card-content>
                     </div>
                     <div class="box-right">
-                        <button mat-icon-button color="primary" (click)="item.upload()"
-                            [disabled]="item.isReady || item.isUploading || item.isSuccess" aria-label="Upload"
-                            matTooltip="Upload">
-                            <span class="material-icons">cloud_upload</span>
-                        </button>
-                        <button mat-icon-button color="primary" (click)="item.cancel()" [disabled]="!item.isUploading"
-                            aria-label="Cancel" matTooltip="Cancel">
-                            <span class="material-icons">not_interested</span>
-                        </button>
-                        <button mat-icon-button color="primary" (click)="item.remove()" aria-label="Remove"
-                            matTooltip="Remove">
-                            <span class="material-icons">delete</span>
-                        </button>
+                        <div class="button-container">
+                            <button mat-icon-button color="primary" (click)="item.upload()"
+                                [disabled]="item.isReady || item.isProcessing || item.isSuccess" aria-label="Upload"
+                                matTooltip="Upload">
+                                <span class="material-icons">cloud_upload</span>
+                            </button>
+                            <button mat-icon-button color="primary" (click)="item.remove()" aria-label="Remove"
+                                matTooltip="Remove">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                        <div style="margin-top: 7px;">
+                            <a mat-raised-button color="primary" *ngIf="item?.isConverted" href="{{item?.downloadUrl}}" download="{{item._file.name}}">Download File</a>
+                        </div>
                     </div>
                 </div>
             </mat-card>
@@ -69,7 +78,8 @@
                     </div>
                 </div> -->
                 <button mat-button color="primary">
-                    <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt" class="inputfile" />
+                    <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt"
+                        class="inputfile" />
                     <label for="file" class="mat-button-wrapper">
                         <span class="material-icons">add_circle</span>
                         Add files
@@ -79,10 +89,6 @@
                     [disabled]="!uploader.getNotUploadedItems().length">
                     <span class="material-icons">cloud_upload</span>
                     Upload all
-                </button>
-                <button mat-button color="primary" (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
-                    <span class="material-icons">not_interested</span>
-                    Cancel all
                 </button>
                 <button mat-button color="primary" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
                     <span class="material-icons">delete</span>
