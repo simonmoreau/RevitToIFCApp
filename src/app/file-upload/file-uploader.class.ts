@@ -150,7 +150,7 @@ export class FileUploader {
   public removeFromQueue(value: FileItem): void {
     const index = this.getIndexOfItem(value);
     const item = this.queue[ index ];
-    if (item.isUploading) {
+    if (item.isProcessing) {
       item.cancel();
     }
     this.queue.splice(index, 1);
@@ -181,13 +181,13 @@ export class FileUploader {
     const index = this.getIndexOfItem(value);
     const item = this.queue[ index ];
     const prop = this.options.isHTML5 ? item._xhr : item._form;
-    if (item && item.isUploading) {
-      prop.abort();
+    if (item && item.isProcessing) {
+      if (prop) {prop.abort(); }
     }
   }
 
   public uploadAll(): void {
-    const items = this.getNotUploadedItems().filter((item: FileItem) => !item.isUploading);
+    const items = this.getNotUploadedItems().filter((item: FileItem) => !item.isProcessing);
     if (!items.length) {
       return;
     }
@@ -218,7 +218,7 @@ export class FileUploader {
 
   public getReadyItems(): any[] {
     return this.queue
-      .filter((item: FileItem) => (item.isReady && !item.isUploading))
+      .filter((item: FileItem) => (item.isReady && !item.isProcessing))
       .sort((item1: any, item2: any) => item1.index - item2.index);
   }
 
@@ -350,9 +350,10 @@ export class FileUploader {
           responseText: JSON.stringify(response)
       };
 
+        this._onCompleteItem(item, JSON.stringify(response), 200, headers);
+
         this.response.next(uploadObjectResult);
 
-        this._onCompleteItem(item, JSON.stringify(response), 200, headers);
       }
     };
 

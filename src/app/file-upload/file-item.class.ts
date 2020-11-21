@@ -1,3 +1,4 @@
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { FileLikeObject } from './file-like-object.class';
 import { FileUploader, ParsedResponseHeaders, FileUploaderOptions } from './file-uploader.class';
 
@@ -12,7 +13,7 @@ export class FileItem {
   public withCredentials = true;
   public formData: any = [];
   public isReady = false;
-  public isUploading = false;
+  public isProcessing = false;
   public isUploaded = false;
   public isSuccess = false;
   public isCancel = false;
@@ -41,12 +42,22 @@ export class FileItem {
       this.alias = uploader.options.itemAlias || 'file';
     }
     this.url = uploader.options.url;
-    this.getRevitVersion(some);
+    this.status = 'Looking for the Revit version ...';
+    this.isProcessing = true;
+    this.getRevitVersion(some).subscribe(v => {
+      this.version = v;
+      if (this.version !== '') {
+        this.isProcessing = false;
+        this.status = 'Ready to be uploaded';
+      }
+    });
+
   }
 
   public upload(): void {
     try {
       this.uploader.uploadItem(this);
+      this.status = 'Uploading ...';
     } catch (e) {
       this.uploader._onCompleteItem(this, '', 0, {});
       this.uploader._onErrorItem(this, '', 0, {});
@@ -91,7 +102,7 @@ export class FileItem {
 
   public _onBeforeUpload(): void {
     this.isReady = true;
-    this.isUploading = true;
+    this.isProcessing = true;
     this.isUploaded = false;
     this.isSuccess = false;
     this.isCancel = false;
@@ -111,7 +122,7 @@ export class FileItem {
 
   public _onSuccess(response: string, status: number, headers: ParsedResponseHeaders): void {
     this.isReady = false;
-    this.isUploading = false;
+    this.isProcessing = false;
     this.isUploaded = true;
     this.isSuccess = true;
     this.isCancel = false;
@@ -123,7 +134,7 @@ export class FileItem {
 
   public _onError(response: string, status: number, headers: ParsedResponseHeaders): void {
     this.isReady = false;
-    this.isUploading = false;
+    this.isProcessing = false;
     this.isUploaded = true;
     this.isSuccess = false;
     this.isCancel = false;
@@ -135,7 +146,7 @@ export class FileItem {
 
   public _onCancel(response: string, status: number, headers: ParsedResponseHeaders): void {
     this.isReady = false;
-    this.isUploading = false;
+    this.isProcessing = false;
     this.isUploaded = false;
     this.isSuccess = false;
     this.isCancel = true;
@@ -158,19 +169,27 @@ export class FileItem {
     this.isReady = true;
   }
 
-  private getRevitVersion(file: File) {
+  private getRevitVersion(file: File): Observable<string> {
     if (!file) {
       return;
     }
+
+    const versionSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    const versionObservable: Observable<string> = versionSubject.asObservable();
 
     const opt: IParseFileOption = {
       chunk_size: 64 * 1024,
       binary: true,
       error_callback: (result: string | ArrayBuffer) => { console.log('error'); console.log(result); },
-      chunk_read_callback: (result: string | ArrayBuffer) => this.FindRevitVersionInText(result),
+      chunk_read_callback: (result: string | ArrayBuffer) => {
+        const version = this.FindRevitVersionInText(result);
+        if (version !== null) {versionSubject.next(version); }
+      },
     };
 
     this.parseFile(file, opt);
+
+    return versionObservable;
   }
 
   /*
@@ -229,26 +248,24 @@ export class FileItem {
     readBlock(offset, chunkSize, file);
   }
 
-  private FindRevitVersionInText(contents: string | ArrayBuffer): boolean {
+  private FindRevitVersionInText(contents: string | ArrayBuffer): string {
     const line: string = contents.toString().replace(/[^ -~]+/g, '');
     if (line.includes('Format:')) {
       const regex = /Format: (\d+)/g;
       const found = line.match(regex);
       const version = found[0].replace('Format: ', '');
       console.log(version);
-      this.version = version;
-      return true;
+      return version;
     }
     else if (line.includes('Revit Build: ')) {
       const regex = /Revit Build: Autodesk Revit (\d+)/g;
       const found = line.match(regex);
       const version = found[0].replace('Revit Build: Autodesk Revit ', '');
       console.log(version);
-      this.version = version;
-      return true;
+      return version;
     }
     else {
-      return false;
+      return null;
     }
   }
 }
@@ -257,6 +274,6 @@ export class FileItem {
 interface IParseFileOption {
   chunk_size: number;
   binary: boolean;
-  chunk_read_callback: (result: string | ArrayBuffer) => boolean;
+  chunk_read_callback: (result: string | ArrayBuffer) => void;
   error_callback: (result: string | ArrayBuffer) => void;
 }
