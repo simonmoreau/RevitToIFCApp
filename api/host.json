@@ -7,13 +7,6 @@
           "Host": "Information",
           "Function": "Information",
           "Host.Aggregator": "Information"
-        },
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "maxTelemetryItemsPerSecond" : 20,
-                "excludedTypes" : "Dependency;Event;Request"
-              }
         }
     }
 }

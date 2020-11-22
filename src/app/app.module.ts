@@ -36,6 +36,7 @@ import { UploadComponent } from './upload/upload.component';
 // Services
 import { InterceptorService } from './services/interceptor.service';
 import { from } from 'rxjs';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 
 function MSALConfigFactory(): Configuration {
@@ -51,7 +52,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    UploadComponent
+    UploadComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,

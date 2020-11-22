@@ -3,7 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { UploadComponent } from './upload/upload.component'
+import { UploadComponent } from './upload/upload.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,14 @@ const routes: Routes = [
   {
     path: 'upload',
     component: UploadComponent,
+    canActivate: [
+      MsalGuard
+    ]
+  }
+  ,
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
     canActivate: [
       MsalGuard
     ]
