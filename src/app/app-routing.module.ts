@@ -5,6 +5,8 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UploadComponent } from './upload/upload.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { CheckoutCancelComponent } from './checkout-cancel/checkout-cancel.component';
+import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
 
 const routes: Routes = [
   {
@@ -29,6 +31,22 @@ const routes: Routes = [
   {
     path: 'checkout',
     component: CheckoutComponent,
+    canActivate: [
+      MsalGuard
+    ]
+  }
+  ,
+  {
+    path: 'checkout/success',
+    component: CheckoutSuccessComponent,
+    canActivate: [
+      MsalGuard
+    ]
+  }
+  ,
+  {
+    path: 'checkout/cancel',
+    component: CheckoutCancelComponent,
     canActivate: [
       MsalGuard
     ]

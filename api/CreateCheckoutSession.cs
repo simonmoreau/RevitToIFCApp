@@ -42,13 +42,15 @@ namespace api
                 Quantity = 1,
             };
 
+            string localUri = Environment.GetEnvironmentVariable("local_uri");
+
             SessionCreateOptions options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string> { "card", },
                 LineItems = new List<SessionLineItemOptions> { product },
                 Mode = "payment",
-                SuccessUrl = "https://example.com/success",
-                CancelUrl = "https://example.com/cancel",
+                SuccessUrl = localUri + "checkout/success",
+                CancelUrl = localUri + "checkout/cancel",
             };
 
             SessionService service = new SessionService();
