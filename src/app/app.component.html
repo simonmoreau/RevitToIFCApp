@@ -20,10 +20,10 @@
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
   <div fxLayout="row" fxLayoutAlign="space-between">
-    <div class="child-1" style="background-color: beige;" fxFlex="5"></div>
-    <div class="child-2" style="background-color: aquamarine;" fxFlex="90">
+    <div fxFlex="5"></div>
+    <div fxFlex="90">
       <router-outlet *ngIf="!isIframe"></router-outlet>
     </div>
-    <div class="child-2" style="background-color:beige;" fxFlex="5"></div>
+    <div fxFlex="5"></div>
   </div>
 </div>
