@@ -28,3 +28,7 @@ export interface ConversionObject {
 export interface IMessage {
   name: string;
 }
+
+export interface ICheckoutSessionId {
+  id: string;
+}
