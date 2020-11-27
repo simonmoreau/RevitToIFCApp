@@ -1,4 +1,8 @@
-<mat-toolbar color="primary">
+
+
+<mat-toolbar color="primary" class="toolbar-flexbox">
+  <div class="toolbar-margin"></div>
+  <mat-toolbar color="primary" class="toolbar-main">
     <a class="title" [routerLink]="['/']">{{ title }}</a>
     <div class="button-spacer"></div>
     <button mat-raised-button color="accent" [routerLink]="'/upload'">Convert</button>
@@ -10,8 +14,16 @@
     <button mat-raised-button *ngIf="!loggedIn" (click)="login()">Login</button>
     <button mat-raised-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
   </mat-toolbar>
-  
-  <div class="container">
-    <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
-    <router-outlet *ngIf="!isIframe"></router-outlet>
+  <div class="toolbar-margin"></div>
+</mat-toolbar>
+
+<div class="container">
+  <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
+  <div fxLayout="row" fxLayoutAlign="space-between">
+    <div class="child-1" style="background-color: beige;" fxFlex="5"></div>
+    <div class="child-2" style="background-color: aquamarine;" fxFlex="90">
+      <router-outlet *ngIf="!isIframe"></router-outlet>
+    </div>
+    <div class="child-2" style="background-color:beige;" fxFlex="5"></div>
   </div>
+</div>

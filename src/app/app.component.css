@@ -9,3 +9,27 @@
   .button-spacer {
     width: 8px;
   }
+
+  .toolbar-margin {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    max-width: 5%;
+  }
+
+  .toolbar-main {
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    max-width: 90%;
+  }
+
+  .toolbar-flexbox {
+    flex-direction: row;
+    box-sizing: border-box;
+    display: flex;
+    place-content: stretch space-between;
+    align-items: stretch;
+  }
+
+  mat-toolbar {
+    padding: 0;
+  }
