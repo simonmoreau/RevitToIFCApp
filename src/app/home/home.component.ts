@@ -18,17 +18,11 @@ export class HomeComponent implements OnInit {
   profile: any;
   callContent: string;
   rootURL = '/api';
-  breakpoint: string;
 
   constructor(private authService: MsalService, private apiService: ApiService, private http: HttpClient) { }
 
   ngOnInit() {
-    this.breakpoint = (window.innerWidth <= 480) ? 'column' : 'row';
     this.profile = this.authService.getAccount();
-  }
-
-  onResize(event) {
-    this.breakpoint = (event.target.innerWidth <= 480) ? 'column' : 'row';
   }
 
   onForgeCall(){
