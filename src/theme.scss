@@ -1,0 +1,35 @@
+// src/theme.scss
+
+// 👇 Importing `Titillium Web` font for headings, you can change this if you want
+// @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,600');
+
+// 👇 1. Default theme
+$theming-material-components-primary: mat-palette($mat-indigo);
+$theming-material-components-accent: mat-palette($mat-pink, A200, A100, A400);
+$theming-material-components-warn: mat-palette($mat-red);
+
+$theming-material-components-theme: mat-light-theme(
+  $theming-material-components-primary,
+  $theming-material-components-accent,
+  $theming-material-components-warn
+);
+
+// 👇 3. Define a custom heading typography config
+$heading-font-family: "'Titillium Web', sans-serif";
+$font-weight-title: 600;
+$font-weight-body: 400;
+$typography: mat-typography-config(
+  $display-4: mat-typography-level(5.61rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+  $display-3: mat-typography-level(4.209rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+  $display-2: mat-typography-level(3.157rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $display-1: mat-typography-level(2.369rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $headline: mat-typography-level(1.777rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $title: mat-typography-level(1.333rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $subheading-2: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $subheading-1: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $body-1: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $body-2: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $caption: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $button: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+);
