@@ -1,5 +1,5 @@
 .card-section {
-  margin: 10%;
+  margin: 10% 0% 10% 0%;
   padding: 5%;
 }
 
@@ -50,8 +50,7 @@ mat-card-content.mat-display-2:hover {
   cursor: pointer;
 }
 
-.mat-body-strong {
-  font-size: 16px;
+.overflow {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-right: 1rem;

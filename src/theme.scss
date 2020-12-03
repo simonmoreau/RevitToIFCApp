@@ -88,6 +88,7 @@ $heading-font-family: "'Titillium Web', sans-serif";
 $font-weight-title: 600;
 $font-weight-body: 400;
 $typography: mat-typography-config(
+  $font-family: $heading-font-family,
   $display-4: mat-typography-level(5.61rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
   $display-3: mat-typography-level(4.209rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
   $display-2: mat-typography-level(3.157rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),

@@ -19,6 +19,10 @@
 // import custom component themes         // 👈 changed
 @import "./custom-component-themes.scss"; // 👈 changed
 
+
+// Override typography for all Angular Material, including mat-base-typography and all components.
+@include angular-material-typography($typography);
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
@@ -27,9 +31,6 @@ $my-app-theme-custom: map-merge($theming-material-components-theme, (foreground:
 
 @include angular-material-theme($my-app-theme-custom);  // 👈 changed
 @include custom-components-theme($my-app-theme-custom); // 👈 changed
-
-// Override typography for all Angular Material, including mat-base-typography and all components.
-@include angular-material-typography($typography);
 
 /* You can add global styles to this file, and also import other style files */
 

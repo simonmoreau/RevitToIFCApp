@@ -1,35 +1,44 @@
 <h1 class="mat-display-4">Revit To IFC</h1>
 <h2 class="mat-display-1">Convert your design online</h2>
-<p>Convert your design online</p>
-<div>Convert your design online</div>
+
+
 <div>
   <div fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutGap="1em">
-    <div style="background-color: beige;" fxFlex>
-      <mat-card class='card-section'>
+    <div fxFlex>
+      <mat-card>
         <mat-card-title>Convert to IFC</mat-card-title>
         <mat-card-subtitle>Convert your Revit model online</mat-card-subtitle>
-        <mat-card-content>This simple sample demonstrates how to use the Microsoft Authentication Library for JavaScript (msal.js) to get an access token and call an API secured by Azure AD B2C.</mat-card-content>
+        <span class="material-icons">3d_rotation</span>
+        <mat-card-content>
+          Use this application to convert Revit model to IFC online, without a buying a licence.
+        </mat-card-content>
         <mat-card-actions>
-          <a mat-raised-button [routerLink]="['profile']">Call API</a>
           <button mat-raised-button (click)="onForgeCall()">Call Forge API</button>
+        </mat-card-actions>
+        <mat-card-actions>
+          <button mat-raised-button [routerLink]="'/upload'">Start Converting</button>
         </mat-card-actions>
         <mat-card-content>{{callContent}}</mat-card-content>
       </mat-card>
     </div>
-    <div style="background-color: aquamarine;" fxFlex>
-      <mat-card class='card-section'>
-        <mat-card-title>Sign-in with Microsoft Azure AD B2C</mat-card-title>
-        <mat-card-subtitle>Getting an access token with Azure AD B2C and calling a Web API</mat-card-subtitle>
-        <mat-card-content id='profile'> Welcome {{profile?.name}}! </mat-card-content>
-        <mat-card-content>This simple sample demonstrates how to use the Microsoft Authentication Library for JavaScript (msal.js) to get an access token and call an API secured by Azure AD B2C.</mat-card-content>
-        <mat-card-actions>
-          <a mat-raised-button [routerLink]="['profile']">Call API</a>
-          <button mat-raised-button (click)="onForgeCall()">Call Forge API</button>
-        </mat-card-actions>
-        <mat-card-content>{{callContent}}</mat-card-content>
+    <div fxFlex>
+      <mat-card>
+        <mat-card-title>Fine tune you export</mat-card-title>
+        <mat-card-subtitle>Fine tune your export settings</mat-card-subtitle>
+        <span class="material-icons">settings_applications</span>
+        <mat-card-content>Use a Revit Ifc Export configuration file or create your own directly on Revit To IFC.</mat-card-content>
+        <mat-card-content>Comming soon</mat-card-content>
       </mat-card>
     </div>
-    <div style="background-color:beige;" fxFlex></div>
+    <div fxFlex>
+      <mat-card>
+        <mat-card-title>Open-Source</mat-card-title>
+        <mat-card-subtitle>Build it yourself</mat-card-subtitle>
+        <span class="material-icons">code</span>
+        <mat-card-content>If you want to build yourself this aplication and use it with your own Autodesk Forge account, the source code is avalaible here.</mat-card-content>
+        <mat-card-content>And if you want to integrate this application into your worflow, contact us.</mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
 
