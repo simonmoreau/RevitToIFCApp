@@ -4,9 +4,9 @@ import { MsalGuard } from '@azure/msal-angular';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UploadComponent } from './upload/upload.component';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { CheckoutCancelComponent } from './checkout-cancel/checkout-cancel.component';
-import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
+import { CheckoutComponent } from './checkout/checkout/checkout.component';
+import { CheckoutCancelComponent } from './checkout/checkout-cancel/checkout-cancel.component';
+import { CheckoutSuccessComponent } from './checkout/checkout-success/checkout-success.component';
 
 const routes: Routes = [
   {
