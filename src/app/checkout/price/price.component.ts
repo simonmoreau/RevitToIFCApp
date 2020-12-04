@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { CheckoutComponent } from '../checkout/checkout.component'
 
 @Component({
   selector: 'app-price',
@@ -7,13 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PriceComponent implements OnInit {
 
-  constructor() { }
+  @Input() price: number;
+  @Input() title: string;
+  @Input() description: string;
+
+  constructor(private checkoutComponent: CheckoutComponent) { }
 
   ngOnInit(): void {
   }
 
   async checkout(event: MouseEvent ) {
-    
+    this.checkoutComponent.checkout(event);
   }
 
 }

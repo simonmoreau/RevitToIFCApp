@@ -4,18 +4,15 @@
 <div>
   <div fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutGap="1em">
     <div fxFlex>
-      <app-price></app-price>
+      <app-price [title]="'10 Conversions'" [description]="'For one of projects'" [price]="10" ></app-price>
     </div>
     <div fxFlex>
-      <app-price></app-price>
+      <app-price [title]="'50 Conversions'" [description]="'To handle your daily conversions'" [price]="50" ></app-price>
     </div>
     <div fxFlex>
-      <app-price></app-price>
+      <app-price [title]="'100 Conversions'" [description]="'For every day'" [price]="100" ></app-price>
     </div>
   </div>
 </div>
-
-<button mat-button color="primary" (click)="checkout($event)">Checkout</button>
-
 
 <div *ngIf="loading">Loading....</div>

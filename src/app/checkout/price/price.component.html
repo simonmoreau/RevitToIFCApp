@@ -1,11 +1,8 @@
 <mat-card>
-    <mat-card-title></mat-card-title>
+    <mat-card-title>{{title}}</mat-card-title>
     <mat-card-subtitle>Convert your Revit model online</mat-card-subtitle>
-    <span class="material-icons">3d_rotation</span>
-    <mat-card-content>
-      Start small with this 10 conversion bundle
-    </mat-card-content>
+    <mat-card-content>{{description}}</mat-card-content>
     <mat-card-actions>
-        <button mat-button color="primary" (click)="checkout($event)">Checkout</button>
+        <button mat-button color="primary" (click)="checkout($event)">Buy</button>
     </mat-card-actions>
   </mat-card>
