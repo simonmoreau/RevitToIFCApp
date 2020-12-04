@@ -1,0 +1,21 @@
+<h1 class="mat-display-2">Revit To IFC</h1>
+<h2 class="mat-display-1">A price for every use</h2>
+
+<div>
+  <div fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutGap="1em">
+    <div fxFlex>
+      <app-price></app-price>
+    </div>
+    <div fxFlex>
+      <app-price></app-price>
+    </div>
+    <div fxFlex>
+      <app-price></app-price>
+    </div>
+  </div>
+</div>
+
+<button mat-button color="primary" (click)="checkout($event)">Checkout</button>
+
+
+<div *ngIf="loading">Loading....</div>

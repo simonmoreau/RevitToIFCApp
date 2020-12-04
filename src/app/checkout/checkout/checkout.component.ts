@@ -3,8 +3,8 @@ import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { ICheckoutSessionId } from '../services/api.model';
-import { ApiService } from '../services/api.service';
+import { ICheckoutSessionId } from '../../services/api.model';
+import { ApiService } from '../../services/api.service';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
