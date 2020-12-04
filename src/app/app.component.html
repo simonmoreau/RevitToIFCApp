@@ -5,14 +5,14 @@
   <mat-toolbar color="primary" class="toolbar-main">
     <a class="title" [routerLink]="['/']">{{ title }}</a>
     <div class="button-spacer"></div>
-    <button mat-raised-button color="accent" [routerLink]="'/upload'">Convert</button>
+    <button mat-flat-button color="accent" [routerLink]="'/upload'">Convert</button>
   
     <div class="toolbar-spacer"></div>
-    <button mat-raised-button color="accent" [routerLink]="'/checkout'">Checkout</button>
-    <button mat-raised-button color="accent" [routerLink]="'/upload'">Convert</button>
+    <button mat-flat-button color="accent" [routerLink]="'/checkout'">Checkout</button>
+    <button mat-flat-button color="accent" [routerLink]="'/upload'">Convert</button>
     <div class="button-spacer"></div>
-    <button mat-raised-button *ngIf="!loggedIn" (click)="login()">Login</button>
-    <button mat-raised-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
+    <button mat-flat-button *ngIf="!loggedIn" (click)="login()">Login</button>
+    <button mat-flat-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
   </mat-toolbar>
   <div class="toolbar-margin"></div>
 </mat-toolbar>

@@ -13,10 +13,10 @@
           Use this application to convert Revit model to IFC online, without a buying a licence.
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button (click)="onForgeCall()">Call Forge API</button>
+          <button mat-flat-button (click)="onForgeCall()">Call Forge API</button>
         </mat-card-actions>
         <mat-card-actions>
-          <button mat-raised-button [routerLink]="'/upload'">Start Converting</button>
+          <button mat-flat-button [routerLink]="'/upload'">Start Converting</button>
         </mat-card-actions>
         <mat-card-content>{{callContent}}</mat-card-content>
       </mat-card>
