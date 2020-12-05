@@ -30,26 +30,17 @@ const routes: Routes = [
   ,
   {
     path: 'checkout',
-    component: CheckoutComponent,
-    canActivate: [
-      MsalGuard
-    ]
+    component: CheckoutComponent
   }
   ,
   {
     path: 'checkout/success',
-    component: CheckoutSuccessComponent,
-    canActivate: [
-      MsalGuard
-    ]
+    component: CheckoutSuccessComponent
   }
   ,
   {
     path: 'checkout/cancel',
-    component: CheckoutCancelComponent,
-    canActivate: [
-      MsalGuard
-    ]
+    component: CheckoutCancelComponent
   }
 ];
 
