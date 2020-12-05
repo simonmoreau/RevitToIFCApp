@@ -25,20 +25,11 @@ namespace api
             StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("stripe_api_key");
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            CheckoutBody checkoutBody = JsonConvert.DeserializeObject<CheckoutBody>(requestBody);
 
             SessionLineItemOptions product = new SessionLineItemOptions
             {
-                PriceData = new SessionLineItemPriceDataOptions
-                {
-                    UnitAmount = 2000,
-                    Currency = "usd",
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = "T-shirt",
-                    },
-
-                },
+                Price = checkoutBody.productId,
                 Quantity = 1,
             };
 
@@ -58,5 +49,11 @@ namespace api
 
             return new OkObjectResult(new { id = session.Id });
         }
+    }
+
+    public class CheckoutBody
+    {
+        public string userId { get; set; }
+        public string productId { get; set; }
     }
 }
