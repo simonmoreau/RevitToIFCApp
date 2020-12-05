@@ -15,7 +15,7 @@ import { FileItem } from '../file-upload/file-item.class';
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.css']
+  styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent {
 

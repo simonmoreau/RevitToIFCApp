@@ -1,0 +1,18 @@
+<h1 class="mat-display-2">Revit To IFC</h1>
+<h2 class="mat-display-1">A price for every use</h2>
+
+<div>
+  <div fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutGap="1em">
+    <div fxFlex>
+      <app-price [title]="'Start'" [description]="'10 Conversions for one of projects'" [price]="10" ></app-price>
+    </div>
+    <div fxFlex>
+      <app-price [title]="'Run'" [description]="'50 Conversions To handle your daily conversions'" [price]="50" ></app-price>
+    </div>
+    <div fxFlex>
+      <app-price [title]="'Expand'" [description]="'100 Conversions to use on large projects'" [price]="100" ></app-price>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading">Loading....</div>

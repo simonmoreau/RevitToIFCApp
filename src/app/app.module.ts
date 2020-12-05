@@ -10,6 +10,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatGridListModule} from '@angular/material/grid-list';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { Configuration } from 'msal';
 import {
@@ -36,9 +39,10 @@ import { UploadComponent } from './upload/upload.component';
 // Services
 import { InterceptorService } from './services/interceptor.service';
 import { from } from 'rxjs';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
-import { CheckoutCancelComponent } from './checkout-cancel/checkout-cancel.component';
+import { CheckoutComponent } from './checkout/checkout/checkout.component';
+import { CheckoutSuccessComponent } from './checkout/checkout-success/checkout-success.component';
+import { CheckoutCancelComponent } from './checkout/checkout-cancel/checkout-cancel.component';
+import { PriceComponent } from './checkout/price/price.component';
 
 
 function MSALConfigFactory(): Configuration {
@@ -57,7 +61,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     UploadComponent,
     CheckoutComponent,
     CheckoutSuccessComponent,
-    CheckoutCancelComponent
+    CheckoutCancelComponent,
+    PriceComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +77,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    MatGridListModule,
+    FlexLayoutModule,
     MsalModule,
     FileUploadModule
   ],
