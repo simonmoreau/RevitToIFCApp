@@ -51,10 +51,14 @@ export class CheckoutComponent implements OnInit {
   }
 
     // Open the checkout handler
-    async checkout(event: MouseEvent ) {
+    async checkout(event: MouseEvent, productId: string ) {
       const account = await this.authService.getAccount();
 
-      const createCheckoutSession: Observable<ICheckoutSessionId> = this.apiService.createCheckoutSession();
+      // Create the body first
+      const createCheckoutSession: Observable<ICheckoutSessionId> = this.apiService.createCheckoutSession(
+        account.sid,
+        productId
+      );
 
       const redirectToCheckout = (sessionId: ICheckoutSessionId): Promise<{ error: stripe.Error; }> => {
 

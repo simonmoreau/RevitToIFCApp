@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CheckoutComponent } from '../checkout/checkout.component'
+import { CheckoutComponent } from '../checkout/checkout.component';
 
 @Component({
   selector: 'app-price',
@@ -11,6 +11,7 @@ export class PriceComponent implements OnInit {
   @Input() price: number;
   @Input() title: string;
   @Input() description: string;
+  @Input() prodcutId: string;
 
   constructor(private checkoutComponent: CheckoutComponent) { }
 
@@ -18,7 +19,6 @@ export class PriceComponent implements OnInit {
   }
 
   async checkout(event: MouseEvent ) {
-    this.checkoutComponent.checkout(event);
+    this.checkoutComponent.checkout(event, this.prodcutId);
   }
-
 }

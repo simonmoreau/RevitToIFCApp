@@ -27,8 +27,10 @@ export class ApiService {
     return this.get<IMessage>(this.baseAPIURL + 'message');
   }
 
-  public createCheckoutSession(): Observable<ICheckoutSessionId> {
-    const body = { };
+  public createCheckoutSession(userId: string, productId: string ): Observable<ICheckoutSessionId> {
+
+    const body = { userId, productId };
+
     return this.post<ICheckoutSessionId>(this.baseAPIURL + 'checkoutSession', body);
   }
 
