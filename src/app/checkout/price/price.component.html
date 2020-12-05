@@ -4,6 +4,6 @@
     <mat-card-subtitle>{{description}}</mat-card-subtitle>
     <mat-card-title class="price">{{price | currency}}</mat-card-title>
     <mat-card-actions>
-        <button mat-flat-button color="primary" (click)="checkout($event)">Buy</button>
+        <button mat-flat-button color="primary" [class.spinner]="loading" [disabled]="loading" (click)="checkout($event)">Buy</button>
     </mat-card-actions>
 </mat-card>

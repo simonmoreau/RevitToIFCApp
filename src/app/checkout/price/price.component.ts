@@ -12,6 +12,7 @@ export class PriceComponent implements OnInit {
   @Input() title: string;
   @Input() description: string;
   @Input() prodcutId: string;
+  loading: boolean;
 
   constructor(private checkoutComponent: CheckoutComponent) { }
 
@@ -19,6 +20,7 @@ export class PriceComponent implements OnInit {
   }
 
   async checkout(event: MouseEvent ) {
+    this.loading = true;
     this.checkoutComponent.checkout(event, this.prodcutId);
   }
 }
