@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId } from './api.model';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId, IConversionTokenUpdate } from './api.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -32,6 +32,13 @@ export class ApiService {
     const body = { userId, productId };
 
     return this.post<ICheckoutSessionId>(this.baseAPIURL + 'checkoutSession', body);
+  }
+
+  public updateConversionToken(userId: string, sessionId: string ): Observable<IConversionTokenUpdate> {
+
+    const body = { userId, sessionId };
+
+    return this.post<IConversionTokenUpdate>(this.baseAPIURL + 'updatetoken', body);
   }
 
   public CreateWorkItem(

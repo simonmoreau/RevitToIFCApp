@@ -18,6 +18,7 @@ namespace api
         [FunctionName("CreateCheckoutSession")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "checkoutSession")] HttpRequest req,
+            [Queue("orders")] IAsyncCollector<Order> orderQueue,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed the checkoutSession request.");
@@ -40,7 +41,7 @@ namespace api
                 PaymentMethodTypes = new List<string> { "card", },
                 LineItems = new List<SessionLineItemOptions> { product },
                 Mode = "payment",
-                SuccessUrl = localUri + "checkout/success",
+                SuccessUrl = localUri + "checkout/success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = localUri + "checkout/cancel",
             };
 
