@@ -171,7 +171,11 @@
             "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]",
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
             "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
-            "ossBucketKey":"[parameters('ossBucketKey')]"
+            "ossBucketKey":"[parameters('ossBucketKey')]",
+            "TenantId": "[parameters('TenantId')]",
+            "AppId": "[parameters('AppId')]",
+            "ClientSecret": "[parameters('ClientSecret')]",
+            "B2cExtensionAppClientId": "[parameters('B2cExtensionAppClientId')]"
           }
         }
       ]
