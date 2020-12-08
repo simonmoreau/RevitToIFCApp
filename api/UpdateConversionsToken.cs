@@ -16,11 +16,11 @@ using Microsoft.Identity.Client;
 
 namespace api
 {
-    public static class UpdateConversionToken
+    public static class UpdateConversionsToken
     {
-        [FunctionName("UpdateConversionToken")]
+        [FunctionName("UpdateConversionsToken")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "updatetoken")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "token")] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed the UpdateConversionToken request.");

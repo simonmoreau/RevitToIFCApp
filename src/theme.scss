@@ -125,5 +125,12 @@ $typography: mat-typography-config(
   );
 };
 
+
  // You can put any color here
  $foreground: my-mat-light-theme-foreground(mat-color($md-blue, 500));
+
+ :root {
+  --color-primary: #{mat-color($app-primary)};
+  --color-accent: #{mat-color($app-accent)};
+  --color-warn: #{mat-color($app-warn)};
+}

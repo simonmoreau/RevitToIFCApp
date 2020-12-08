@@ -38,7 +38,12 @@ export class ApiService {
 
     const body = { userId, sessionId };
 
-    return this.post<IConversionTokenUpdate>(this.baseAPIURL + 'updatetoken', body);
+    return this.post<IConversionTokenUpdate>(this.baseAPIURL + 'token', body);
+  }
+
+  public GetConversionToken(userId: string ): Observable<IConversionTokenUpdate> {
+
+    return this.get<IConversionTokenUpdate>(this.baseAPIURL + 'token?id=' + userId);
   }
 
   public CreateWorkItem(
