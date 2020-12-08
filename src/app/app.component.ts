@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
       console.log(success);
 
       this.userService.refreshToken().subscribe(t => {
-        console.log("Get a Forge Token");
+        console.log('Get a Forge Token');
         console.log('this.router.navigateByUrl');
         this.router.navigateByUrl('/upload');
       });
