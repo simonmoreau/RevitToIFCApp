@@ -4,8 +4,10 @@
   <div class="toolbar-margin"></div>
   <mat-toolbar color="primary" class="toolbar-main">
     <a class="title" [routerLink]="['/']">{{ title }}</a>
-  
     <div class="toolbar-spacer"></div>
+    <div class="mat-body" *ngIf="userName">Hello {{ userName }}</div>
+    <div class="mat-body" *ngIf="userName">, you have 10 conversions available</div>
+    <div class="button-spacer"></div>
     <button mat-flat-button [routerLink]="'/checkout'">Checkout</button>
     <div class="button-spacer"></div>
     <button mat-flat-button [routerLink]="'/upload'">Convert</button>

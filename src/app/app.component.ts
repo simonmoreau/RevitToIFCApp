@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   title = 'Revit To IFC';
   isIframe = false;
   loggedIn = false;
-  user: any;
+  userName: any;
   loading: boolean;
 
   constructor(
@@ -71,7 +71,11 @@ export class AppComponent implements OnInit {
       console.log('login succeeded. id token acquired at: ' + new Date().toString());
       console.log(success);
 
-      this.userService.refreshToken().subscribe(t => console.log("Get a Forge Token"));
+      this.userService.refreshToken().subscribe(t => {
+        console.log("Get a Forge Token");
+        console.log('this.router.navigateByUrl');
+        this.router.navigateByUrl('/upload');
+      });
 
       this.checkAccount();
     });
@@ -100,7 +104,7 @@ export class AppComponent implements OnInit {
       }
 
       console.log('Redirect Success: ', response);
-      console.log(this.authService.getAccount());
+
     });
 
     this.authService.setLogger(new Logger((logLevel, message, piiEnabled) => {
@@ -113,7 +117,12 @@ export class AppComponent implements OnInit {
 
   // other methods
   checkAccount() {
-    this.loggedIn = !!this.authService.getAccount();
+    const account = this.authService.getAccount();
+    this.loggedIn = !!account;
+    if (account) {
+      this.userName = account.name;
+      this.router.navigateByUrl('/upload');
+    }
   }
 
   login() {
