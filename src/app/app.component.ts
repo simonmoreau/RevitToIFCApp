@@ -1,4 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  Event,
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router
+} from '@angular/router';
 import { BroadcastService, MsalService} from '@azure/msal-angular';
 import { Logger, CryptoUtils } from 'msal';
 import { isIE, b2cPolicies } from './app-config';
@@ -15,8 +23,34 @@ export class AppComponent implements OnInit {
   isIframe = false;
   loggedIn = false;
   user: any;
+  loading: boolean;
 
-  constructor(private broadcastService: BroadcastService, private authService: MsalService, private userService: UserService) { }
+  constructor(
+    private broadcastService: BroadcastService,
+    private authService: MsalService,
+    private userService: UserService,
+    private router: Router) {
+
+      this.router.events.subscribe((event: Event) => {
+        switch (true) {
+          case event instanceof NavigationStart: {
+            this.loading = true;
+            break;
+          }
+
+          case event instanceof NavigationEnd:
+          case event instanceof NavigationCancel:
+          case event instanceof NavigationError: {
+            this.loading = false;
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+
+    }
 
   ngOnInit() {
 
@@ -50,11 +84,11 @@ export class AppComponent implements OnInit {
         // Learn more about AAD error codes at https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
       if (error.errorMessage.indexOf('AADB2C90118') > -1) {
           this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-          // if (isIE) {
-          //   this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-          // } else {
-          //   this.authService.loginPopup(b2cPolicies.authorities.resetPassword);
-          // }
+          if (isIE) {
+            this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
+          } else {
+            this.authService.loginPopup(b2cPolicies.authorities.resetPassword);
+          }
         }
     });
 
@@ -84,11 +118,11 @@ export class AppComponent implements OnInit {
 
   login() {
     this.authService.loginRedirect();
-    // if (isIE) {
-    //   this.authService.loginRedirect();
-    // } else {
-    //   this.authService.loginPopup();
-    // }
+    if (isIE) {
+      this.authService.loginRedirect();
+    } else {
+      this.authService.loginPopup();
+    }
   }
 
   logout() {

@@ -11,6 +11,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -77,6 +78,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatGridListModule,
     FlexLayoutModule,
     MsalModule,

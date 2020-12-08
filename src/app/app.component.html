@@ -15,7 +15,7 @@
   </mat-toolbar>
   <div class="toolbar-margin"></div>
 </mat-toolbar>
-
+<mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-bar>
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
   <div fxLayout="row" fxLayoutAlign="space-between">
