@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
       this.userService.refreshToken().subscribe(t => {
         console.log('Get a Forge Token');
         console.log('this.router.navigateByUrl');
-        this.router.navigateByUrl('/upload');
+        // this.router.navigateByUrl('/upload');
       });
 
       this.checkAccount();
@@ -121,7 +121,7 @@ export class AppComponent implements OnInit {
     this.loggedIn = !!account;
     if (account) {
       this.userName = account.name;
-      this.router.navigateByUrl('/upload');
+      // this.router.navigateByUrl('/upload');
     }
   }
 

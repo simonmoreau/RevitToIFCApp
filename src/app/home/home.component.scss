@@ -1,11 +1,24 @@
 .mat-display-4 {
-    margin-top: 1em;
+    margin-top: 0.6em;
 }
 
 mat-card {
-    min-height: 16em;
+    min-height: 22em;
 }
 
 span.material-icons {
     font-size: 4em;
+}
+
+mat-card-title {
+    margin-bottom: 1rem;
+}
+
+.picture {
+    margin-bottom: 1rem;
+}
+
+mat-card mat-card-actions:last-of-type {
+    margin-top: auto;
+    margin-bottom: 0.8em;
 }

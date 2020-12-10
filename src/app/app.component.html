@@ -1,32 +1,47 @@
+<div fxLayout="column" fxFlexFill>
+  <mat-toolbar color="primary" class="toolbar-flexbox">
+    <div class="toolbar-margin"></div>
+    <mat-toolbar color="primary" class="toolbar-main">
 
+      <a class="title" [routerLink]="['/']">
+        <img src="assets/revit-to-ifc-logo-white.svg">
+      </a>
+      <div class="toolbar-spacer"></div>
 
-<mat-toolbar color="primary" class="toolbar-flexbox">
-  <div class="toolbar-margin"></div>
-  <mat-toolbar color="primary" class="toolbar-main">
-    
-    <a class="title" [routerLink]="['/']">
-      <img src="assets/revit-to-ifc-logo-white.svg">
-    </a>
-    <div class="toolbar-spacer"></div>
-
-    <div class="button-spacer"></div>
-    <button mat-flat-button [routerLink]="'/checkout'">Checkout</button>
-    <div class="button-spacer"></div>
-    <button mat-flat-button [routerLink]="'/upload'">Convert</button>
-    <div class="button-spacer"></div>
-    <button mat-flat-button *ngIf="!loggedIn" (click)="login()">Login</button>
-    <button mat-flat-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
+      <div class="button-spacer"></div>
+      <button mat-flat-button [routerLink]="'/checkout'">Checkout</button>
+      <div class="button-spacer"></div>
+      <button mat-flat-button [routerLink]="'/upload'">Convert</button>
+      <div class="button-spacer"></div>
+      <button mat-flat-button *ngIf="!loggedIn" (click)="login()">Login</button>
+      <button mat-flat-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
+    </mat-toolbar>
+    <div class="toolbar-margin"></div>
   </mat-toolbar>
-  <div class="toolbar-margin"></div>
-</mat-toolbar>
-<mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-bar>
-<div class="container">
-  <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
-  <div fxLayout="row" fxLayoutAlign="space-between">
+  <mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-bar>
+
+  
+  <div fxLayout="row" fxLayoutAlign="space-between" fxFlex>
     <div fxFlex="8"></div>
     <div fxFlex="84">
+      <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
       <router-outlet *ngIf="!isIframe"></router-outlet>
     </div>
     <div fxFlex="8"></div>
   </div>
+  <footer fxLayout="row">
+    <div class="toolbar-margin"></div>
+    <div class="mat-small">
+      <div>And if you want to integrate this application into your worflow, contact us.
+      </div>
+      <div>
+        This service make use of Autodesk® Forge® services. By using it, your are suscribing to the Forge term of service
+      </div>
+      <div>
+        Autodesk, the Autodesk logo, Autodesk® Revit® are registered trademarks or trademarks of Autodesk, Inc., and/or its
+        subsidiaries and/or affiliates in the USA and/or other countries.
+      </div>
+    </div>
+    <div class="toolbar-margin"></div>
+  </footer>
 </div>
