@@ -1,18 +1,26 @@
 <div  *ngIf="isProcessing" >
-  <h1>We are processing your order ...</h1>
+  <h2 class="mat-display-1">Please wait, we are processing your order ...</h2>
 </div>
 
 <div  *ngIf="isSuccess" >
-  <h1>Thanks for your order!</h1>
+  <h1 class="mat-display-2">Thank you for your order!</h1>
   <h2 *ngIf="conversionTokenUpdate">You now have {{conversionTokenUpdate.tokenNumber}} conversions availables !</h2>
-  <p>
-    We appreciate your business!
-    If you have any questions, please email
-    <a href="simon@bim42.com">simon@bil42.com</a>.
-  </p>
+  <div  fxLayout="row" fxLayoutAlign="space-around center">
+    <button mat-flat-button color="primary" [routerLink]="'/upload'">Start converting!</button>
+  </div>
+  <div class="detail">
+    <p>
+      We appreciate your business!
+      If you have any questions, please email
+      <a href="simon@bim42.com">simon@bim42.com</a>.
+    </p>
+  </div>
 </div>
 
 <div  *ngIf="isError" >
-  <h4>Something went wront, please try again.</h4>
+  <h2 class="mat-display-1">Something went wront, please try again.</h2>
+  <div  fxLayout="row" fxLayoutAlign="space-around center">
+    <button mat-flat-button color="primary" [routerLink]="'/checkout'">Buy Conversions</button>
+  </div>
 </div>
 
