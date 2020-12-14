@@ -43,8 +43,8 @@ namespace api
           PaymentMethodTypes = new List<string> { "card", },
           LineItems = new List<SessionLineItemOptions> { product },
           Mode = "payment",
-          SuccessUrl = localUri + "checkout/success?session_id={CHECKOUT_SESSION_ID}",
-          CancelUrl = localUri + "checkout/cancel",
+          SuccessUrl = localUri + "/checkout/success?session_id={CHECKOUT_SESSION_ID}",
+          CancelUrl = localUri + "/checkout/cancel",
         };
 
         SessionService service = new SessionService();
