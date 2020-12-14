@@ -46,7 +46,7 @@
         },
         "AppId": {
             "value": "cf4d263d-0c0b-4dc2-978b-bd3746416330"
-        },
+        }, 
         "ClientSecret": {
             "reference": {
                 "keyVault": {
@@ -57,6 +57,14 @@
         },
         "B2cExtensionAppClientId": {
             "value": "1782e7e0-3545-4c05-9d85-ca27dc166df6"
+        },
+        "StripeApiKey": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/GeneralRessources/providers/Microsoft.KeyVault/vaults/bim42mailkeyvault"
+                },
+                "secretName": "RevitToIFCStripeApiKey"
+            }
         }
     }
 }

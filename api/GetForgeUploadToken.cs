@@ -33,8 +33,8 @@ namespace api
     [FunctionName("GetForgeUploadToken")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "uploadToken")] HttpRequest req,
-        [Table("token", "token", "token")] Token token,
-        [Table("token")] IAsyncCollector<Token> tokenTable,
+        [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
+        [Table("token", Connection = "StorageConnectionString")] IAsyncCollector<Token> tokenTable,
         ILogger log)
     {
       try
@@ -45,7 +45,8 @@ namespace api
           if (DateTime.UtcNow - token.Timestamp.UtcDateTime > new TimeSpan(0, 50, 0))
           {
             // Refresh it
-            return new OkObjectResult(await RefreshForgeToken(tokenTable, log));
+            Token refreshedToken = await RefreshForgeToken(tokenTable, log);
+            return new OkObjectResult(refreshedToken.ForgeToken);
           }
           else
           {
@@ -55,7 +56,8 @@ namespace api
         else
         {
           // Get a token
-          return new OkObjectResult(await RefreshForgeToken(tokenTable, log));
+          Token refreshedToken = await RefreshForgeToken(tokenTable, log);
+          return new OkObjectResult(refreshedToken.ForgeToken);
         }
       }
       catch (Exception ex)

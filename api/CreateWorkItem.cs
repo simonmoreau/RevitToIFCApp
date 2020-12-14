@@ -39,7 +39,7 @@ namespace api
         [FunctionName("CreateWorkItem")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
-            [Table("token", "token", "token")] Token token,
+            [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");

@@ -18,7 +18,7 @@ namespace api
         [FunctionName("CreateCheckoutSession")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "checkoutSession")] HttpRequest req,
-            [Queue("orders")] IAsyncCollector<Order> orderQueue,
+            [Queue("orders", Connection = "StorageConnectionString")] IAsyncCollector<Order> orderQueue,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed the checkoutSession request.");
