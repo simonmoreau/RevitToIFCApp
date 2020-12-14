@@ -90,6 +90,30 @@
       "metadata": {
         "description": "The Forge OSS Bucket key"
       }
+    },
+    "TenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure AD B2C tenant ID"
+      }
+    },
+    "AppId": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure AD B2C application ID"
+      }
+    },
+    "ClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure AD B2C application secret key"
+      }
+    },
+    "B2cExtensionAppClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure AD B2C application Extension ID"
+      }
     }
   },
   "variables": {
@@ -171,7 +195,11 @@
             "FUNCTIONS_WORKER_RUNTIME": "[parameters('runtime')]",
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
             "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
-            "ossBucketKey":"[parameters('ossBucketKey')]"
+            "ossBucketKey":"[parameters('ossBucketKey')]",
+            "TenantId": "[parameters('TenantId')]",
+            "AppId": "[parameters('AppId')]",
+            "ClientSecret": "[parameters('ClientSecret')]",
+            "B2cExtensionAppClientId": "[parameters('B2cExtensionAppClientId')]"
           }
         }
       ]
@@ -218,6 +246,7 @@
       "name": "[variables('applicationInsightsName')]",
       "type": "Microsoft.Insights/components",
       "location": "[parameters('location')]",
+      "kind": "web",
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('applicationInsightsName'))]": "Resource"
       },

@@ -32,3 +32,8 @@ export interface IMessage {
 export interface ICheckoutSessionId {
   id: string;
 }
+
+export interface IConversionTokenUpdate {
+  userId: string;
+  tokenNumber: number;
+}

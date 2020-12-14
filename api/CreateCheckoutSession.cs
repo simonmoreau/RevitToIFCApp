@@ -18,6 +18,7 @@ namespace api
         [FunctionName("CreateCheckoutSession")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "checkoutSession")] HttpRequest req,
+            [Queue("orders")] IAsyncCollector<Order> orderQueue,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed the checkoutSession request.");
@@ -25,20 +26,11 @@ namespace api
             StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("stripe_api_key");
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            CheckoutBody checkoutBody = JsonConvert.DeserializeObject<CheckoutBody>(requestBody);
 
             SessionLineItemOptions product = new SessionLineItemOptions
             {
-                PriceData = new SessionLineItemPriceDataOptions
-                {
-                    UnitAmount = 2000,
-                    Currency = "usd",
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = "T-shirt",
-                    },
-
-                },
+                Price = checkoutBody.productId,
                 Quantity = 1,
             };
 
@@ -49,7 +41,7 @@ namespace api
                 PaymentMethodTypes = new List<string> { "card", },
                 LineItems = new List<SessionLineItemOptions> { product },
                 Mode = "payment",
-                SuccessUrl = localUri + "checkout/success",
+                SuccessUrl = localUri + "checkout/success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = localUri + "checkout/cancel",
             };
 
@@ -58,5 +50,11 @@ namespace api
 
             return new OkObjectResult(new { id = session.Id });
         }
+    }
+
+    public class CheckoutBody
+    {
+        public string userId { get; set; }
+        public string productId { get; set; }
     }
 }
