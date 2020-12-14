@@ -193,7 +193,7 @@
             "ClientSecret": "[parameters('ClientSecret')]",
             "B2cExtensionAppClientId": "[parameters('B2cExtensionAppClientId')]",
             "stripe_api_key": "[parameters('StripeApiKey')]",
-            "local_uri": "[reference(resourceId('Microsoft.Web/sites', parameters('appName')), '2018-02-01').defaultHostName]"
+            "local_uri": "[reference(resourceId('Microsoft.Web/staticSites', parameters('appName')), '2019-12-01-preview').defaultHostName]"
           },
           "dependsOn": [
             "[resourceId('Microsoft.Web/staticSites', parameters('appName'))]",
