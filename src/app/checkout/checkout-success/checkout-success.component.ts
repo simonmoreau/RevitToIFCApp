@@ -35,7 +35,7 @@ export class CheckoutSuccessComponent implements OnInit {
 
     const updateConversionTokens = (params: Params): Observable<IConversionTokenUpdate> => {
       const checkoutSessionId = params['session_id'];
-      return this.apiService.updateConversionToken(
+      return this.apiService.updateConversionCredits(
         userId,
         checkoutSessionId
       );

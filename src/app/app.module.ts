@@ -44,7 +44,7 @@ import { CheckoutComponent } from './checkout/checkout/checkout.component';
 import { CheckoutSuccessComponent } from './checkout/checkout-success/checkout-success.component';
 import { CheckoutCancelComponent } from './checkout/checkout-cancel/checkout-cancel.component';
 import { PriceComponent } from './checkout/price/price.component';
-import { TokenCounterComponent } from './token-counter/token-counter.component';
+import { CreditsCounterComponent } from './credits-counter/credits-counter.component';
 
 
 function MSALConfigFactory(): Configuration {
@@ -65,7 +65,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     CheckoutSuccessComponent,
     CheckoutCancelComponent,
     PriceComponent,
-    TokenCounterComponent
+    CreditsCounterComponent
   ],
   imports: [
     BrowserModule,

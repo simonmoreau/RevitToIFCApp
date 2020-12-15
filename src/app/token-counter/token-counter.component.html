@@ -1,9 +1,0 @@
-<mat-card *ngIf="userName">
-    <mat-card-header>
-        <mat-card-title>Hello {{ userName }} !</mat-card-title>
-        <mat-card-subtitle *ngIf="tokens">You have {{tokens}} conversions available</mat-card-subtitle>
-        <mat-card-subtitle *ngIf="!tokens">
-            <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
-        </mat-card-subtitle>
-    </mat-card-header>
-</mat-card>

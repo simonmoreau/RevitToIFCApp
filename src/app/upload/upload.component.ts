@@ -4,12 +4,9 @@ import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 import { ApiService } from '../services/api.service';
 
-
-import { IUploadObject } from '../forge/forge.model';
 import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject } from '../services/api.model';
 import { concatMap, flatMap, takeWhile, switchMap, tap, map, first } from 'rxjs/operators';
-import { RtlScrollAxisType } from '@angular/cdk/platform';
-import { merge, Observable, of, timer } from 'rxjs';
+import { Observable, of, timer } from 'rxjs';
 import { FileItem } from '../file-upload/file-item.class';
 
 @Component({

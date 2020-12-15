@@ -35,5 +35,5 @@ export interface ICheckoutSessionId {
 
 export interface IConversionTokenUpdate {
   userId: string;
-  tokenNumber: number;
+  creditsNumber: number;
 }
