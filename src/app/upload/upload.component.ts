@@ -4,10 +4,12 @@ import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 import { ApiService } from '../services/api.service';
 
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject } from '../services/api.model';
-import { concatMap, flatMap, takeWhile, switchMap, tap, map, first } from 'rxjs/operators';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject, WorkItemCreationStatus } from '../services/api.model';
+import { concatMap, flatMap, takeWhile, switchMap, tap, map, first, catchError } from 'rxjs/operators';
 import { Observable, of, timer } from 'rxjs';
 import { FileItem } from '../file-upload/file-item.class';
+import { throwError } from 'rxjs';
+import { MsalService } from '@azure/msal-angular';
 
 @Component({
   selector: 'app-upload',
@@ -20,7 +22,7 @@ export class UploadComponent {
   hasBaseDropZoneOver: boolean;
   hasAnotherDropZoneOver: boolean;
 
-  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService){
+  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,){
     const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
@@ -59,11 +61,22 @@ export class UploadComponent {
       const revitVersion: string = currentFileItem.version;
       const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
 
-      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId).pipe(
+      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId,authService.getAccount().accountIdentifier).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
-          conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
-          conversionObject.workItemResponse = workItemResponse;
-          return conversionObject;
+          if (workItemResponse.workItemCreationStatus == WorkItemCreationStatus.Created)
+          {
+            conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
+            conversionObject.workItemResponse = workItemResponse;
+            return conversionObject;
+          }
+          else
+          {
+            conversionObject.uploadObjectResult.file.isProcessing = false;
+            conversionObject.uploadObjectResult.file.status = 'You don\'t have enough credit !';
+            conversionObject.uploadObjectResult.file.isConverted = false;
+            conversionObject.uploadObjectResult.file.isError = true;
+            throwError(conversionObject);
+          }
         })
       );
     };
@@ -107,7 +120,10 @@ export class UploadComponent {
         return conversionObject;
       }),
       flatMap((conversionObject: ConversionObject) => createWorkItemObs(conversionObject)),
-      flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject))
+      flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject)),
+      catchError((conversionObject: ConversionObject) =>{
+        return of(conversionObject);
+      })
     );
 
     conversionObservable.subscribe(r => console.log(r));

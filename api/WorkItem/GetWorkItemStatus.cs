@@ -25,6 +25,7 @@ namespace api
         [FunctionName("GetWorkItemStatus")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "workitem/{workItemId}")] HttpRequest req,
+            [Queue("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatus> workItemsQueue,
             string workItemId,
             ILogger log)
         {
@@ -34,6 +35,14 @@ namespace api
             {
                 Autodesk.Forge.Core.ApiResponse<WorkItemStatus> workItemResponse = await _workItemApi.GetWorkitemStatusAsync(workItemId);
 
+                if (workItemResponse.Content.Status == Status.Success)
+                {
+                    // WorkItemStatus workItemStatus = workItemResponse.Content;
+                    // workItemStatus.Id;
+
+                    // await workItemsQueue.AddAsync(order);
+                }
+                
                 return new OkObjectResult(workItemResponse.Content);
             }
             catch (Exception ex)
