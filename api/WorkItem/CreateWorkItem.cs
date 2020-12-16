@@ -57,9 +57,9 @@ namespace api
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         WorkItemDescription workItemDescription = JsonConvert.DeserializeObject<WorkItemDescription>(requestBody);
 
-        bool hasEnoughCredits = await HasEnoughCredits(workItemDescription.userId);
+        int existingCredits = await Utilities.GetConversionCredits(workItemDescription.userId);
 
-        if (hasEnoughCredits)
+        if (existingCredits > 0)
         {
           // Create two signed URLs to upload the file to the activity and download the result
           ObjectsApi apiInstance = new ObjectsApi();
@@ -111,42 +111,6 @@ namespace api
       {
         return new BadRequestObjectResult(ex);
       }
-    }
-
-    private async Task<bool> HasEnoughCredits(string userId)
-    {
-      string b2cExtensionAppClientId = Environment.GetEnvironmentVariable("b2cExtensionAppClientId");
-
-      // Declare the names of the custom attributes
-      const string customAttributeName = "ConversionCredits";
-
-      // Get the complete name of the custom attribute (Azure AD extension)
-      B2cCustomAttributeHelper helper = new B2cCustomAttributeHelper(b2cExtensionAppClientId);
-      string ConversionCreditsAttributeName = helper.GetCompleteAttributeName(customAttributeName);
-
-      // Get all users (one page)
-      User existingUser = await this._graphServiceClient.Users[userId]
-          .Request()
-          .Select($"id,displayName,identities,{ConversionCreditsAttributeName}")
-          .GetAsync();
-
-      int existingCredits = 0;
-
-      if (existingUser.AdditionalData.ContainsKey(ConversionCreditsAttributeName))
-      {
-        object exisitingCreditsObject = existingUser.AdditionalData[ConversionCreditsAttributeName];
-        int.TryParse(exisitingCreditsObject.ToString(), out existingCredits);
-      }
-
-      if (existingCredits > 0)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-
     }
   }
 

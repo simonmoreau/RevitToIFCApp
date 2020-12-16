@@ -13,7 +13,7 @@ using Microsoft.Identity.Client;
 
 namespace api
 {
-  public  class GetConversionsCredits
+  public class GetConversionsCredits
   {
     private readonly GraphServiceClient _graphServiceClient;
     public GetConversionsCredits(GraphServiceClient graphServiceClient)
@@ -21,7 +21,7 @@ namespace api
       this._graphServiceClient = graphServiceClient;
     }
     [FunctionName("GetConversionsCredits")]
-    public  async Task<IActionResult> Run(
+    public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "credits")] HttpRequest req,
         ILogger log)
     {
@@ -32,34 +32,12 @@ namespace api
 
         log.LogInformation("C# HTTP trigger function processed the GetConversionsCredits request.");
 
-        string b2cExtensionAppClientId = Environment.GetEnvironmentVariable("b2cExtensionAppClientId");
-
-        // Declare the names of the custom attributes
-        const string customAttributeName = "ConversionCredits";
-
-        // Get the complete name of the custom attribute (Azure AD extension)
-        B2cCustomAttributeHelper helper = new B2cCustomAttributeHelper(b2cExtensionAppClientId);
-        string ConversionCreditsAttributeName = helper.GetCompleteAttributeName(customAttributeName);
-
-        // Get all users (one page)
-        User existingUser = await this._graphServiceClient.Users[userId]
-            .Request()
-            .Select($"id,displayName,identities,{ConversionCreditsAttributeName}")
-            .GetAsync();
-
-        int existingCredits = 0;
-
-        if (existingUser.AdditionalData.ContainsKey(ConversionCreditsAttributeName))
-        {
-          object exisitingCreditsObject = existingUser.AdditionalData[ConversionCreditsAttributeName];
-          int.TryParse(exisitingCreditsObject.ToString(), out existingCredits);
-        }
+        int existingCredits = await Utilities.GetConversionCredits(userId);
 
         return new OkObjectResult(new { userId = userId, creditsNumber = existingCredits });
       }
       catch (Exception ex)
       {
-
         return new BadRequestObjectResult(ex);
       }
     }
