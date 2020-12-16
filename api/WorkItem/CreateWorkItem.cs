@@ -33,12 +33,13 @@ namespace api
 
     private readonly DA.IWorkItemsApi _workItemApi;
     private readonly DA.IEnginesApi _engineApi;
-    private readonly GraphServiceClient _graphServiceClient;
-    public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi, GraphServiceClient graphServiceClient)
+    private readonly Utilities _utilities;
+    public CreateWorkItem(DA.IWorkItemsApi workItemApi, DA.IEnginesApi engineApi, Utilities utilities)
     {
       this._workItemApi = workItemApi;
       this._engineApi = engineApi;
-      this._graphServiceClient = graphServiceClient;
+      this._utilities = utilities;
+
     }
 
     [FunctionName("CreateWorkItem")]
@@ -57,7 +58,7 @@ namespace api
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         WorkItemDescription workItemDescription = JsonConvert.DeserializeObject<WorkItemDescription>(requestBody);
 
-        int existingCredits = await Utilities.GetConversionCredits(workItemDescription.userId);
+        int existingCredits = await _utilities.GetConversionCredits(workItemDescription.userId);
 
         if (existingCredits > 0)
         {

@@ -34,9 +34,11 @@ namespace api
           .WithClientSecret(Environment.GetEnvironmentVariable("ClientSecret"))
           .Build();
       ClientCredentialProvider authProvider = new ClientCredentialProvider(confidentialClientApplication);
-
+      GraphServiceClient graphServiceClient = new GraphServiceClient(authProvider);
       // Set up the Microsoft Graph service client with client credentials
-      builder.Services.AddSingleton<GraphServiceClient>(new GraphServiceClient(authProvider));
+      builder.Services.AddSingleton<GraphServiceClient>(graphServiceClient);
+
+      builder.Services.AddSingleton<Utilities>(new Utilities(graphServiceClient));
     }
   }
 }

@@ -15,11 +15,12 @@ namespace api
 {
   public class GetConversionsCredits
   {
-    private readonly GraphServiceClient _graphServiceClient;
-    public GetConversionsCredits(GraphServiceClient graphServiceClient)
+    private readonly Utilities _utilities;
+    public GetConversionsCredits(Utilities utilities)
     {
-      this._graphServiceClient = graphServiceClient;
+      this._utilities = utilities;
     }
+
     [FunctionName("GetConversionsCredits")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "credits")] HttpRequest req,
@@ -32,7 +33,7 @@ namespace api
 
         log.LogInformation("C# HTTP trigger function processed the GetConversionsCredits request.");
 
-        int existingCredits = await Utilities.GetConversionCredits(userId);
+        int existingCredits = await _utilities.GetConversionCredits(userId);
 
         return new OkObjectResult(new { userId = userId, creditsNumber = existingCredits });
       }
