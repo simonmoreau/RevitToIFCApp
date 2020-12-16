@@ -25,7 +25,8 @@ namespace api
         [FunctionName("GetWorkItemStatus")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "workitem/{workItemId}")] HttpRequest req,
-            [Queue("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatus> workItemsQueue,
+            [Table("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusObject> workItemsTable,
+            [Queue("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusObject> completedWorkItemsQueue,
             string workItemId,
             ILogger log)
         {
@@ -37,10 +38,9 @@ namespace api
 
                 if (workItemResponse.Content.Status == Status.Success)
                 {
-                    // WorkItemStatus workItemStatus = workItemResponse.Content;
-                    // workItemStatus.Id;
-
-                    // await workItemsQueue.AddAsync(order);
+                    WorkItemStatusObject resultingWorkItemStatus = new WorkItemStatusObject(workItemResponse.Content);
+                    await workItemsTable.AddAsync(resultingWorkItemStatus);
+                    await completedWorkItemsQueue.AddAsync(resultingWorkItemStatus);
                 }
                 
                 return new OkObjectResult(workItemResponse.Content);

@@ -46,6 +46,7 @@ namespace api
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
         [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
+        [Table("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusObject> workItemsTable,
         ILogger log)
     {
       log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");
@@ -87,6 +88,10 @@ namespace api
           Autodesk.Forge.Core.ApiResponse<WorkItemStatus> workItemResponse = await _workItemApi.CreateWorkItemAsync(workItem);
           // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
 
+          WorkItemStatusObject WorkItemStatusObject = new WorkItemStatusObject(workItemResponse.Content);
+
+          await workItemsTable.AddAsync(WorkItemStatusObject);
+
           WorkItemStatusResponse workItemStatusResponse = new WorkItemStatusResponse()
           {
             WorkItemId = workItemResponse.Content.Id,
@@ -121,6 +126,27 @@ namespace api
     public string outputObjectName { get; set; }
     public string activityId { get; set; }
     public string userId { get; set; }
+  }
+
+  public class WorkItemStatusObject : WorkItemStatus
+  {
+    public WorkItemStatusObject()
+    {
+      
+    }
+    public WorkItemStatusObject(WorkItemStatus workItemStatus)
+    {
+      this.PartitionKey = "workItems";
+      this.RowKey = workItemStatus.Id;
+      this.Id = workItemStatus.Id;
+      this.Progress = workItemStatus.Progress;
+      this.ReportUrl = workItemStatus.ReportUrl;
+      this.Stats = workItemStatus.Stats;
+      this.Status = workItemStatus.Status;
+    }
+    public string PartitionKey { get; }
+    public string RowKey { get; }
+    public string ETag { get; } = "*";
   }
 
   public class WorkItemStatusResponse
