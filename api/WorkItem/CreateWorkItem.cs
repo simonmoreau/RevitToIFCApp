@@ -46,7 +46,7 @@ namespace api
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
         [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
-        [Table("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusObject> workItemsTable,
+        [Table("createdWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> createdWorkItemsTable,
         ILogger log)
     {
       log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");
@@ -87,10 +87,11 @@ namespace api
 
           Autodesk.Forge.Core.ApiResponse<WorkItemStatus> workItemResponse = await _workItemApi.CreateWorkItemAsync(workItem);
           // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
+          WorkItemStatus workItemStatusCreationResponse = workItemResponse.Content;
 
-          WorkItemStatusObject WorkItemStatusObject = new WorkItemStatusObject(workItemResponse.Content);
+          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(workItemStatusCreationResponse, workItemDescription.userId);
 
-          await workItemsTable.AddAsync(WorkItemStatusObject);
+          await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
 
           WorkItemStatusResponse workItemStatusResponse = new WorkItemStatusResponse()
           {
@@ -118,46 +119,5 @@ namespace api
         return new BadRequestObjectResult(ex);
       }
     }
-  }
-
-  public class WorkItemDescription
-  {
-    public string inputObjectName { get; set; }
-    public string outputObjectName { get; set; }
-    public string activityId { get; set; }
-    public string userId { get; set; }
-  }
-
-  public class WorkItemStatusObject : WorkItemStatus
-  {
-    public WorkItemStatusObject()
-    {
-      
-    }
-    public WorkItemStatusObject(WorkItemStatus workItemStatus)
-    {
-      this.PartitionKey = "workItems";
-      this.RowKey = workItemStatus.Id;
-      this.Id = workItemStatus.Id;
-      this.Progress = workItemStatus.Progress;
-      this.ReportUrl = workItemStatus.ReportUrl;
-      this.Stats = workItemStatus.Stats;
-      this.Status = workItemStatus.Status;
-    }
-    public string PartitionKey { get; }
-    public string RowKey { get; }
-    public string ETag { get; } = "*";
-  }
-
-  public class WorkItemStatusResponse
-  {
-    public string WorkItemId { get; set; }
-    public string OutputUrl { get; set; }
-    public WorkItemCreationStatus WorkItemCreationStatus { get; set; }
-  }
-
-  public enum WorkItemCreationStatus
-  {
-    Created, NotEnoughCredit, Error
   }
 }
