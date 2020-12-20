@@ -4,7 +4,7 @@ using Autodesk.Forge.DesignAutomation.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 
 namespace api
 {
@@ -68,7 +68,7 @@ namespace api
           // update the number of credits
           int newCreditsNumber = await _utilities.UpdateCustomAttributeByUserId(completedWorkItemStatusObject.UserId, -1);
 
-          log.LogInformation($"The user ${completedWorkItemStatusObject.UserId} has now ${newCreditsNumber} credits.");
+          log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
         }
       }
 
