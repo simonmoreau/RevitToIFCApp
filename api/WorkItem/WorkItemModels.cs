@@ -11,6 +11,7 @@ namespace api
     public string outputObjectName { get; set; }
     public string activityId { get; set; }
     public string userId { get; set; }
+    public int fileSize {get;set;}
   }
 
   public class WorkItemStatusEntity : TableEntity
@@ -21,6 +22,7 @@ namespace api
     public string Status { get; set; }
     public string UserId { get; set; }
     public DateTime TimeQueued { get; set; }
+    public int Size {get;set;}
     public DateTime? TimeDownloadStarted { get; set; }
     public DateTime? TimeInstructionsStarted { get; set; }
     public DateTime? TimeInstructionsEnded { get; set; }
@@ -51,7 +53,7 @@ namespace api
 
   public static class Mappings
   {
-    public static WorkItemStatusEntity ToWorkItemStatusEntity(this WorkItemStatus workItemStatus, string userId)
+    public static WorkItemStatusEntity ToWorkItemStatusEntity(this WorkItemStatus workItemStatus, string userId, int size)
     {
       return new WorkItemStatusEntity()
       {
@@ -64,6 +66,7 @@ namespace api
         Stats = ToStatistic(workItemStatus.Stats),
         Status = workItemStatus.Status.ToString(),
         TimeQueued = workItemStatus.Stats.TimeQueued,
+        Size = size,
         TimeDownloadStarted = workItemStatus.Stats.TimeDownloadStarted,
         TimeInstructionsStarted = workItemStatus.Stats.TimeInstructionsStarted,
         TimeInstructionsEnded = workItemStatus.Stats.TimeInstructionsEnded,

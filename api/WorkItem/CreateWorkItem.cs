@@ -89,7 +89,7 @@ namespace api
           // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
           WorkItemStatus workItemStatusCreationResponse = workItemResponse.Content;
 
-          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(workItemStatusCreationResponse, workItemDescription.userId);
+          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(workItemStatusCreationResponse, workItemDescription.userId, workItemDescription.fileSize);
 
           await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
 

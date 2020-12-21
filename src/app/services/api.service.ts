@@ -50,9 +50,10 @@ export class ApiService {
     objectName: string,
     outputName: string,
     forgeActivityId: string,
-    currentUserId: string
+    currentUserId: string,
+    currentFileSize: number
   ): Observable<IWorkItemResponse> {
-    const body = { inputObjectName: objectName, outputObjectName: outputName, activityId: forgeActivityId , userId: currentUserId};
+    const body = { inputObjectName: objectName, outputObjectName: outputName, activityId: forgeActivityId , userId: currentUserId, fileSize: currentFileSize};
     return this.post<IWorkItemResponse>(
       this.baseAPIURL + 'workitem',
       body

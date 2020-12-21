@@ -27,6 +27,7 @@ namespace api
       log.LogInformation($"C# Queue trigger function ProcessCompletedWorkItem processed");
 
       string userId = null;
+      int fileSize = 0;
 
       // Get user id
       TableQuery<WorkItemStatusEntity> createdWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(
@@ -42,13 +43,14 @@ namespace api
           await createdWorkItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
       {
         userId = workItemStatusObject.UserId;
+        fileSize = workItemStatusObject.Size;
       }
 
       // Add to the completed work item
 
       if (userId != null)
       {
-        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId);
+        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize);
 
         // Check if the completed work item has already been added to the table
         TableQuery<WorkItemStatusEntity> completedWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(
