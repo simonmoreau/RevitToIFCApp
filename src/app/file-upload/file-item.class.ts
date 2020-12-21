@@ -42,18 +42,25 @@ export class FileItem {
       this.alias = uploader.options.itemAlias || 'file';
     }
     this.url = uploader.options.url;
-    this.status = 'Looking for the Revit version ...';
-    this.isProcessing = true;
-    this.getRevitVersion(some).subscribe(v => {
-      this.version = v;
-      if (this.version !== '') {
-        this.isProcessing = false;
-        if (!this.isError) {
-          this.status = 'Ready to be uploaded';
+    if (this.file?.size / 1024 / 1024 > 600 )
+    {
+      this.isError = true;
+      this.status = 'The maximum Revit file size is 600 Mb, please upload a smaller file.';
+    }
+    else
+    {
+      this.status = 'Looking for the Revit version ...';
+      this.isProcessing = true;
+      this.getRevitVersion(some).subscribe(v => {
+        this.version = v;
+        if (this.version !== '') {
+          this.isProcessing = false;
+          if (!this.isError) {
+            this.status = 'Ready to be uploaded';
+          }
         }
-      }
-    });
-
+      });
+    }
   }
 
   public upload(): void {
