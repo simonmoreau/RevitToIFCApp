@@ -97,7 +97,13 @@ export class UploadComponent {
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
       outputName = outputName + '.ifc';
 
-      const revitVersion: string = currentFileItem.version;
+      const versionNumber: number = +currentFileItem.version;
+      let revitVersion: string = currentFileItem.version;
+      if (versionNumber < 2018)
+      {
+        revitVersion = '2018';
+      }
+      
       const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
 
       return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId,authService.getAccount().accountIdentifier, currentFileItem.file.size).pipe(
