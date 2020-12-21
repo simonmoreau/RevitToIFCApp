@@ -141,7 +141,7 @@ export class UploadComponent {
     };
 
     const checkStatus = (conversionObject: ConversionObject): Observable<ConversionObject> => {
-      return timer(0, 2000).pipe(
+      return timer(0, 10000).pipe(
         switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse.workItemId)),
         first(workItemStatus => workItemStatus.status === 'success'),
         map(r => {
