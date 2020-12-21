@@ -67,7 +67,7 @@ export class FileUploader {
   public authTokenHeader: string;
   public response: EventEmitter<UploadObjectResult>;
   public onAfterAddingFileEvent: EventEmitter<FileItem>;
-  public onCancelItemEvent: EventEmitter<FileItem>;
+  public onRemoveItemEvent: EventEmitter<FileItem>;
   public forgeService: ForgeService;
   public userService: UserService;
 
@@ -87,7 +87,7 @@ export class FileUploader {
     this.setOptions(options);
     this.response = new EventEmitter<UploadObjectResult>();
     this.onAfterAddingFileEvent = new EventEmitter<FileItem>();
-    this.onCancelItemEvent = new EventEmitter<FileItem>();
+    this.onRemoveItemEvent = new EventEmitter<FileItem>();
     this.forgeService = forgeService;
     this.userService = userService;
   }
@@ -159,6 +159,7 @@ export class FileUploader {
     }
     this.queue.splice(index, 1);
     this.progress = this._getTotalProgress();
+    this.onRemoveItemEvent.next(item);
   }
 
   public clearQueue(): void {
@@ -195,7 +196,7 @@ export class FileUploader {
     if (!items.length) {
       return;
     }
-    items.map((item: FileItem) => item._prepareToUploading());
+    items.map((item: FileItem) => {if (!item.isError) {item._prepareToUploading()}});
     items[ 0 ].upload();
   }
 
@@ -268,7 +269,6 @@ export class FileUploader {
   }
 
   public onCancelItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any {
-    this.onCancelItemEvent.next(item);
     return { item, response, status, headers };
   }
 

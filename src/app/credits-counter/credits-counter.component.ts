@@ -19,20 +19,30 @@ export class CreditsCounterComponent implements OnInit {
     this.creditsCounterService = creditsService;
 
     this.creditsCounterService.displayedCreditsEvent.subscribe(c => {
-      this.displayedCredits = c;
-      this.updateVisibility(this.displayedCredits);
+      this.updateDisplayedCreditsNumber(c);
     });
    }
 
   ngOnInit(): void {
     this.isLoading = true;
     this.creditsCounterService.GetConversionCredits().subscribe(c => {
-      this.displayedCredits = c.creditsNumber;
-      this.updateVisibility(this.displayedCredits);
+      this.updateDisplayedCreditsNumber(c.creditsNumber);
       this.isLoading = false;
     });
   }
 
+  updateDisplayedCreditsNumber(c: number)
+  {
+    if (c > 0)
+    {
+      this.displayedCredits = c;
+    }
+    else {
+      this.displayedCredits = 0;
+    }
+    
+    this.updateVisibility(this.displayedCredits);
+  }
 
 
   updateVisibility(creditsNumber: number): void {

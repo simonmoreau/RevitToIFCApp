@@ -38,7 +38,7 @@
                     <div class="box-right">
                         <div class="button-container">
                             <button mat-icon-button color="primary" (click)="item.upload()"
-                                [disabled]="item.isReady || item.isProcessing || item.isSuccess" aria-label="Upload"
+                                [disabled]="item.isReady || item.isProcessing || item.isSuccess || item.isError" aria-label="Upload"
                                 matTooltip="Upload">
                                 <span class="material-icons">cloud_upload</span>
                             </button>

@@ -13,7 +13,7 @@ import { ApiService } from '../services/api.service';
 })
 export class CreditsCounterService {
   private account: Account;
-  private creditCount: number;
+  public creditCount: number;
   
   public displayedCreditsEvent: EventEmitter<number>;
   public displayedCredits;
@@ -55,9 +55,13 @@ export class CreditsCounterService {
       .GetConversionCredits(this.account.accountIdentifier)
       .pipe(
         map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
+          // TODO temp
+          conversionCreditsUpdate.creditsNumber = 1;
+
           this.creditCount = conversionCreditsUpdate.creditsNumber;
           this.displayedCredits = this.creditCount;
           this.displayedCreditsEvent.next(this.displayedCredits);
+
           return conversionCreditsUpdate;
         })
       );

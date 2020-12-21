@@ -51,14 +51,38 @@ export class UploadComponent {
     this.hasAnotherDropZoneOver = false;
 
     this.uploader.onAfterAddingFileEvent.subscribe( (fileItem: FileItem) => {
-      // check if there is enought credits
+      
       const updatedDisplayedCredits = this.creditsCounterService.UpdateDisplayedCredits(-1);
 
+      // check if there is enought credits
       if (updatedDisplayedCredits < 0 )
       {
-        fileItem.isProcessing = false;
         fileItem.status = 'You don\'t have enough credit !';
-        fileItem.isConverted = false;
+        fileItem.isError = true;
+      }
+    });
+
+    this.uploader.onRemoveItemEvent.subscribe( (fileItem: FileItem) => {
+      const updatedDisplayedCredits = this.creditsCounterService.UpdateDisplayedCredits(1);
+
+      this.uploader.queue.forEach((fileItem: FileItem) => {
+
+        if (!fileItem.version)
+        {
+          fileItem.status = 'Looking for the Revit version ...';
+          fileItem.isProcessing = true;
+        }
+        else
+        {
+          fileItem.status = 'Ready to be uploaded';
+          fileItem.isProcessing = false;
+        }
+        fileItem.isError = false;
+      })
+
+      for (let index = this.creditsCounterService.creditCount; index < this.uploader.queue.length ; index++) {
+        const fileItem = this.uploader.queue[index];
+        fileItem.status = 'You don\'t have enough credit !';
         fileItem.isError = true;
       }
     });
