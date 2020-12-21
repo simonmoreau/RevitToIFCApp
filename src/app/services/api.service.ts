@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId, IConversionTokenUpdate as IConversionCreditsUpdate } from './api.model';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId, IConversionCreditsUpdate } from './api.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

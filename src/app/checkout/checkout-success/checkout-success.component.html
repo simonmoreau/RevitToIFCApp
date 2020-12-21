@@ -4,7 +4,7 @@
 
 <div  *ngIf="isSuccess" >
   <h1 class="mat-display-2">Thank you for your order!</h1>
-  <h2 *ngIf="conversionTokenUpdate">You now have {{conversionTokenUpdate.tokenNumber}} conversions availables !</h2>
+  <h2 *ngIf="conversionCreditsUpdate">You now have {{conversionCreditsUpdate.creditsNumber}} conversions availables !</h2>
   <div  fxLayout="row" fxLayoutAlign="space-around center">
     <button mat-flat-button color="primary" [routerLink]="'/upload'">Start converting!</button>
   </div>

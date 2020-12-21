@@ -38,7 +38,7 @@ export interface ICheckoutSessionId {
   id: string;
 }
 
-export interface IConversionTokenUpdate {
+export interface IConversionCreditsUpdate {
   userId: string;
   creditsNumber: number;
 }

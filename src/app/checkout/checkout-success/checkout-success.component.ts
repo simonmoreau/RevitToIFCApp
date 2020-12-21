@@ -5,7 +5,7 @@ import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { IConversionTokenUpdate } from '../../services/api.model';
+import { IConversionCreditsUpdate } from '../../services/api.model';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class CheckoutSuccessComponent implements OnInit {
   isProcessing = true;
   isSuccess = false;
   isError = false;
-  conversionTokenUpdate: IConversionTokenUpdate;
+  conversionCreditsUpdate: IConversionCreditsUpdate;
 
   constructor(private route: ActivatedRoute, private authService: MsalService, private apiService: ApiService) {
     this.isProcessing = true;
@@ -33,7 +33,7 @@ export class CheckoutSuccessComponent implements OnInit {
     this.isError = false;
     const userId = this.authService.getAccount().accountIdentifier;
 
-    const updateConversionTokens = (params: Params): Observable<IConversionTokenUpdate> => {
+    const updateConversionTokens = (params: Params): Observable<IConversionCreditsUpdate> => {
       const checkoutSessionId = params['session_id'];
       return this.apiService.updateConversionCredits(
         userId,
@@ -44,8 +44,8 @@ export class CheckoutSuccessComponent implements OnInit {
     this.route.queryParams.pipe(
       flatMap((params: Params) => updateConversionTokens(params))
     ).subscribe(
-      (result: IConversionTokenUpdate) => {
-        this.conversionTokenUpdate = result;
+      (result: IConversionCreditsUpdate) => {
+        this.conversionCreditsUpdate = result;
         this.isProcessing = false;
         this.isSuccess = true;
         this.isError = false;
