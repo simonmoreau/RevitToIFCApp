@@ -55,8 +55,6 @@ export class CreditsCounterService {
       .GetConversionCredits(this.account.accountIdentifier)
       .pipe(
         map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
-          // TODO temp
-          conversionCreditsUpdate.creditsNumber = 5;
 
           this.creditCount = conversionCreditsUpdate.creditsNumber;
           this.displayedCredits = this.creditCount;
