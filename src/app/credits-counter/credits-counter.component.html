@@ -1,9 +1,9 @@
-<mat-card *ngIf="userName">
+<mat-card *ngIf="creditsCounterService.userName">
     <mat-card-header>
-        <mat-card-title>Hello {{ userName }} !</mat-card-title>
+        <mat-card-title>Hello {{ creditsCounterService.userName }} !</mat-card-title>
         <mat-card-subtitle *ngIf="zeroCredits">You don't have any conversion available</mat-card-subtitle>
-        <mat-card-subtitle *ngIf="oneCredits">You have {{credits}} conversion available</mat-card-subtitle>
-        <mat-card-subtitle *ngIf="moreCredits">You have {{credits}} conversions available</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="oneCredits">You have {{displayedCredits}} conversion available</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="moreCredits">You have {{displayedCredits}} conversions available</mat-card-subtitle>
         <mat-card-subtitle *ngIf="isLoading">
             <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
         </mat-card-subtitle>

@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MsalService} from '@azure/msal-angular';
-import { ApiService } from '../services/api.service';
-import { Account} from 'msal/lib-commonjs/Account';
+import { CreditsCounterService} from './credits-counter.service';
 
 @Component({
   selector: 'app-credits-counter',
@@ -10,39 +8,37 @@ import { Account} from 'msal/lib-commonjs/Account';
 })
 export class CreditsCounterComponent implements OnInit {
 
-  loggedIn: boolean;
-  userName: string;
-  account: Account;
-  credits: number;
+  displayedCredits: number;
   zeroCredits: boolean;
   oneCredits: boolean;
   moreCredits: boolean;
   isLoading: boolean;
+  creditsCounterService: CreditsCounterService;
 
-  constructor(private authService: MsalService, private apiService: ApiService) { }
+  constructor(private creditsService: CreditsCounterService) {
+    this.creditsCounterService = creditsService;
+
+    this.creditsCounterService.displayedCreditsEvent.subscribe(c => {
+      this.displayedCredits = c;
+      this.updateVisibility(this.displayedCredits);
+    });
+   }
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.checkAccount();
-    this.apiService.GetConversionCredits(this.account.accountIdentifier).subscribe(c => {
-      this.credits = c.creditsNumber;
-      this.updateVisibility(this.credits);
+    this.creditsCounterService.GetConversionCredits().subscribe(c => {
+      this.displayedCredits = c.creditsNumber;
+      this.updateVisibility(this.displayedCredits);
       this.isLoading = false;
     });
   }
 
-  checkAccount() {
-    this.account = this.authService.getAccount();
-    this.loggedIn = !!this.account;
-    if (this.account) {
-      this.userName = this.account.name;
-    }
-  }
+
 
   updateVisibility(creditsNumber: number): void {
     if (!creditsNumber)
     {
-      this.credits = 0;
+      this.displayedCredits = 0;
       this.zeroCredits = true;
       this.oneCredits = false;
       this.moreCredits = false;

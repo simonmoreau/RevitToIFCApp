@@ -10,6 +10,7 @@ import { Observable, of, timer } from 'rxjs';
 import { FileItem } from '../file-upload/file-item.class';
 import { throwError } from 'rxjs';
 import { MsalService } from '@azure/msal-angular';
+import { CreditsCounterService } from '../credits-counter/credits-counter.service';
 
 @Component({
   selector: 'app-upload',
@@ -22,11 +23,12 @@ export class UploadComponent {
   hasBaseDropZoneOver: boolean;
   hasAnotherDropZoneOver: boolean;
 
-  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,){
+  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,private creditsCounterService: CreditsCounterService){
     const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
+    // TODO add the ability to cancel a workitem before the end
     this.uploader = new FileUploader({
       url: URL,
       method: 'PUT',
@@ -47,6 +49,19 @@ export class UploadComponent {
 
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
+
+    this.uploader.onAfterAddingFileEvent.subscribe( (fileItem: FileItem) => {
+      // check if there is enought credits
+      const updatedDisplayedCredits = this.creditsCounterService.UpdateDisplayedCredits(-1);
+
+      if (updatedDisplayedCredits < 0 )
+      {
+        fileItem.isProcessing = false;
+        fileItem.status = 'You don\'t have enough credit !';
+        fileItem.isConverted = false;
+        fileItem.isError = true;
+      }
+    });
 
     // this.uploader.response.subscribe( response: IUploadObject => {this.response = response ; console.log(response); } );
 
