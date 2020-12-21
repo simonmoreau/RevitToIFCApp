@@ -106,7 +106,14 @@ export class UploadComponent {
       
       const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
 
-      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId,authService.getAccount().accountIdentifier, currentFileItem.file.size).pipe(
+      return this.apiService.CreateWorkItem(
+        conversionObject.uploadObjectResult.uploadObject.objectKey, 
+        outputName, 
+        activityId,
+        authService.getAccount().accountIdentifier,
+        currentFileItem.file.size,
+        currentFileItem.version,
+        currentFileItem.file.name).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
           if (workItemResponse.workItemCreationStatus == WorkItemCreationStatus.Created)
           {

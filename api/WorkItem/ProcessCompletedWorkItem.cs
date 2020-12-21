@@ -27,6 +27,8 @@ namespace api
       log.LogInformation($"C# Queue trigger function ProcessCompletedWorkItem processed");
 
       string userId = null;
+      string fileVersion = null;
+      string fileName = null;
       int fileSize = 0;
 
       // Get user id
@@ -44,13 +46,15 @@ namespace api
       {
         userId = workItemStatusObject.UserId;
         fileSize = workItemStatusObject.Size;
+        fileVersion = workItemStatusObject.Version;
+        fileName = workItemStatusObject.FileName;
       }
 
       // Add to the completed work item
 
       if (userId != null)
       {
-        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize);
+        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize, fileVersion, fileName);
 
         // Check if the completed work item has already been added to the table
         TableQuery<WorkItemStatusEntity> completedWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(

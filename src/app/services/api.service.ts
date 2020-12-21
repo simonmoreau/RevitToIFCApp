@@ -51,9 +51,19 @@ export class ApiService {
     outputName: string,
     forgeActivityId: string,
     currentUserId: string,
-    currentFileSize: number
+    currentFileSize: number,
+    revitVersion: string,
+    currentFileName: string
   ): Observable<IWorkItemResponse> {
-    const body = { inputObjectName: objectName, outputObjectName: outputName, activityId: forgeActivityId , userId: currentUserId, fileSize: currentFileSize};
+    const body = {
+      inputObjectName: objectName, 
+      outputObjectName: outputName, 
+      activityId: forgeActivityId , 
+      userId: currentUserId, 
+      fileSize: currentFileSize, 
+      version: revitVersion,
+      fileName: currentFileName,
+    };
     return this.post<IWorkItemResponse>(
       this.baseAPIURL + 'workitem',
       body
