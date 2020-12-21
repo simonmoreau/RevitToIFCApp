@@ -1,4 +1,4 @@
-<app-token-counter></app-token-counter>
+<app-credits-counter></app-credits-counter>
 <mat-card class="card-section">
     <mat-card-content *ngIf="uploader?.queue?.length == 0" class="mat-display-2">
         <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt"
@@ -25,20 +25,20 @@
                             </div>
                         </mat-card-content>
                         <mat-card-content class="file-detail mat-body">
-                            <!-- <div *ngIf="uploader.options.isHTML5">{{ item?.progress}} %</div> -->
                             <div *ngIf="uploader.options.isHTML5">
-                                <span *ngIf="item?.isProcessing" class="horizontal">
-                                    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
-                                </span>
-                                <span class="horizontal">{{ item?.status}}</span>
-                                <span class="horizontal" *ngIf="item?.progress">{{ item?.progress}} % </span>
+                                <div class="horizontal" [ngClass]="{'isError': item?.isError}" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-progress-spinner *ngIf="item?.isProcessing" diameter="20" mode="indeterminate"></mat-progress-spinner>
+                                    <span class="horizontal" *ngIf="item?.progress">{{ item?.progress}} % </span>
+                                    <span *ngIf="item?.isError" class="material-icons">error</span>
+                                    <span>{{ item?.status}}</span>
+                                </div>
                             </div>
                         </mat-card-content>
                     </div>
                     <div class="box-right">
                         <div class="button-container">
                             <button mat-icon-button color="primary" (click)="item.upload()"
-                                [disabled]="item.isReady || item.isProcessing || item.isSuccess" aria-label="Upload"
+                                [disabled]="item.isReady || item.isProcessing || item.isSuccess || item.isError" aria-label="Upload"
                                 matTooltip="Upload">
                                 <span class="material-icons">cloud_upload</span>
                             </button>

@@ -4,8 +4,9 @@ import { Router, ActivatedRoute, ParamMap, Params } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
+import { CreditsCounterService } from 'src/app/credits-counter/credits-counter.service';
 import { environment } from 'src/environments/environment';
-import { IConversionTokenUpdate } from '../../services/api.model';
+import { IConversionCreditsUpdate } from '../../services/api.model';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -18,9 +19,9 @@ export class CheckoutSuccessComponent implements OnInit {
   isProcessing = true;
   isSuccess = false;
   isError = false;
-  conversionTokenUpdate: IConversionTokenUpdate;
+  conversionCreditsUpdate: IConversionCreditsUpdate;
 
-  constructor(private route: ActivatedRoute, private authService: MsalService, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, private creditsCounterService: CreditsCounterService) {
     this.isProcessing = true;
     this.isSuccess = false;
     this.isError = false;
@@ -31,21 +32,12 @@ export class CheckoutSuccessComponent implements OnInit {
     this.isProcessing = true;
     this.isSuccess = false;
     this.isError = false;
-    const userId = this.authService.getAccount().accountIdentifier;
-
-    const updateConversionTokens = (params: Params): Observable<IConversionTokenUpdate> => {
-      const checkoutSessionId = params['session_id'];
-      return this.apiService.updateConversionToken(
-        userId,
-        checkoutSessionId
-      );
-    };
 
     this.route.queryParams.pipe(
-      flatMap((params: Params) => updateConversionTokens(params))
+      flatMap((params: Params) => this.creditsCounterService.UpdateConversionCredits(params['session_id']))
     ).subscribe(
-      (result: IConversionTokenUpdate) => {
-        this.conversionTokenUpdate = result;
+      (result: IConversionCreditsUpdate) => {
+        this.conversionCreditsUpdate = result;
         this.isProcessing = false;
         this.isSuccess = true;
         this.isError = false;

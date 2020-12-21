@@ -48,7 +48,9 @@ export class FileItem {
       this.version = v;
       if (this.version !== '') {
         this.isProcessing = false;
-        this.status = 'Ready to be uploaded';
+        if (!this.isError) {
+          this.status = 'Ready to be uploaded';
+        }
       }
     });
 

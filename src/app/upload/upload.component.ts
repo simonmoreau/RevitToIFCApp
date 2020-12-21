@@ -4,13 +4,13 @@ import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 import { ApiService } from '../services/api.service';
 
-
-import { IUploadObject } from '../forge/forge.model';
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject } from '../services/api.model';
-import { concatMap, flatMap, takeWhile, switchMap, tap, map, first } from 'rxjs/operators';
-import { RtlScrollAxisType } from '@angular/cdk/platform';
-import { merge, Observable, of, timer } from 'rxjs';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, ConversionObject, WorkItemCreationStatus } from '../services/api.model';
+import { concatMap, flatMap, takeWhile, switchMap, tap, map, first, catchError } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
 import { FileItem } from '../file-upload/file-item.class';
+import { throwError } from 'rxjs';
+import { MsalService } from '@azure/msal-angular';
+import { CreditsCounterService } from '../credits-counter/credits-counter.service';
 
 @Component({
   selector: 'app-upload',
@@ -23,11 +23,12 @@ export class UploadComponent {
   hasBaseDropZoneOver: boolean;
   hasAnotherDropZoneOver: boolean;
 
-  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService){
+  constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,private creditsCounterService: CreditsCounterService){
     const bucketKey = 'ifc-storage';
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
+    // TODO add the ability to cancel a workitem before the end
     this.uploader = new FileUploader({
       url: URL,
       method: 'PUT',
@@ -49,6 +50,43 @@ export class UploadComponent {
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;
 
+    this.uploader.onAfterAddingFileEvent.subscribe( (fileItem: FileItem) => {
+      
+      const updatedDisplayedCredits = this.creditsCounterService.UpdateDisplayedCredits(-1);
+
+      // check if there is enought credits
+      if (updatedDisplayedCredits < 0 )
+      {
+        fileItem.status = 'You don\'t have enough credit !';
+        fileItem.isError = true;
+      }
+    });
+
+    this.uploader.onRemoveItemEvent.subscribe( (fileItem: FileItem) => {
+      const updatedDisplayedCredits = this.creditsCounterService.UpdateDisplayedCredits(1);
+
+      this.uploader.queue.forEach((fileItem: FileItem) => {
+
+        if (!fileItem.version)
+        {
+          fileItem.status = 'Looking for the Revit version ...';
+          fileItem.isProcessing = true;
+        }
+        else
+        {
+          fileItem.status = 'Ready to be uploaded';
+          fileItem.isProcessing = false;
+        }
+        fileItem.isError = false;
+      })
+
+      for (let index = this.creditsCounterService.creditCount; index < this.uploader.queue.length ; index++) {
+        const fileItem = this.uploader.queue[index];
+        fileItem.status = 'You don\'t have enough credit !';
+        fileItem.isError = true;
+      }
+    });
+
     // this.uploader.response.subscribe( response: IUploadObject => {this.response = response ; console.log(response); } );
 
     const createWorkItemObs = (conversionObject: ConversionObject): Observable<ConversionObject> => {
@@ -62,11 +100,22 @@ export class UploadComponent {
       const revitVersion: string = currentFileItem.version;
       const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
 
-      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId).pipe(
+      return this.apiService.CreateWorkItem(conversionObject.uploadObjectResult.uploadObject.objectKey, outputName, activityId,authService.getAccount().accountIdentifier, currentFileItem.file.size).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
-          conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
-          conversionObject.workItemResponse = workItemResponse;
-          return conversionObject;
+          if (workItemResponse.workItemCreationStatus == WorkItemCreationStatus.Created)
+          {
+            conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
+            conversionObject.workItemResponse = workItemResponse;
+            return conversionObject;
+          }
+          else
+          {
+            conversionObject.uploadObjectResult.file.isProcessing = false;
+            conversionObject.uploadObjectResult.file.status = 'You don\'t have enough credit !';
+            conversionObject.uploadObjectResult.file.isConverted = false;
+            conversionObject.uploadObjectResult.file.isError = true;
+            throwError(conversionObject);
+          }
         })
       );
     };
@@ -110,7 +159,10 @@ export class UploadComponent {
         return conversionObject;
       }),
       flatMap((conversionObject: ConversionObject) => createWorkItemObs(conversionObject)),
-      flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject))
+      flatMap( (conversionObject: ConversionObject) => getworkItemStatus(conversionObject)),
+      catchError((conversionObject: ConversionObject) =>{
+        return of(conversionObject);
+      })
     );
 
     conversionObservable.subscribe(r => console.log(r));

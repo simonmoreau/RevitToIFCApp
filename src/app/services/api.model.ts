@@ -9,6 +9,11 @@ export interface IForgeToken {
 export interface IWorkItemResponse {
   workItemId: string;
   outputUrl: string;
+  workItemCreationStatus: WorkItemCreationStatus;
+}
+
+export enum WorkItemCreationStatus {
+  Created = 0, NotEnoughCredit, Error
 }
 
 export interface IWorkItemStatus {
@@ -33,7 +38,8 @@ export interface ICheckoutSessionId {
   id: string;
 }
 
-export interface IConversionTokenUpdate {
+export interface IConversionCreditsUpdate {
   userId: string;
-  tokenNumber: number;
+  creditsNumber: number;
 }
+
