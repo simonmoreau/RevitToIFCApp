@@ -33,7 +33,7 @@
             "value": "RevitToIFC"
         },
         "apiLocation": {
-            "value": "api"
+            "value": ""
         },
         "appArtifactLocation": {
             "value": "dist/angular-basic"
