@@ -141,9 +141,9 @@ export class UploadComponent {
     };
 
     const checkStatus = (conversionObject: ConversionObject): Observable<ConversionObject> => {
-      return timer(0, 10000).pipe(
+      return timer(0, 20000).pipe(
         switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse.workItemId)),
-        first(workItemStatus => workItemStatus.status === 'success'),
+        first(workItemStatus => workItemStatus.status !== 'pending' && workItemStatus.status !== 'inprogress'),
         map(r => {
           conversionObject.worfItemStatus = r;
           return conversionObject;
@@ -154,10 +154,20 @@ export class UploadComponent {
     const processConvertedObject = (conversionObject: ConversionObject): Observable<ConversionObject> => {
       return  of(conversionObject).pipe(
         map((cO: ConversionObject) => {
-          cO.uploadObjectResult.file.isProcessing = false;
-          cO.uploadObjectResult.file.status = 'Converted !';
-          cO.uploadObjectResult.file.isConverted = true;
-          return cO;
+          if (cO.worfItemStatus.status == 'success')
+          {
+            cO.uploadObjectResult.file.isProcessing = false;
+            cO.uploadObjectResult.file.status = 'Converted !';
+            cO.uploadObjectResult.file.isConverted = true;
+            return cO;
+          }
+          else
+          {
+            cO.uploadObjectResult.file.isProcessing = false;
+            cO.uploadObjectResult.file.status = 'Something when wrong, please try again. ' + cO.worfItemStatus.status;
+            cO.uploadObjectResult.file.isError = true;
+            return cO;
+          }
         })
       );
     };

@@ -71,10 +71,14 @@ namespace api
         {
           await completedWorkItemsTable.AddAsync(completedWorkItemStatusObject);
 
-          // update the number of credits
-          int newCreditsNumber = await _utilities.UpdateCustomAttributeByUserId(completedWorkItemStatusObject.UserId, -1);
+          if (completedWorkItemStatusObject.Status == "Success")
+          {
+            // update the number of credits
+            int newCreditsNumber = await _utilities.UpdateCustomAttributeByUserId(completedWorkItemStatusObject.UserId, -1);
 
-          log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
+            log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
+          }
+
         }
       }
 
