@@ -35,17 +35,28 @@ namespace api
       {
         Autodesk.Forge.Core.ApiResponse<WorkItemStatus> workItemResponse = await _workItemApi.GetWorkitemStatusAsync(workItemId);
 
-        if (workItemResponse.Content.Status == Status.Pending || workItemResponse.Content.Status == Status.Inprogress)
+        WorkItemStatus workItemStatus = workItemResponse.Content;
+
+        if (workItemStatus.Status == Status.Pending || workItemStatus.Status == Status.Inprogress)
         {
-          // Keep going
+          // check if the workItem run for less than a hour
+          TimeSpan? duration = DateTime.Now - workItemStatus.Stats.TimeDownloadStarted;
+
+          if (duration != null)
+          {
+            if (duration > new TimeSpan(0, 55, 0))
+            {
+              await _workItemApi.DeleteWorkItemAsync(workItemId);
+            }
+          }
+
         }
         else
         {
-          WorkItemStatus workItemStatus = workItemResponse.Content;
           await completedWorkItemsQueue.AddAsync(workItemStatus);
         }
 
-        return new OkObjectResult(workItemResponse.Content);
+        return new OkObjectResult(workItemStatus);
       }
       catch (Exception ex)
       {
