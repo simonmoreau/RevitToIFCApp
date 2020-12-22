@@ -2,6 +2,7 @@ import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
+import { AppComponent } from 'src/app/app.component';
 import { environment } from 'src/environments/environment';
 import { ICheckoutSessionId } from '../../services/api.model';
 import { ApiService } from '../../services/api.service';
@@ -11,11 +12,14 @@ declare var StripeCheckout: StripeCheckoutStatic;
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.scss']
+  styleUrls: ['./checkout.component.scss'],
 })
 export class CheckoutComponent implements OnInit {
-
-  constructor(private authService: MsalService, private apiService: ApiService) { }
+  constructor(
+    private authService: MsalService,
+    private apiService: ApiService,
+    private appComponent: AppComponent
+  ) {}
 
   @Input() amount;
   @Input() description;
@@ -27,14 +31,13 @@ export class CheckoutComponent implements OnInit {
   loading = false;
 
   ngOnInit(): void {
-
     const stripe_key = environment.stripe_key;
 
     const stripeOption: stripe.StripeOptions = {
       locale: 'auto',
     };
 
-    this.stripe  = Stripe(stripe_key, stripeOption);
+    this.stripe = Stripe(stripe_key, stripeOption);
 
     // this.handler = StripeCheckout.configure({
     //   key: environment.stripe_key,
@@ -50,25 +53,29 @@ export class CheckoutComponent implements OnInit {
     // });
   }
 
-    // Open the checkout handler
-    async checkout(event: MouseEvent, productId: string ) {
-      const account = await this.authService.getAccount();
+  // Open the checkout handler
+  async checkout(event: MouseEvent, productId: string) {
+    const account = await this.authService.getAccount();
 
+    if (account) {
       // Create the Checkout Session in Stripe
       const createCheckoutSession: Observable<ICheckoutSessionId> = this.apiService.createCheckoutSession(
         account.sid,
         productId
       );
 
-      const redirectToCheckout = (sessionId: ICheckoutSessionId): Promise<{ error: stripe.Error; }> => {
-
+      const redirectToCheckout = (
+        sessionId: ICheckoutSessionId
+      ): Promise<{ error: stripe.Error }> => {
         const stripeServerCheckoutOptions: stripe.StripeServerCheckoutOptions = {
-          sessionId: sessionId.id
+          sessionId: sessionId.id,
         };
         return this.stripe.redirectToCheckout(stripeServerCheckoutOptions);
       };
 
-      const processCheckoutResult = (checkoutError: { error: stripe.Error; }): string => {
+      const processCheckoutResult = (checkoutError: {
+        error: stripe.Error;
+      }): string => {
         if (checkoutError) {
           alert(checkoutError.error.message);
           return checkoutError.error.message;
@@ -77,22 +84,33 @@ export class CheckoutComponent implements OnInit {
         }
       };
 
-      createCheckoutSession.pipe(
-        flatMap((sessionId: ICheckoutSessionId) => redirectToCheckout(sessionId)),
-        flatMap((checkoutError: { error: stripe.Error; }) => processCheckoutResult(checkoutError))
-      )
-      .subscribe(
-        (result) => { console.log(result); },
-        (error) => { console.log(error); }
+      createCheckoutSession
+        .pipe(
+          flatMap((sessionId: ICheckoutSessionId) =>
+            redirectToCheckout(sessionId)
+          ),
+          flatMap((checkoutError: { error: stripe.Error }) =>
+            processCheckoutResult(checkoutError)
+          )
+        )
+        .subscribe(
+          (result) => {
+            console.log(result);
+          },
+          (error) => {
+            console.log(error);
+          }
         );
 
       event.preventDefault();
+    } else {
+      this.appComponent.login();
     }
+  }
 
-    // Close on navigate
-    @HostListener('window:popstate')
-    onPopstate() {
-      this.handler.close();
-    }
-
+  // Close on navigate
+  @HostListener('window:popstate')
+  onPopstate() {
+    this.handler.close();
+  }
 }

@@ -19,7 +19,6 @@ import { UserService } from './services/user.service';
 })
 
 export class AppComponent implements OnInit {
-  title = 'Revit To IFC';
   isIframe = false;
   loggedIn = false;
   userName: any;
