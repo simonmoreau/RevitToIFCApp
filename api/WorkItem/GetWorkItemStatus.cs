@@ -44,7 +44,7 @@ namespace api
 
           if (duration != null)
           {
-            if (duration > new TimeSpan(0, 55, 0))
+            if (duration > new TimeSpan(0, 20, 0))
             {
               await _workItemApi.DeleteWorkItemAsync(workItemId);
             }
