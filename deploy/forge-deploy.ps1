@@ -14,17 +14,19 @@ $settings = Get-Content -Raw -Path $settingsFile | ConvertFrom-Json
 $env:FORGE_CLIENT_ID = $settings.Values.FORGE_CLIENT_ID
 $env:FORGE_CLIENT_SECRET = $settings.Values.FORGE_CLIENT_SECRET
 
-forge-da create-activity --help
-
 ## Create the Forge bucket to store the converted files
-## forge-dm create-bucket -r transient $settings.Values.ossBucketKey
+# forge-dm create-bucket -r transient $settings.Values.ossBucketKey
 
 ## Create an array with every version of the engine
 $engineVersions = '2018','2019', '2020', '2021'
+$appName = 'RevitToIFC'
+
+forge-da list-appbundles
+forge-da list-activities
 
 function DeployApplication($revitVersion,$bundle) {
    
-   $appName = 'RevitToIFC2'
+   
    $appbundle_file = $bundle
    $appbundle_name = [string]::Format('{0}Bundle{1}',$appName,$revitVersion) # Your own appbundle name here
    $appbundle_alias = $revitVersion # Your own alias name here
@@ -68,10 +70,14 @@ function DeployApplication($revitVersion,$bundle) {
    $result = $result | Select-String -Pattern $activity_name | Measure-Object -Line
    if ($result.Lines -eq 0) {
       Write-Host "Creating new activity"
-      forge-da create-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine
+      forge-da create-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update `
+      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
+      --output result --input-verb put --input-zip false --input-required true --input-description "Results" --output-local-name output.ifc
    } else {
       Write-Host "Updating existing activity"
-      forge-da update-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine
+      forge-da update-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update `
+      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
+      --output result --input-verb put --input-zip false --input-required true --input-description "Results" --output-local-name output.ifc
    }
 
    # Create or update an activity alias
@@ -95,10 +101,18 @@ foreach ($engineVersion in $engineVersions) {
    DeployApplication -revitVersion $engineVersion -bundle $bundlePath
 }
 
-
 # # Delete all AppBundle
 # foreach ($engineVersion in $engineVersions) {
-#    $appBundleId = [string]::Format('RevitToIFC2Bundle{0}',$engineVersion)
+#    $appBundleId =  [string]::Format('{0}Bundle{1}',$appName,$engineVersion)
+#    Write-Host "Deleting the existing appbundle $appBundleId"
 #    forge-da delete-appbundle $appBundleId
 # }
+
+# # Delete all activity
+# foreach ($engineVersion in $engineVersions) {
+#    $appActivityId = [string]::Format('{0}Activity{1}',$appName,$engineVersion)
+#    Write-Host "Deleting the activity $appActivityId"
+#    forge-da delete-activity $appActivityId
+# }
+
 
