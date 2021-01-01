@@ -14,6 +14,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
 
 import { Configuration } from 'msal';
 import {
@@ -55,6 +56,25 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
   return msalAngularConfig;
 }
 
+const cookieConfig:NgcCookieConsentConfig = {
+  cookie: {
+    domain: 'localhost' // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+  },
+  palette: {
+    popup: {
+      background: '#1c364a',
+      text: "#fff"
+    },
+    button: {
+      background: '#e74727',
+      text: "#fff"
+    }
+  },
+  position: 'bottom-right',
+  theme: 'classic',
+  type: 'info'
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -84,7 +104,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     MatGridListModule,
     FlexLayoutModule,
     MsalModule,
-    FileUploadModule
+    FileUploadModule,
+    NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [
     MsalService,

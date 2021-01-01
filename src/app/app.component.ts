@@ -11,6 +11,8 @@ import { BroadcastService, MsalService} from '@azure/msal-angular';
 import { Logger, CryptoUtils } from 'msal';
 import { isIE, b2cPolicies } from './app-config';
 import { UserService } from './services/user.service';
+import { NgcCookieConsentService } from 'ngx-cookieconsent';
+
 
 @Component({
   selector: 'app-root',
@@ -28,7 +30,8 @@ export class AppComponent implements OnInit {
     private broadcastService: BroadcastService,
     private authService: MsalService,
     private userService: UserService,
-    private router: Router) {
+    private router: Router,
+    private ccService: NgcCookieConsentService) {
 
       this.router.events.subscribe((event: Event) => {
         switch (true) {

@@ -23,7 +23,9 @@
     "@angular/platform-browser-dynamic": "~10.0.14",
     "@angular/router": "~10.0.14",
     "@azure/msal-angular": "^1.1.1",
+    "cookieconsent": "^3.1.1",
     "msal": "^1.4.0",
+    "ngx-cookieconsent": "^2.2.3",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
