@@ -46,6 +46,7 @@ import { CheckoutSuccessComponent } from './checkout/checkout-success/checkout-s
 import { CheckoutCancelComponent } from './checkout/checkout-cancel/checkout-cancel.component';
 import { PriceComponent } from './checkout/price/price.component';
 import { CreditsCounterComponent } from './credits-counter/credits-counter.component';
+import { environment } from '../environments/environment';
 
 
 function MSALConfigFactory(): Configuration {
@@ -58,7 +59,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
 
 const cookieConfig:NgcCookieConsentConfig = {
   cookie: {
-    domain: 'localhost' // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+    domain: environment.localDomain // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
   },
   palette: {
     popup: {
