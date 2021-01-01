@@ -5,21 +5,22 @@ import {
   NavigationEnd,
   NavigationError,
   NavigationStart,
-  Router
+  Router,
 } from '@angular/router';
-import { BroadcastService, MsalService} from '@azure/msal-angular';
+import { BroadcastService, MsalService } from '@azure/msal-angular';
 import { Logger, CryptoUtils } from 'msal';
 import { isIE, b2cPolicies } from './app-config';
 import { UserService } from './services/user.service';
 import { NgcCookieConsentService } from 'ngx-cookieconsent';
 
+// declare gtag as a function to set and sent the events
+declare let gtag: Function;
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-
 export class AppComponent implements OnInit {
   isIframe = false;
   loggedIn = false;
@@ -31,49 +32,56 @@ export class AppComponent implements OnInit {
     private authService: MsalService,
     private userService: UserService,
     private router: Router,
-    private ccService: NgcCookieConsentService) {
+    private ccService: NgcCookieConsentService
+  ) {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationEnd) {
+        gtag('config', 'G-2S7M7HEKL6', {
+          page_path: event.urlAfterRedirects,
+        });
+      }
 
-      this.router.events.subscribe((event: Event) => {
-        switch (true) {
-          case event instanceof NavigationStart: {
-            this.loading = true;
-            break;
-          }
-
-          case event instanceof NavigationEnd:
-          case event instanceof NavigationCancel:
-          case event instanceof NavigationError: {
-            this.loading = false;
-            break;
-          }
-          default: {
-            break;
-          }
+      switch (true) {
+        case event instanceof NavigationStart: {
+          this.loading = true;
+          break;
         }
-      });
 
-    }
+        case event instanceof NavigationEnd:
+        case event instanceof NavigationCancel:
+        case event instanceof NavigationError: {
+          this.loading = false;
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
+  }
 
   ngOnInit() {
-
     this.isIframe = window !== window.parent && !window.opener;
     this.checkAccount();
 
     // event listeners for authentication status
     this.broadcastService.subscribe('msal:loginSuccess', (success) => {
-
-    // We need to reject id tokens that were not issued with the default sign-in policy.
-    // "acr" claim in the token tells us what policy is used (NOTE: for new policies (v2.0), use "tfp" instead of "acr")
-    // To learn more about b2c tokens, visit https://docs.microsoft.com/en-us/azure/active-directory-b2c/tokens-overview
+      // We need to reject id tokens that were not issued with the default sign-in policy.
+      // "acr" claim in the token tells us what policy is used (NOTE: for new policies (v2.0), use "tfp" instead of "acr")
+      // To learn more about b2c tokens, visit https://docs.microsoft.com/en-us/azure/active-directory-b2c/tokens-overview
       if (success.idToken.claims['tfp'] !== b2cPolicies.names.signUpSignIn) {
-        window.alert('Password has been reset successfully. \nPlease sign-in with your new password');
+        window.alert(
+          'Password has been reset successfully. \nPlease sign-in with your new password'
+        );
         return this.authService.logout();
       }
 
-      console.log('login succeeded. id token acquired at: ' + new Date().toString());
+      console.log(
+        'login succeeded. id token acquired at: ' + new Date().toString()
+      );
       console.log(success);
 
-      this.userService.refreshToken().subscribe(t => {
+      this.userService.refreshToken().subscribe((t) => {
         console.log('Get a Forge Token');
         console.log('this.router.navigateByUrl');
         // this.router.navigateByUrl('/upload');
@@ -86,16 +94,16 @@ export class AppComponent implements OnInit {
       console.log('login failed');
       console.log(error);
 
-        // Check for forgot password error
-        // Learn more about AAD error codes at https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
+      // Check for forgot password error
+      // Learn more about AAD error codes at https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
       if (error.errorMessage.indexOf('AADB2C90118') > -1) {
+        this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
+        if (isIE) {
           this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-          if (isIE) {
-            this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-          } else {
-            this.authService.loginPopup(b2cPolicies.authorities.resetPassword);
-          }
+        } else {
+          this.authService.loginPopup(b2cPolicies.authorities.resetPassword);
         }
+      }
     });
 
     // redirect callback for redirect flow (IE)
@@ -106,15 +114,19 @@ export class AppComponent implements OnInit {
       }
 
       console.log('Redirect Success: ', response);
-
     });
 
-    this.authService.setLogger(new Logger((logLevel, message, piiEnabled) => {
-      // console.log('MSAL Logging: ', message);
-    }, {
-      correlationId: CryptoUtils.createNewGuid(),
-      piiLoggingEnabled: false
-    }));
+    this.authService.setLogger(
+      new Logger(
+        (logLevel, message, piiEnabled) => {
+          // console.log('MSAL Logging: ', message);
+        },
+        {
+          correlationId: CryptoUtils.createNewGuid(),
+          piiLoggingEnabled: false,
+        }
+      )
+    );
   }
 
   // other methods
