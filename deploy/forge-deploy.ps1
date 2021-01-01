@@ -26,7 +26,7 @@ forge-da list-activities
 
 function DeployApplication($revitVersion,$bundle) {
    
-   
+   $nickName = 'RevitToIFC'
    $appbundle_file = $bundle
    $appbundle_name = [string]::Format('{0}Bundle{1}',$appName,$revitVersion) # Your own appbundle name here
    $appbundle_alias = $revitVersion # Your own alias name here
@@ -70,14 +70,14 @@ function DeployApplication($revitVersion,$bundle) {
    $result = $result | Select-String -Pattern $activity_name | Measure-Object -Line
    if ($result.Lines -eq 0) {
       Write-Host "Creating new activity"
-      forge-da create-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update `
+      forge-da create-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update --nickname $nickName `
       --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
-      --output result --input-verb put --input-zip false --input-required true --input-description "Results" --output-local-name output.ifc
+      --output result --output-verb put --output-zip false --output-required true --output-description "Results" --output-local-name output.ifc
    } else {
       Write-Host "Updating existing activity"
-      forge-da update-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update `
+      forge-da update-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update --nickname $nickName `
       --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
-      --output result --input-verb put --input-zip false --input-required true --input-description "Results" --output-local-name output.ifc
+      --output result --output-verb put --output-zip false --output-required true --output-description "Results" --output-local-name output.ifc
    }
 
    # Create or update an activity alias
