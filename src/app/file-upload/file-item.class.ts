@@ -1,6 +1,10 @@
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { FileLikeObject } from './file-like-object.class';
-import { FileUploader, ParsedResponseHeaders, FileUploaderOptions } from './file-uploader.class';
+import {
+  FileUploader,
+  ParsedResponseHeaders,
+  FileUploaderOptions,
+} from './file-uploader.class';
 
 export class FileItem {
   public file: FileLikeObject;
@@ -31,7 +35,11 @@ export class FileItem {
   protected some: File;
   protected options: FileUploaderOptions;
 
-  public constructor(uploader: FileUploader, some: File, options: FileUploaderOptions) {
+  public constructor(
+    uploader: FileUploader,
+    some: File,
+    options: FileUploaderOptions
+  ) {
     this.uploader = uploader;
     this.some = some;
     this.options = options;
@@ -42,16 +50,14 @@ export class FileItem {
       this.alias = uploader.options.itemAlias || 'file';
     }
     this.url = uploader.options.url;
-    if (this.file?.size / 1024 / 1024 > 600 )
-    {
+    if (this.file?.size / 1024 / 1024 > 600) {
       this.isError = true;
-      this.status = 'The maximum Revit file size is 600 Mb, please upload a smaller file.';
-    }
-    else
-    {
+      this.status =
+        'The maximum Revit file size is 600 Mb, please upload a smaller file.';
+    } else {
       this.status = 'Looking for the Revit version ...';
       this.isProcessing = true;
-      this.getRevitVersion(some).subscribe(v => {
+      this.getRevitVersion(some).subscribe((v) => {
         this.version = v;
         if (this.version !== '') {
           this.isProcessing = false;
@@ -93,19 +99,35 @@ export class FileItem {
     return { progress };
   }
 
-  public onSuccess(response: string, status: number, headers: ParsedResponseHeaders): any {
+  public onSuccess(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): any {
     return { response, status, headers };
   }
 
-  public onError(response: string, status: number, headers: ParsedResponseHeaders): any {
+  public onError(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): any {
     return { response, status, headers };
   }
 
-  public onCancel(response: string, status: number, headers: ParsedResponseHeaders): any {
+  public onCancel(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): any {
     return { response, status, headers };
   }
 
-  public onComplete(response: string, status: number, headers: ParsedResponseHeaders): any {
+  public onComplete(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): any {
     return { response, status, headers };
   }
 
@@ -129,7 +151,11 @@ export class FileItem {
     this.onProgress(progress);
   }
 
-  public _onSuccess(response: string, status: number, headers: ParsedResponseHeaders): void {
+  public _onSuccess(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): void {
     this.isReady = false;
     this.isProcessing = false;
     this.isUploaded = true;
@@ -141,7 +167,11 @@ export class FileItem {
     this.onSuccess(response, status, headers);
   }
 
-  public _onError(response: string, status: number, headers: ParsedResponseHeaders): void {
+  public _onError(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): void {
     this.isReady = false;
     this.isProcessing = false;
     this.isUploaded = true;
@@ -153,7 +183,11 @@ export class FileItem {
     this.onError(response, status, headers);
   }
 
-  public _onCancel(response: string, status: number, headers: ParsedResponseHeaders): void {
+  public _onCancel(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): void {
     this.isReady = false;
     this.isProcessing = false;
     this.isUploaded = false;
@@ -165,7 +199,11 @@ export class FileItem {
     this.onCancel(response, status, headers);
   }
 
-  public _onComplete(response: string, status: number, headers: ParsedResponseHeaders): void {
+  public _onComplete(
+    response: string,
+    status: number,
+    headers: ParsedResponseHeaders
+  ): void {
     this.onComplete(response, status, headers);
 
     if (this.uploader.options.removeAfterUpload) {
@@ -183,16 +221,23 @@ export class FileItem {
       return;
     }
 
-    const versionSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    const versionSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
+      ''
+    );
     const versionObservable: Observable<string> = versionSubject.asObservable();
 
     const opt: IParseFileOption = {
       chunk_size: 64 * 1024,
       binary: true,
-      error_callback: (result: string | ArrayBuffer) => { console.log('error'); console.log(result); },
+      error_callback: (result: string | ArrayBuffer) => {
+        console.log('error');
+        console.log(result);
+      },
       chunk_read_callback: (result: string | ArrayBuffer) => {
         const version = this.FindRevitVersionInText(result);
-        if (version !== null) {versionSubject.next(version); }
+        if (version !== null) {
+          versionSubject.next(version);
+        }
       },
     };
 
@@ -216,15 +261,24 @@ export class FileItem {
  * - chunk_size:          The chunk size to be used, in bytes. Default is 64K.
  */
   private parseFile(file: File, options: IParseFileOption) {
-
     const opts = typeof options === 'undefined' ? {} : options;
     const fileSize = file.size;
-    const chunkSize = typeof opts['chunk_size'] === 'undefined' ? 64 * 1024 : parseInt(opts['chunk_size']); // bytes
-    const binary = typeof opts['binary'] === 'undefined' ? false : opts['binary'] === true;
+    const chunkSize =
+      typeof opts['chunk_size'] === 'undefined'
+        ? 64 * 1024
+        : parseInt(opts['chunk_size']); // bytes
+    const binary =
+      typeof opts['binary'] === 'undefined' ? false : opts['binary'] === true;
     let offset = 0;
     let readBlock = null;
-    const chunkReadCallback = typeof opts['chunk_read_callback'] === 'function' ? opts['chunk_read_callback'] : function () { };
-    const chunkErrorCallback = typeof opts['error_callback'] === 'function' ? opts['error_callback'] : function () { };
+    const chunkReadCallback =
+      typeof opts['chunk_read_callback'] === 'function'
+        ? opts['chunk_read_callback']
+        : function () {};
+    const chunkErrorCallback =
+      typeof opts['error_callback'] === 'function'
+        ? opts['error_callback']
+        : function () {};
 
     const onLoadHandler = (evt: ProgressEvent<FileReader>) => {
       let stopReading = false;
@@ -265,20 +319,50 @@ export class FileItem {
       const version = found[0].replace('Format: ', '');
       console.log(version);
       return version;
-    }
-    else if (line.includes('Revit Build: ')) {
+    } else if (line.includes('Revit Build: ')) {
       const regex = /Revit Build: Autodesk Revit (\d+)/g;
       const found = line.match(regex);
-      const version = found[0].replace('Revit Build: Autodesk Revit ', '');
+      let version = null;
+      if (found) {
+        version = found[0].replace('Revit Build: Autodesk Revit ', '');
+      } else {
+        if (line.includes('Architecture')) {
+          const regex = /Revit Build: Autodesk Revit Architecture (\d+)/g;
+          const found = line.match(regex);
+          if (found) {
+            version = found[0].replace(
+              'Revit Build: Autodesk Revit Architecture ',
+              ''
+            );
+          }
+        } else if (line.includes('MEP')) {
+          const regex = /Revit Build: Autodesk Revit MEP (\d+)/g;
+          const found = line.match(regex);
+          if (found) {
+            version = found[0].replace(
+              'Revit Build: Autodesk Revit MEP ',
+              ''
+            );
+          }
+        } else if (line.includes('Structure')) {
+          const regex = /Revit Build: Autodesk Revit Structure (\d+)/g;
+          const found = line.match(regex);
+          if (found) {
+            version = found[0].replace(
+              'Revit Build: Autodesk Revit Structure ',
+              ''
+            );
+          }
+        }
+      }
+
       console.log(version);
       return version;
-    }
-    else {
+    } else {
       return null;
     }
   }
 }
-
 
 interface IParseFileOption {
   chunk_size: number;
