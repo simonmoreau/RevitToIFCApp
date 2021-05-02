@@ -60,6 +60,8 @@ export class UploadComponent {
         fileItem.status = 'You don\'t have enough credit !';
         fileItem.isError = true;
       }
+
+      
     });
 
     this.uploader.onRemoveItemEvent.subscribe( (fileItem: FileItem) => {

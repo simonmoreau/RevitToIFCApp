@@ -218,7 +218,7 @@ export class FileUploader {
   }
 
   public getNotUploadedItems(): any[] {
-    return this.queue.filter((item: FileItem) => !item.isUploaded);
+    return this.queue.filter((item: FileItem) => (!item.isUploaded) && (!item.isError));
   }
 
   public getReadyItems(): any[] {
