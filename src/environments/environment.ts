@@ -7,6 +7,7 @@ export const environment = {
   localDomain: 'localhost',
   localUri: 'http://localhost:6420/',
   apiUri: '',
+  ossBucketKey: 'ifc-storage-dev',
   stripe_key: 'pk_test_51HKjR0FjsZIqAFNU21RxcBqZraZIoqa7RBvmBefDK04IGqKvYFIOPlGgm3qOQth5zimpmFmuvfFjryOU4gl8yqun00Gjcq2Ot7'
 };
 

@@ -39,7 +39,7 @@
             "value": "dist/angular-basic"
         },
         "ossBucketKey": {
-            "value": "ifc-storage"
+            "value": "ifc-storage-dev"
         },
         "TenantId": {
             "value": "revittoifc.onmicrosoft.com"

@@ -40,11 +40,17 @@ namespace api
         if (workItemStatus.Status == Status.Pending || workItemStatus.Status == Status.Inprogress)
         {
           // check if the workItem run for less than a hour
-          TimeSpan? duration = DateTime.Now - workItemStatus.Stats.TimeDownloadStarted;
+          TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Dateline Standard Time");
+          DateTime now = TimeZoneInfo.ConvertTime(DateTime.Now, timeZoneInfo); 
+          TimeSpan? duration = now - workItemStatus.Stats.TimeDownloadStarted;
+          TimeSpan maxDuration = new TimeSpan(0, 20, 0);
 
           if (duration != null)
           {
-            if (duration > new TimeSpan(0, 20, 0))
+            TimeSpan durationNNull = duration ?? default(TimeSpan);
+            int result = TimeSpan.Compare(durationNNull, maxDuration);
+
+            if (result == 1)
             {
               await _workItemApi.DeleteWorkItemAsync(workItemId);
             }
