@@ -15,7 +15,7 @@ $env:FORGE_CLIENT_ID = $settings.Values.FORGE_CLIENT_ID
 $env:FORGE_CLIENT_SECRET = $settings.Values.FORGE_CLIENT_SECRET
 
 ## Create the Forge bucket to store the converted files
-forge-dm create-bucket -r transient $settings.Values.ossBucketKey
+# forge-dm create-bucket -r transient $settings.Values.ossBucketKey
 
 ## Create an array with every version of the engine
 $engineVersions = '2018','2019', '2020', '2021', '2022'
