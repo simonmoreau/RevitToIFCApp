@@ -65,7 +65,7 @@ namespace api
         {
           // Create two signed URLs to upload the file to the activity and download the result
           ObjectsApi apiInstance = new ObjectsApi();
-          string bucketKey = Environment.GetEnvironmentVariable("ossBucketKey");  // string | URL-encoded bucket key
+          string bucketKey = Environment.GetEnvironmentVariable("ifcStorageKey");  // string | URL-encoded bucket key
           string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
           string outputObjectName = workItemDescription.outputObjectName;
           PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);

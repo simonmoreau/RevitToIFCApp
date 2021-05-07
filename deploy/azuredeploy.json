@@ -84,7 +84,7 @@
         "description": "Artifact Location"
       }
     },
-    "ossBucketKey": {
+    "ifcStorageKey": {
       "type": "string",
       "defaultValue": "forge-storage",
       "metadata": {
@@ -199,7 +199,7 @@
             "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
             "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
-            "ossBucketKey":"[parameters('ossBucketKey')]",
+            "ifcStorageKey":"[parameters('ifcStorageKey')]",
             "TenantId": "[parameters('TenantId')]",
             "AppId": "[parameters('AppId')]",
             "ClientSecret": "[parameters('ClientSecret')]",

@@ -25,7 +25,7 @@ export class UploadComponent {
   hasAnotherDropZoneOver: boolean;
 
   constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,private creditsCounterService: CreditsCounterService){
-    const bucketKey = environment.ossBucketKey;
+    const bucketKey = environment.ifcStorageKey;
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 

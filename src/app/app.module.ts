@@ -12,6 +12,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
@@ -47,6 +48,7 @@ import { CheckoutCancelComponent } from './checkout/checkout-cancel/checkout-can
 import { PriceComponent } from './checkout/price/price.component';
 import { CreditsCounterComponent } from './credits-counter/credits-counter.component';
 import { environment } from '../environments/environment';
+import { ConvertionsListComponent } from './convertions-list/convertions-list.component';
 
 
 function MSALConfigFactory(): Configuration {
@@ -86,7 +88,8 @@ const cookieConfig:NgcCookieConsentConfig = {
     CheckoutSuccessComponent,
     CheckoutCancelComponent,
     PriceComponent,
-    CreditsCounterComponent
+    CreditsCounterComponent,
+    ConvertionsListComponent
   ],
   imports: [
     BrowserModule,
@@ -103,6 +106,7 @@ const cookieConfig:NgcCookieConsentConfig = {
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatGridListModule,
+    MatExpansionModule,
     FlexLayoutModule,
     MsalModule,
     FileUploadModule,
