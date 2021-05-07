@@ -25,7 +25,7 @@ namespace api
     [FunctionName("GetWorkItemStatus")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "workitem/{workItemId}")] HttpRequest req,
-        [Queue("completedworkitems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatus> completedWorkItemsQueue,
+        //[Queue("completedworkitems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatus> completedWorkItemsQueue,
         string workItemId,
         ILogger log)
     {
@@ -57,10 +57,10 @@ namespace api
           }
 
         }
-        else
-        {
-          await completedWorkItemsQueue.AddAsync(workItemStatus);
-        }
+        // else
+        // {
+        //   await completedWorkItemsQueue.AddAsync(workItemStatus);
+        // }
 
         return new OkObjectResult(workItemStatus);
       }

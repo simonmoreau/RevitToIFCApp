@@ -205,6 +205,7 @@
             "ClientSecret": "[parameters('ClientSecret')]",
             "B2cExtensionAppClientId": "[parameters('B2cExtensionAppClientId')]",
             "stripe_api_key": "[parameters('StripeApiKey')]",
+            "api_uri": "[concat('https://',toLower(parameters('appName')), 'function.azurewebsites.net')]",
             "local_uri": "[concat('https://',reference(resourceId('Microsoft.Web/staticSites', parameters('appName')), '2019-12-01-preview').defaultHostName)]"
           }
         }

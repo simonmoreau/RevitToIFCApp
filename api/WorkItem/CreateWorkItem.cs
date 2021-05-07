@@ -68,6 +68,7 @@ namespace api
           string bucketKey = Environment.GetEnvironmentVariable("ifcStorageKey");  // string | URL-encoded bucket key
           string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
           string outputObjectName = workItemDescription.outputObjectName;
+          string onCompleteCallbackUrl = Environment.GetEnvironmentVariable("api_uri") + "/api/onworkitemcomplete";
           PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
 
           DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(bucketKey, inputObjectName, postBucketsSigned, "read"));
@@ -75,13 +76,16 @@ namespace api
           DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(bucketKey, outputObjectName, postBucketsSigned, "readwrite");
           PostObjectSigned uploadSigned = dynamicJsonResponseUpload.ToObject<PostObjectSigned>();
 
+
+
           Autodesk.Forge.DesignAutomation.Model.WorkItem workItem = new Autodesk.Forge.DesignAutomation.Model.WorkItem()
           {
             ActivityId = workItemDescription.activityId,
             Arguments = new Dictionary<string, IArgument>
                     {
                         { "rvtFile",  new XrefTreeArgument() { Url = downloadSigned.SignedUrl } },
-                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadSigned.SignedUrl } }
+                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadSigned.SignedUrl } },
+                        { "onComplete", new XrefTreeArgument { Verb=Verb.Post, Url =  onCompleteCallbackUrl} }
                     }
           };
 
@@ -89,7 +93,13 @@ namespace api
           // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
           WorkItemStatus workItemStatusCreationResponse = workItemResponse.Content;
 
-          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(workItemStatusCreationResponse, workItemDescription.userId, workItemDescription.fileSize, workItemDescription.version, workItemDescription.fileName);
+          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(
+            workItemStatusCreationResponse, 
+            workItemDescription.userId, 
+            workItemDescription.fileSize, 
+            workItemDescription.version, 
+            workItemDescription.fileName, 
+            uploadSigned.SignedUrl);
 
           await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
 

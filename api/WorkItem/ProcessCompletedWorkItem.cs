@@ -30,6 +30,7 @@ namespace api
       string fileVersion = null;
       string fileName = null;
       int fileSize = 0;
+      string fileUrl = null;
 
       // Get user id
       TableQuery<WorkItemStatusEntity> createdWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(
@@ -48,13 +49,14 @@ namespace api
         fileSize = workItemStatusObject.Size;
         fileVersion = workItemStatusObject.Version;
         fileName = workItemStatusObject.FileName;
+        fileUrl = workItemStatusObject.FileUrl;
       }
 
       // Add to the completed work item
 
       if (userId != null)
       {
-        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize, fileVersion, fileName);
+        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize, fileVersion, fileName, fileUrl);
 
         // Check if the completed work item has already been added to the table
         TableQuery<WorkItemStatusEntity> completedWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(

@@ -20,12 +20,13 @@ namespace api
   {
     public string Progress { get; set; }
     public string ReportUrl { get; set; }
+    public string FileUrl { get; set; }
     public Statistic Stats { get; set; }
     public string Status { get; set; }
     public string UserId { get; set; }
     public DateTime TimeQueued { get; set; }
     public int Size {get;set;}
-        public string Version { get; set; }
+    public string Version { get; set; }
     public string FileName { get; set; }
     public DateTime? TimeDownloadStarted { get; set; }
     public DateTime? TimeInstructionsStarted { get; set; }
@@ -57,7 +58,7 @@ namespace api
 
   public static class Mappings
   {
-    public static WorkItemStatusEntity ToWorkItemStatusEntity(this WorkItemStatus workItemStatus, string userId, int size, string version, string fileName)
+    public static WorkItemStatusEntity ToWorkItemStatusEntity(this WorkItemStatus workItemStatus, string userId, int size, string version, string fileName, string fileUrl)
     {
       return new WorkItemStatusEntity()
       {
@@ -67,6 +68,7 @@ namespace api
         ETag = "*",
         Progress = workItemStatus.Progress,
         ReportUrl = workItemStatus.ReportUrl,
+        FileUrl = fileUrl,
         Stats = ToStatistic(workItemStatus.Stats),
         Status = workItemStatus.Status.ToString(),
         TimeQueued = workItemStatus.Stats.TimeQueued,
@@ -79,7 +81,7 @@ namespace api
         TimeUploadEnded = workItemStatus.Stats.TimeUploadEnded,
         TimeFinished = workItemStatus.Stats.TimeFinished,
         BytesDownloaded = workItemStatus.Stats.BytesDownloaded,
-        BytesUploaded = workItemStatus.Stats.BytesUploaded
+        BytesUploaded = workItemStatus.Stats.BytesUploaded,
       };
     }
 
