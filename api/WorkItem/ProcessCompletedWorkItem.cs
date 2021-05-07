@@ -19,8 +19,8 @@ namespace api
     [FunctionName("ProcessCompletedWorkItem")]
     public async Task Run(
         [QueueTrigger("completedworkitems", Connection = "StorageConnectionString")] WorkItemStatus completedWorkItemStatus,
-        [Table("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> completedWorkItemsTable,
-        [Table("completedWorkItems", Connection = "StorageConnectionString")] CloudTable completedWorkItemsCloudTable,
+        // [Table("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> completedWorkItemsTable,
+        // [Table("completedWorkItems", Connection = "StorageConnectionString")] CloudTable completedWorkItemsCloudTable,
         [Table("createdWorkItems", Connection = "StorageConnectionString")] CloudTable createdWorkItemsCloudTable,
         ILogger log)
     {
@@ -58,20 +58,8 @@ namespace api
       {
         WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize, fileVersion, fileName, fileUrl);
 
-        // Check if the completed work item has already been added to the table
-        TableQuery<WorkItemStatusEntity> completedWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(
-      TableQuery.CombineFilters(
-          TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal,
-              "workItems"),
-          TableOperators.And,
-          TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal,
-              completedWorkItemStatus.Id)));
-
-        TableQuerySegment<WorkItemStatusEntity> result = await completedWorkItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null);
-
-        if (result.Results.Count == 0)
-        {
-          await completedWorkItemsTable.AddAsync(completedWorkItemStatusObject);
+                  TableOperation tableOperation = TableOperation.InsertOrMerge(completedWorkItemStatusObject);
+          await createdWorkItemsCloudTable.ExecuteAsync(tableOperation);
 
           if (completedWorkItemStatusObject.Status == "Success")
           {
@@ -80,8 +68,6 @@ namespace api
 
             log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
           }
-
-        }
       }
 
     }
