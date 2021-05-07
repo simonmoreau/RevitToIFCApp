@@ -86,9 +86,16 @@
     },
     "ifcStorageKey": {
       "type": "string",
-      "defaultValue": "forge-storage",
+      "defaultValue": "ifc-forge-storage",
       "metadata": {
-        "description": "The Forge OSS Bucket key"
+        "description": "The Forge OSS Bucket key to store IFC files"
+      }
+    },
+    "rvtStorageKey": {
+      "type": "string",
+      "defaultValue": "rvt-forge-storage",
+      "metadata": {
+        "description": "The Forge OSS Bucket key to store Revit files"
       }
     },
     "TenantId": {
@@ -200,6 +207,7 @@
             "FORGE_CLIENT_ID": "[parameters('RevitToIFCForgeClientID')]",
             "FORGE_CLIENT_SECRET": "[parameters('RevitToIFCForgeSecret')]",
             "ifcStorageKey":"[parameters('ifcStorageKey')]",
+            "rvtStorageKey":"[parameters('rvtStorageKey')]",
             "TenantId": "[parameters('TenantId')]",
             "AppId": "[parameters('AppId')]",
             "ClientSecret": "[parameters('ClientSecret')]",

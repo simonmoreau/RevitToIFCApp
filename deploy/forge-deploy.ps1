@@ -14,8 +14,11 @@ $settings = Get-Content -Raw -Path $settingsFile | ConvertFrom-Json
 $env:FORGE_CLIENT_ID = $settings.Values.FORGE_CLIENT_ID
 $env:FORGE_CLIENT_SECRET = $settings.Values.FORGE_CLIENT_SECRET
 
+forge-dm list-buckets
+
 ## Create the Forge bucket to store the converted files
-# forge-dm create-bucket -r transient $settings.Values.ifcStorageKey
+forge-dm create-bucket -r transient $settings.Values.ifcStorageKey
+forge-dm create-bucket -r persistent $settings.Values.rvtStorageKey
 
 ## Create an array with every version of the engine
 $engineVersions = '2018','2019', '2020', '2021', '2022'

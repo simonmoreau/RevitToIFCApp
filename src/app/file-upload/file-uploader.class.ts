@@ -330,7 +330,7 @@ export class FileUploader {
       throw new TypeError('The file specified is no longer valid');
     }
 
-    const bucketKey = environment.ifcStorageKey;
+    const bucketKey = environment.rvtStorageKey;
     const objectName = Date.now().toString() + '-' + item.file.name;
 
     let nbChunkProcessed = 0;

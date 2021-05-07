@@ -65,18 +65,17 @@ namespace api
         {
           // Create two signed URLs to upload the file to the activity and download the result
           ObjectsApi apiInstance = new ObjectsApi();
-          string bucketKey = Environment.GetEnvironmentVariable("ifcStorageKey");  // string | URL-encoded bucket key
+          string rvtBucketKey = Environment.GetEnvironmentVariable("rvtStorageKey");  // string | URL-encoded bucket key
+          string ifcBucketKey = Environment.GetEnvironmentVariable("ifcStorageKey");  // string | URL-encoded bucket key
           string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
           string outputObjectName = workItemDescription.outputObjectName;
           string onCompleteCallbackUrl = Environment.GetEnvironmentVariable("api_uri") + "/api/onworkitemcomplete";
           PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
 
-          DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(bucketKey, inputObjectName, postBucketsSigned, "read"));
+          DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(rvtBucketKey, inputObjectName, postBucketsSigned, "read"));
           PostObjectSigned downloadSigned = dynamicJsonResponseDownload.ToObject<PostObjectSigned>();
-          DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(bucketKey, outputObjectName, postBucketsSigned, "readwrite");
+          DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(ifcBucketKey, outputObjectName, postBucketsSigned, "readwrite");
           PostObjectSigned uploadSigned = dynamicJsonResponseUpload.ToObject<PostObjectSigned>();
-
-
 
           Autodesk.Forge.DesignAutomation.Model.WorkItem workItem = new Autodesk.Forge.DesignAutomation.Model.WorkItem()
           {
