@@ -70,7 +70,7 @@ namespace api
           string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
           string outputObjectName = workItemDescription.outputObjectName;
           string onCompleteCallbackUrl = Environment.GetEnvironmentVariable("api_uri") + "/api/onworkitemcomplete";
-          PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
+          PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60*24*30);
 
           DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(rvtBucketKey, inputObjectName, postBucketsSigned, "read"));
           PostObjectSigned downloadSigned = dynamicJsonResponseDownload.ToObject<PostObjectSigned>();
