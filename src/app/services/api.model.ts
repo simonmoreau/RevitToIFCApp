@@ -13,7 +13,9 @@ export interface IWorkItemResponse {
 }
 
 export enum WorkItemCreationStatus {
-  Created = 0, NotEnoughCredit, Error
+  Created = 0,
+  NotEnoughCredit,
+  Error,
 }
 
 export interface IWorkItemStatus {
@@ -23,6 +25,25 @@ export interface IWorkItemStatus {
   id: string;
 }
 
+export interface IWorkItemStatusEntity {
+  progress: string;
+  reportUrl: string;
+  fileUrl: string;
+  stats: string;
+  status: string;
+  userId: string;
+  timeQueued: Date;
+  size: number;
+  version: string;
+  fileName: string;
+  timeDownloadStarted: Date;
+  timeInstructionsStarted: Date;
+  timeInstructionsEnded: Date;
+  timeUploadEnded: Date;
+  timeFinished: Date;
+  bytesDownloaded: number;
+  bytesUploaded: number;
+}
 
 export interface ConversionObject {
   uploadObjectResult: UploadObjectResult;
@@ -42,4 +63,3 @@ export interface IConversionCreditsUpdate {
   userId: string;
   creditsNumber: number;
 }
-

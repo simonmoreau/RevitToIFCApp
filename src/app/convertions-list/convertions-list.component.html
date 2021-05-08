@@ -1,8 +1,19 @@
 <mat-expansion-panel class="expansion-panel">
-    <mat-expansion-panel-header class="expansion-panel-header">
-      <mat-panel-title class="panel-title">
-        All conversions
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <p>You don't have any conversion yet. Upload a Revit model to get started.</p>
-  </mat-expansion-panel>
+  <mat-expansion-panel-header class="expansion-panel-header">
+    <mat-panel-title class="panel-title">
+      All conversions
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-card-subtitle *ngIf="isLoading">
+    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+  </mat-card-subtitle>
+  <p *ngIf="zeroConversion">You don't have any conversion yet. Upload a Revit model to get started.</p>
+  <div *ngIf="hasConversions">
+    <div *ngFor="let workItem of workItems">
+      <div style="margin-top: 7px;">
+        <a mat-flat-button color="primary" href="{{workItem.fileUrl}}" download="{{workItem.fileName}}">Download File</a>
+      </div>
+      <div style="margin-top: 7px;">{{workItem.fileName}}</div>
+    </div>
+  </div>
+</mat-expansion-panel>
