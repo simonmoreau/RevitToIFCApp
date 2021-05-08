@@ -98,7 +98,7 @@ export class UploadComponent {
       currentFileItem.progress = null;
       currentFileItem.status = 'Converting ...';
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
-      outputName = outputName + '.ifc';
+      outputName = Date.now().toString() + '-' + outputName + '.ifc';
 
       const versionNumber: number = +currentFileItem.version;
       let revitVersion: string = currentFileItem.version;
