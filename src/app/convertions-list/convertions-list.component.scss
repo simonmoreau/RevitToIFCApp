@@ -20,6 +20,27 @@ table {
 }
   
 td, th {
-    width: 25%;
     border-bottom-color: rgba(0,0,0,.12);
 }
+
+.small-column {
+    width: 100px;
+}
+
+.date-column {
+    width: 200px;
+}
+
+.center{
+    text-align: center;
+}
+
+
+a.material-icons {
+    text-decoration: none;
+    color: var(--color-primary)
+}
+
+a.material-icons:hover {
+    color: var(--color-accent)
+  }

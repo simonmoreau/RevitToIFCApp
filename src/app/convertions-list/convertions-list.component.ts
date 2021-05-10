@@ -12,6 +12,7 @@ export interface WorkItemData {
   name: string;
   fileUrl: string;
   report: string;
+  date: Date;
 }
 
 @Component({
@@ -25,7 +26,7 @@ export class ConvertionsListComponent implements OnInit {
   zeroConversion: boolean;
   hasConversions: boolean;
 
-  displayedColumns: string[] = ['name', 'status', 'fileUrl', 'report'];
+  displayedColumns: string[] = ['name', 'status', 'date', 'report', 'fileUrl'];
   dataSource: MatTableDataSource<WorkItemData>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -75,7 +76,8 @@ CreateNewWorkItemData(item: IWorkItemStatusEntity): WorkItemData {
     status: item.status,
     name: item.fileName,
     fileUrl: item.fileUrl,
-    report: item.reportUrl
+    report: item.reportUrl,
+    date: item.timeQueued
   };
 }
 }
