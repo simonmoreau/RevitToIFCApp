@@ -5,6 +5,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Cosmos.Table;
+using Microsoft.Azure.Storage.Blob;
+using System.IO;
 
 namespace api
 {
@@ -21,7 +23,9 @@ namespace api
         [QueueTrigger("completedworkitems", Connection = "StorageConnectionString")] WorkItemStatus completedWorkItemStatus,
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> completedWorkItemsTable,
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] CloudTable completedWorkItemsCloudTable,
+        [Blob("reports", FileAccess.Write)] CloudBlobContainer reportsCloudBlobContainer,
         [Table("createdWorkItems", Connection = "StorageConnectionString")] CloudTable createdWorkItemsCloudTable,
+        [Queue("failedConversions", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> failedConversionsQueue,
         ILogger log)
     {
       log.LogInformation($"C# Queue trigger function ProcessCompletedWorkItem processed");
@@ -31,6 +35,7 @@ namespace api
       string fileName = null;
       int fileSize = 0;
       string fileUrl = null;
+      string inputUrl = null;
 
       // Get user id
       TableQuery<WorkItemStatusEntity> createdWorkItemsQuery = new TableQuery<WorkItemStatusEntity>().Where(
@@ -50,24 +55,53 @@ namespace api
         fileVersion = workItemStatusObject.Version;
         fileName = workItemStatusObject.FileName;
         fileUrl = workItemStatusObject.FileUrl;
+        inputUrl = workItemStatusObject.InputUrl;
       }
 
       // Add to the completed work item
 
       if (userId != null)
       {
-        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(completedWorkItemStatus, userId, fileSize, fileVersion, fileName, fileUrl);
+        WorkItemStatusEntity completedWorkItemStatusObject = Mappings.ToWorkItemStatusEntity(
+          completedWorkItemStatus,
+          userId,
+          fileSize,
+          fileVersion,
+          fileName,
+          fileUrl,
+          inputUrl);
 
-                  TableOperation tableOperation = TableOperation.InsertOrMerge(completedWorkItemStatusObject);
-          await createdWorkItemsCloudTable.ExecuteAsync(tableOperation);
+        // Save the report in Azure
+        await reportsCloudBlobContainer.CreateIfNotExistsAsync();
 
-          if (completedWorkItemStatusObject.Status == "Success")
-          {
-            // update the number of credits
-            int newCreditsNumber = await _utilities.UpdateCustomAttributeByUserId(completedWorkItemStatusObject.UserId, -1);
+        // Create a SAS token that's valid for one hour.
+        SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
+        sasConstraints.SharedAccessExpiryTime = DateTime.UtcNow.AddDays(30);
+        sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
 
-            log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
-          }
+        Uri reportUri = new Uri(completedWorkItemStatusObject.ReportUrl);
+        string reportName = Path.GetFileNameWithoutExtension(completedWorkItemStatusObject.FileName) + ".txt";
+        CloudBlockBlob target = reportsCloudBlobContainer.GetBlockBlobReference(reportName);
+        await target.StartCopyAsync(reportUri);
+
+        // Get its url
+        string reportUrl = target.Uri.AbsoluteUri + target.GetSharedAccessSignature(sasConstraints);
+        completedWorkItemStatusObject.ReportUrl = reportUrl;
+
+        TableOperation tableOperation = TableOperation.InsertOrMerge(completedWorkItemStatusObject);
+        await createdWorkItemsCloudTable.ExecuteAsync(tableOperation);
+
+        if (completedWorkItemStatusObject.Status == "Success")
+        {
+          // update the number of credits
+          int newCreditsNumber = await _utilities.UpdateCustomAttributeByUserId(completedWorkItemStatusObject.UserId, -1);
+
+          log.LogInformation($"The user {completedWorkItemStatusObject.UserId} has now {newCreditsNumber} credits.");
+        }
+        else
+        {
+          await failedConversionsQueue.AddAsync(completedWorkItemStatusObject);
+        }
       }
 
     }

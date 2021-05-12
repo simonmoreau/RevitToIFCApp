@@ -21,6 +21,7 @@ namespace api
     public string Progress { get; set; }
     public string ReportUrl { get; set; }
     public string FileUrl { get; set; }
+    public string InputUrl {get;set;}
     public Statistic Stats { get; set; }
     public string Status { get; set; }
     public string UserId { get; set; }
@@ -58,7 +59,14 @@ namespace api
 
   public static class Mappings
   {
-    public static WorkItemStatusEntity ToWorkItemStatusEntity(this WorkItemStatus workItemStatus, string userId, int size, string version, string fileName, string fileUrl)
+    public static WorkItemStatusEntity ToWorkItemStatusEntity(
+      this WorkItemStatus workItemStatus, 
+      string userId, 
+      int size, 
+      string version, 
+      string fileName, 
+      string fileUrl,
+      string inputUrl)
     {
       return new WorkItemStatusEntity()
       {
@@ -69,6 +77,7 @@ namespace api
         Progress = workItemStatus.Progress,
         ReportUrl = workItemStatus.ReportUrl,
         FileUrl = fileUrl,
+        InputUrl = inputUrl,
         Stats = ToStatistic(workItemStatus.Stats),
         Status = workItemStatus.Status.ToString(),
         TimeQueued = workItemStatus.Stats.TimeQueued,

@@ -72,7 +72,7 @@ namespace api
           string onCompleteCallbackUrl = Environment.GetEnvironmentVariable("api_uri") + "/api/onworkitemcomplete";
           PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60*24*30);
 
-          DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(rvtBucketKey, inputObjectName, postBucketsSigned, "read"));
+          DynamicJsonResponse dynamicJsonResponseDownload = await apiInstance.CreateSignedResourceAsync(rvtBucketKey, inputObjectName, postBucketsSigned, "read");
           PostObjectSigned downloadSigned = dynamicJsonResponseDownload.ToObject<PostObjectSigned>();
           DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(ifcBucketKey, outputObjectName, postBucketsSigned, "readwrite");
           PostObjectSigned uploadSigned = dynamicJsonResponseUpload.ToObject<PostObjectSigned>();
@@ -98,7 +98,8 @@ namespace api
             workItemDescription.fileSize, 
             workItemDescription.version, 
             workItemDescription.fileName, 
-            uploadSigned.SignedUrl);
+            uploadSigned.SignedUrl,
+            downloadSigned.SignedUrl);
 
           await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
 
