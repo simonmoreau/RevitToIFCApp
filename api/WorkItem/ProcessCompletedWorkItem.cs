@@ -24,7 +24,7 @@ namespace api
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> completedWorkItemsTable,
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] CloudTable completedWorkItemsCloudTable,
         [Blob("reports", FileAccess.Write)] CloudBlobContainer reportsCloudBlobContainer,
-        [Table("createdWorkItems", Connection = "StorageConnectionString")] CloudTable createdWorkItemsCloudTable,
+        [Table("workItems", Connection = "StorageConnectionString")] CloudTable workItemsCloudTable,
         [Queue("failedConversions", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> failedConversionsQueue,
         ILogger log)
     {
@@ -48,7 +48,7 @@ namespace api
 
       // Execute the query and loop through the results
       foreach (WorkItemStatusEntity workItemStatusObject in
-          await createdWorkItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
+          await workItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
       {
         userId = workItemStatusObject.UserId;
         fileSize = workItemStatusObject.Size;
@@ -89,7 +89,7 @@ namespace api
         completedWorkItemStatusObject.ReportUrl = reportUrl;
 
         TableOperation tableOperation = TableOperation.InsertOrMerge(completedWorkItemStatusObject);
-        await createdWorkItemsCloudTable.ExecuteAsync(tableOperation);
+        await workItemsCloudTable.ExecuteAsync(tableOperation);
 
         if (completedWorkItemStatusObject.Status == "Success")
         {

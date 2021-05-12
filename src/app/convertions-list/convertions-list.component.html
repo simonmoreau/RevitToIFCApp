@@ -8,7 +8,7 @@
     <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
   </mat-card-subtitle>
   <p *ngIf="zeroConversion">You don't have any conversion yet. Upload a Revit model to get started.</p>
-  <div >
+  <div *ngIf="!zeroConversion">
     <mat-form-field>
       <mat-label>Filter</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Success" #input/>

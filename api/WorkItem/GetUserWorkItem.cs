@@ -17,7 +17,7 @@ namespace api
     [FunctionName("GetUserWorkItem")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{userId}/workitems")] HttpRequest req,
-        [Table("createdWorkItems", Connection = "StorageConnectionString")] CloudTable createdWorkItemsCloudTable,
+        [Table("workItems", Connection = "StorageConnectionString")] CloudTable workItemsCloudTable,
         string userId,
         ILogger log)
     {
@@ -37,7 +37,7 @@ namespace api
 
         // Execute the query and loop through the results
         foreach (WorkItemStatusEntity workItemStatusObject in
-            await createdWorkItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
+            await workItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
         {
           WorkItemStatusEntities.Add(workItemStatusObject);
         }

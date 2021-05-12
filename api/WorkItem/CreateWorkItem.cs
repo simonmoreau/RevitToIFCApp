@@ -46,7 +46,7 @@ namespace api
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
         [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
-        [Table("createdWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> createdWorkItemsTable,
+        [Table("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> workItemsTable,
         ILogger log)
     {
       log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");
@@ -101,7 +101,7 @@ namespace api
             uploadSigned.SignedUrl,
             downloadSigned.SignedUrl);
 
-          await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
+          await workItemsTable.AddAsync(WorkItemStatusObject);
 
           WorkItemStatusResponse workItemStatusResponse = new WorkItemStatusResponse()
           {
