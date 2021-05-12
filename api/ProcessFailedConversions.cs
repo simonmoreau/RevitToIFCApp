@@ -23,15 +23,15 @@ namespace api
 
       Uri fileUri = new Uri(failedConversion.InputUrl);
       CloudBlockBlob target = faildedConversionCloudBlobContainer.GetBlockBlobReference(failedConversion.FileName);
-      try
-      {
-          string response = await target.StartCopyAsync(fileUri);
-      }
-      catch (System.Exception ex)
-      {
-          System.Diagnostics.Debug.WriteLine(ex.Message);
-          throw;
-      }
+      // try
+      // {
+      //     string response = await target.StartCopyAsync(fileUri);
+      // }
+      // catch (System.Exception ex)
+      // {
+      //     System.Diagnostics.Debug.WriteLine(ex.Message);
+      //     throw;
+      // }
       
     }
   }

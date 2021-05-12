@@ -13,6 +13,7 @@ export interface WorkItemData {
   fileUrl: string;
   report: string;
   date: Date;
+  canDownload: boolean;
 }
 
 @Component({
@@ -32,7 +33,10 @@ export class ConvertionsListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private apiService: ApiService, private authService: MsalService ) {  }
+  constructor(
+    private apiService: ApiService,
+    private authService: MsalService
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -40,14 +44,16 @@ export class ConvertionsListComponent implements OnInit {
       .GetUserWorkItems(this.authService.getAccount().accountIdentifier)
       .subscribe((items) => {
         this.workItems = items;
-        const workItemDataArray = items.map(item => this.CreateNewWorkItemData(item));
+        const workItemDataArray = items.map((item) =>
+          this.CreateNewWorkItemData(item)
+        );
 
         // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(workItemDataArray);
+        this.dataSource = new MatTableDataSource(workItemDataArray);
 
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
         console.log(items);
         if (items.length == 0) {
           this.zeroConversion = true;
@@ -70,14 +76,19 @@ export class ConvertionsListComponent implements OnInit {
   }
 
   /** Builds and returns a new User. */
-CreateNewWorkItemData(item: IWorkItemStatusEntity): WorkItemData {
+  CreateNewWorkItemData(item: IWorkItemStatusEntity): WorkItemData {
+    let canDownload = false;
 
-  return {
-    status: item.status,
-    name: item.fileName,
-    fileUrl: item.fileUrl,
-    report: item.reportUrl,
-    date: item.timeQueued
-  };
-}
+    if (item.status == 'Success') {
+      canDownload = true;
+    }
+    return {
+      status: item.status,
+      name: item.fileName,
+      fileUrl: item.fileUrl,
+      report: item.reportUrl,
+      date: item.timeQueued,
+      canDownload: canDownload,
+    };
+  }
 }

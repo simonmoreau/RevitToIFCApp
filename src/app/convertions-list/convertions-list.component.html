@@ -8,8 +8,7 @@
     <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
   </mat-card-subtitle>
   <p *ngIf="zeroConversion">You don't have any conversion yet. Upload a Revit model to get started.</p>
-  <!-- *ngIf="hasConversions" -->
-  <div>
+  <div >
     <mat-form-field>
       <mat-label>Filter</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Success" #input/>
@@ -26,8 +25,8 @@
 
         <!-- Status Column -->
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="small-column"> Status </th>
-          <td mat-cell *matCellDef="let row" class="small-column"> {{row.status}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="date-column"> Status </th>
+          <td mat-cell *matCellDef="let row" class="date-column"> {{row.status}} </td>
         </ng-container>
 
         <!-- Date Column -->
@@ -48,7 +47,7 @@
         <ng-container matColumnDef="fileUrl">
           <th mat-header-cell *matHeaderCellDef class="small-column center"> Download </th>
           <td mat-cell *matCellDef="let row" class="small-column center">
-            <a mat-flat-button color="primary" href="{{row.fileUrl}}" download="{{row.name}}">Download File</a>
+            <a mat-flat-button color="primary" disabled="{{!row.canDownload}}" href="{{row.fileUrl}}" download="{{row.name}}">Download File</a>
           </td>
         </ng-container>
     
@@ -64,4 +63,5 @@
       <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
     </div>
   </div>
+  <p>All converted files will stay available here for 30 days.</p>
 </mat-expansion-panel>
