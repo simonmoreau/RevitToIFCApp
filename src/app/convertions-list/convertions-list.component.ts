@@ -14,6 +14,7 @@ export interface WorkItemData {
   report: string;
   date: Date;
   canDownload: boolean;
+  canDownloadReport: boolean;
 }
 
 @Component({
@@ -78,10 +79,16 @@ export class ConvertionsListComponent implements OnInit {
   /** Builds and returns a new User. */
   CreateNewWorkItemData(item: IWorkItemStatusEntity): WorkItemData {
     let canDownload = false;
+    let canDownloadReport = false;
 
     if (item.status == 'Success') {
       canDownload = true;
     }
+
+    if (item.reportUrl != null) {
+      canDownloadReport = true;
+    }
+
     return {
       status: item.status,
       name: item.fileName,
@@ -89,6 +96,7 @@ export class ConvertionsListComponent implements OnInit {
       report: item.reportUrl,
       date: item.timeQueued,
       canDownload: canDownload,
+      canDownloadReport: canDownloadReport,
     };
   }
 }

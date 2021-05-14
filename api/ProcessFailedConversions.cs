@@ -13,7 +13,7 @@ namespace api
   {
     [FunctionName("ProcessFailedConversions")]
     public static async Task Run([QueueTrigger("failedConversions", Connection = "StorageConnectionString")] WorkItemStatusEntity failedConversion,
-    [Blob("failed-conversions", FileAccess.Write)] CloudBlobContainer faildedConversionCloudBlobContainer,
+    [Blob("failed-conversions", FileAccess.Write, Connection = "StorageConnectionString")] CloudBlobContainer faildedConversionCloudBlobContainer,
     ILogger log)
     {
       log.LogInformation($"C# Queue trigger function processed: failedConversion");

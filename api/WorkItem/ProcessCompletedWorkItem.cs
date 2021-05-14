@@ -23,7 +23,7 @@ namespace api
         [QueueTrigger("completedworkitems", Connection = "StorageConnectionString")] WorkItemStatus completedWorkItemStatus,
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> completedWorkItemsTable,
         // [Table("completedWorkItems", Connection = "StorageConnectionString")] CloudTable completedWorkItemsCloudTable,
-        [Blob("reports", FileAccess.Write)] CloudBlobContainer reportsCloudBlobContainer,
+        [Blob("reports", FileAccess.Write, Connection = "StorageConnectionString")] CloudBlobContainer reportsCloudBlobContainer,
         [Table("workItems", Connection = "StorageConnectionString")] CloudTable workItemsCloudTable,
         [Queue("failedConversions", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> failedConversionsQueue,
         ILogger log)

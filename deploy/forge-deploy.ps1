@@ -22,8 +22,8 @@ forge-dm create-bucket -r persistent $settings.Values.rvtStorageKey
 
 ## Create an array with every version of the engine
 $engineVersions = '2018','2019', '2020', '2021', '2022'
-# $appName = 'RevitToIFC'
-$appName = 'RevitToIFCDev'
+$appName = 'RevitToIFC'
+# $appName = 'RevitToIFCDev'
 
 # forge-da list-engines
 # forge-da list-appbundles
@@ -101,7 +101,7 @@ function DeployApplication($revitVersion,$bundle) {
    }
 }
 
-## Loop on each version
+# Loop on each version
 foreach ($engineVersion in $engineVersions) {
    DeployApplication -revitVersion $engineVersion -bundle $bundlePath
 }
