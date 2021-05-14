@@ -14,19 +14,24 @@ $settings = Get-Content -Raw -Path $settingsFile | ConvertFrom-Json
 $env:FORGE_CLIENT_ID = $settings.Values.FORGE_CLIENT_ID
 $env:FORGE_CLIENT_SECRET = $settings.Values.FORGE_CLIENT_SECRET
 
+forge-dm list-buckets
+
 ## Create the Forge bucket to store the converted files
-# forge-dm create-bucket -r transient $settings.Values.ossBucketKey
+forge-dm create-bucket -r persistent $settings.Values.ifcStorageKey
+forge-dm create-bucket -r persistent $settings.Values.rvtStorageKey
 
 ## Create an array with every version of the engine
-$engineVersions = '2018','2019', '2020', '2021'
-$appName = 'RevitToIFC'
+$engineVersions = '2018','2019', '2020', '2021', '2022'
+# $appName = 'RevitToIFC'
+$appName = 'RevitToIFCDev'
 
-forge-da list-appbundles
-forge-da list-activities
+# forge-da list-engines
+# forge-da list-appbundles
+# forge-da list-activities
 
 function DeployApplication($revitVersion,$bundle) {
    
-   $nickName = 'RevitToIFC'
+   $nickName = $appName
    $appbundle_file = $bundle
    $appbundle_name = [string]::Format('{0}Bundle{1}',$appName,$revitVersion) # Your own appbundle name here
    $appbundle_alias = $revitVersion # Your own alias name here

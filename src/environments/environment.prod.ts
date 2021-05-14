@@ -1,5 +1,7 @@
 export const environment = {
   production: true,
+  ifcStorageKey: 'ifc-storage',
+  rvtStorageKey: 'rvt-storage',
   localDomain: 'rvt-to-ifc.bim42.com',
   localUri: 'https://rvt-to-ifc.bim42.com',
   apiUri: 'https://revittoifcfunction.azurewebsites.net',

@@ -38,8 +38,11 @@
         "appArtifactLocation": {
             "value": "dist/angular-basic"
         },
-        "ossBucketKey": {
-            "value": "ifc-storage"
+        "ifcStorageKey": {
+            "value": "ifc-storage-dev"
+        },
+        "rvtStorageKey": {
+            "value": "rvt-storage-dev"
         },
         "TenantId": {
             "value": "revittoifc.onmicrosoft.com"

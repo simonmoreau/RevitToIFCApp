@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId, IConversionCreditsUpdate } from './api.model';
+import { IForgeToken, IWorkItemResponse, IWorkItemStatus, IMessage, ICheckoutSessionId, IConversionCreditsUpdate, IWorkItemStatusEntity } from './api.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -72,6 +72,10 @@ export class ApiService {
 
   public GetWorkItemStatus(workItemId: string ): Observable<IWorkItemStatus> {
     return this.get<IWorkItemStatus>(this.baseAPIURL + 'workitem/' + workItemId);
+  }
+
+  public GetUserWorkItems(userId: string ): Observable<IWorkItemStatusEntity[]> {
+    return this.get<IWorkItemStatusEntity[]>(this.baseAPIURL + '/' + userId +'/workitems');
   }
 
   // private function for REST requests

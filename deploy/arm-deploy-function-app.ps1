@@ -4,7 +4,7 @@ $location = "westeurope"
 az group create -n $resourceGroup -l $location
 
 # to check our deployement app
-az deployment group what-if -g $resourceGroup --template-file deploy\azuredeploy.json `
+az deployment group what-if -g $resourceGroup --template-file deploy\azuredeploy.json --debug `
 --parameters deploy\parameters.json
 
 # to deploy our function app

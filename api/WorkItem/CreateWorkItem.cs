@@ -46,7 +46,7 @@ namespace api
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "workitem")] HttpRequest req,
         [Table("token", "token", "token", Connection = "StorageConnectionString")] Token token,
-        [Table("createdWorkItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> createdWorkItemsTable,
+        [Table("workItems", Connection = "StorageConnectionString")] IAsyncCollector<WorkItemStatusEntity> workItemsTable,
         ILogger log)
     {
       log.LogInformation("C# HTTP trigger function processed CreateWorkItem.");
@@ -65,14 +65,16 @@ namespace api
         {
           // Create two signed URLs to upload the file to the activity and download the result
           ObjectsApi apiInstance = new ObjectsApi();
-          string bucketKey = Environment.GetEnvironmentVariable("ossBucketKey");  // string | URL-encoded bucket key
+          string rvtBucketKey = Environment.GetEnvironmentVariable("rvtStorageKey");  // string | URL-encoded bucket key
+          string ifcBucketKey = Environment.GetEnvironmentVariable("ifcStorageKey");  // string | URL-encoded bucket key
           string inputObjectName = workItemDescription.inputObjectName;  // string | URL-encoded object name
           string outputObjectName = workItemDescription.outputObjectName;
-          PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60);
+          string onCompleteCallbackUrl = Environment.GetEnvironmentVariable("api_uri") + "/api/onworkitemcomplete";
+          PostBucketsSigned postBucketsSigned = new PostBucketsSigned(60*24*30);
 
-          DynamicJsonResponse dynamicJsonResponseDownload = await (apiInstance.CreateSignedResourceAsync(bucketKey, inputObjectName, postBucketsSigned, "read"));
+          DynamicJsonResponse dynamicJsonResponseDownload = await apiInstance.CreateSignedResourceAsync(rvtBucketKey, inputObjectName, postBucketsSigned, "read");
           PostObjectSigned downloadSigned = dynamicJsonResponseDownload.ToObject<PostObjectSigned>();
-          DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(bucketKey, outputObjectName, postBucketsSigned, "readwrite");
+          DynamicJsonResponse dynamicJsonResponseUpload = await apiInstance.CreateSignedResourceAsync(ifcBucketKey, outputObjectName, postBucketsSigned, "readwrite");
           PostObjectSigned uploadSigned = dynamicJsonResponseUpload.ToObject<PostObjectSigned>();
 
           Autodesk.Forge.DesignAutomation.Model.WorkItem workItem = new Autodesk.Forge.DesignAutomation.Model.WorkItem()
@@ -81,7 +83,8 @@ namespace api
             Arguments = new Dictionary<string, IArgument>
                     {
                         { "rvtFile",  new XrefTreeArgument() { Url = downloadSigned.SignedUrl } },
-                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadSigned.SignedUrl } }
+                        { "result", new XrefTreeArgument { Verb=Verb.Put, Url = uploadSigned.SignedUrl } },
+                        { "onComplete", new XrefTreeArgument { Verb=Verb.Post, Url =  onCompleteCallbackUrl} }
                     }
           };
 
@@ -89,9 +92,16 @@ namespace api
           // ApiResponse<Page<string>> page = await _engineApi.GetEnginesAsync();
           WorkItemStatus workItemStatusCreationResponse = workItemResponse.Content;
 
-          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(workItemStatusCreationResponse, workItemDescription.userId, workItemDescription.fileSize, workItemDescription.version, workItemDescription.fileName);
+          WorkItemStatusEntity WorkItemStatusObject =  Mappings.ToWorkItemStatusEntity(
+            workItemStatusCreationResponse, 
+            workItemDescription.userId, 
+            workItemDescription.fileSize, 
+            workItemDescription.version, 
+            workItemDescription.fileName, 
+            uploadSigned.SignedUrl,
+            downloadSigned.SignedUrl);
 
-          await createdWorkItemsTable.AddAsync(WorkItemStatusObject);
+          await workItemsTable.AddAsync(WorkItemStatusObject);
 
           WorkItemStatusResponse workItemStatusResponse = new WorkItemStatusResponse()
           {

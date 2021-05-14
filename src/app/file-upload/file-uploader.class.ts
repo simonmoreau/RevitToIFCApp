@@ -10,6 +10,7 @@ import { IUploadObject } from '../forge/forge.model';
 import { JsonPipe } from '@angular/common';
 import { flatMap } from 'rxjs/operators';
 import { IForgeToken } from '../services/api.model';
+import { environment } from 'src/environments/environment';
 
 
 function isFile(value: any): boolean {
@@ -218,7 +219,7 @@ export class FileUploader {
   }
 
   public getNotUploadedItems(): any[] {
-    return this.queue.filter((item: FileItem) => !item.isUploaded);
+    return this.queue.filter((item: FileItem) => (!item.isUploaded) && (!item.isError));
   }
 
   public getReadyItems(): any[] {
@@ -329,7 +330,7 @@ export class FileUploader {
       throw new TypeError('The file specified is no longer valid');
     }
 
-    const bucketKey = 'ifc-storage';
+    const bucketKey = environment.rvtStorageKey;
     const objectName = Date.now().toString() + '-' + item.file.name;
 
     let nbChunkProcessed = 0;

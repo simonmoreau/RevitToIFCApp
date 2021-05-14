@@ -11,6 +11,7 @@ import { FileItem } from '../file-upload/file-item.class';
 import { throwError } from 'rxjs';
 import { MsalService } from '@azure/msal-angular';
 import { CreditsCounterService } from '../credits-counter/credits-counter.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-upload',
@@ -24,7 +25,7 @@ export class UploadComponent {
   hasAnotherDropZoneOver: boolean;
 
   constructor(private userService: UserService, private forgeService: ForgeService, private apiService: ApiService, private authService: MsalService,private creditsCounterService: CreditsCounterService){
-    const bucketKey = 'ifc-storage';
+    const bucketKey = environment.rvtStorageKey;
     const objectName = 'input-revit-model';
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
@@ -60,6 +61,8 @@ export class UploadComponent {
         fileItem.status = 'You don\'t have enough credit !';
         fileItem.isError = true;
       }
+
+      
     });
 
     this.uploader.onRemoveItemEvent.subscribe( (fileItem: FileItem) => {
@@ -95,7 +98,7 @@ export class UploadComponent {
       currentFileItem.progress = null;
       currentFileItem.status = 'Converting ...';
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
-      outputName = outputName + '.ifc';
+      outputName = Date.now().toString() + '-' + outputName + '.ifc';
 
       const versionNumber: number = +currentFileItem.version;
       let revitVersion: string = currentFileItem.version;
@@ -103,8 +106,11 @@ export class UploadComponent {
       {
         revitVersion = '2018';
       }
+
+      // const appName = 'RevitToIFC';
+      const appName = 'RevitToIFCDev';
       
-      const activityId = 'RevitToIFC.RevitToIFCActivity' + revitVersion + '+' + revitVersion;
+      const activityId = appName + '.' + appName + 'Activity' + revitVersion + '+' + revitVersion;
 
       return this.apiService.CreateWorkItem(
         conversionObject.uploadObjectResult.uploadObject.objectKey, 

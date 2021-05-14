@@ -1,0 +1,46 @@
+.panel-title {
+    font-size: 1.333rem;
+    font-weight: 400;
+}
+
+.expansion-panel {
+    padding: 5px 16px;
+}
+.expansion-panel-header {
+    padding: 0px 16px;
+}
+
+table {
+    width: 100%;
+}
+  
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+  
+td, th {
+    border-bottom-color: rgba(0,0,0,.12);
+}
+
+.small-column {
+    width: 100px;
+}
+
+.date-column {
+    width: 200px;
+}
+
+.center{
+    text-align: center;
+}
+
+
+a.material-icons {
+    text-decoration: none;
+    color: var(--color-primary)
+}
+
+a.material-icons:hover {
+    color: var(--color-accent)
+  }
