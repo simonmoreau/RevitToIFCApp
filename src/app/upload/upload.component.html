@@ -1,7 +1,7 @@
 <app-credits-counter></app-credits-counter>
 <mat-card class="card-section">
     <mat-card-content *ngIf="uploader?.queue?.length == 0" class="mat-display-2">
-        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt"
+        <input type="file" name="file" ng2FileSelect [uploader]="uploader" multiple id="file" accept=".rvt,.rfa" 
             class="inputfile" />
         <label for="file">
             <span class="material-icons">add_circle</span>

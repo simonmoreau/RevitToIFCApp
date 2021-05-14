@@ -17,8 +17,8 @@ $env:FORGE_CLIENT_SECRET = $settings.Values.FORGE_CLIENT_SECRET
 forge-dm list-buckets
 
 ## Create the Forge bucket to store the converted files
-forge-dm create-bucket -r persistent $settings.Values.ifcStorageKey
-forge-dm create-bucket -r persistent $settings.Values.rvtStorageKey
+# forge-dm create-bucket -r persistent $settings.Values.ifcStorageKey
+# forge-dm create-bucket -r persistent $settings.Values.rvtStorageKey
 
 ## Create an array with every version of the engine
 $engineVersions = '2018','2019', '2020', '2021', '2022'
@@ -76,12 +76,12 @@ function DeployApplication($revitVersion,$bundle) {
    if ($result.Lines -eq 0) {
       Write-Host "Creating new activity"
       forge-da create-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update --nickname $nickName `
-      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
+      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" `
       --output result --output-verb put --output-zip false --output-required true --output-description "Results" --output-local-name output.ifc
    } else {
       Write-Host "Updating existing activity"
       forge-da update-activity $activity_name $appbundle_name $appbundle_alias $appbundle_engine --update --nickname $nickName `
-      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" --input-local-name input.rvt `
+      --input rvtFile --input-verb get --input-zip false --input-required true --input-description "Input Revit model" `
       --output result --output-verb put --output-zip false --output-required true --output-description "Results" --output-local-name output.ifc
    }
 
