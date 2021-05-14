@@ -39,7 +39,16 @@ namespace api
         foreach (WorkItemStatusEntity workItemStatusObject in
             await workItemsCloudTable.ExecuteQuerySegmentedAsync(createdWorkItemsQuery, null))
         {
-          WorkItemStatusEntities.Add(workItemStatusObject);
+          TimeSpan? timeSpan = DateTime.Now - workItemStatusObject.TimeDownloadStarted;
+          TimeSpan thirtyDays = new TimeSpan(30, 0, 0, 0);
+
+          if (timeSpan != null)
+          {
+            if (timeSpan < thirtyDays)
+            {
+              WorkItemStatusEntities.Add(workItemStatusObject);
+            }
+          }
         }
 
         return new OkObjectResult(WorkItemStatusEntities);

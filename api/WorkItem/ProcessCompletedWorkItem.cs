@@ -80,7 +80,7 @@ namespace api
         sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
 
         Uri reportUri = new Uri(completedWorkItemStatusObject.ReportUrl);
-        string reportName = Path.GetFileNameWithoutExtension(completedWorkItemStatusObject.FileName) + ".txt";
+        string reportName = DateTime.Now.ToString() + "_" + Path.GetFileNameWithoutExtension(completedWorkItemStatusObject.FileName) + ".txt";
         CloudBlockBlob target = reportsCloudBlobContainer.GetBlockBlobReference(reportName);
         await target.StartCopyAsync(reportUri);
 
