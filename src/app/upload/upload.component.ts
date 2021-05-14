@@ -108,7 +108,7 @@ export class UploadComponent {
       }
 
       // const appName = 'RevitToIFC';
-      const appName = 'RevitToIFCDev';
+      const appName = 'RevitToIFC';
       
       const activityId = appName + '.' + appName + 'Activity' + revitVersion + '+' + revitVersion;
 
