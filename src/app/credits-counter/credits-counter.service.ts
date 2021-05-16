@@ -29,15 +29,23 @@ export class CreditsCounterService {
   public UpdateConversionCredits(checkoutSessionId: string): Observable<IConversionCreditsUpdate> {
 
     this.checkAccount();
-    return this.apiService
-    .updateConversionCredits(this.account.accountIdentifier,checkoutSessionId).pipe(
-      map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
-        this.creditCount = conversionCreditsUpdate.creditsNumber;
-        this.displayedCredits = this.creditCount;
-        this.displayedCreditsEvent.next(this.displayedCredits);
-        return conversionCreditsUpdate;
-      })
-    );
+    if (this.account)
+    {
+      return this.apiService
+      .updateConversionCredits(this.account.accountIdentifier,checkoutSessionId).pipe(
+        map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
+          this.creditCount = conversionCreditsUpdate.creditsNumber;
+          this.displayedCredits = this.creditCount;
+          this.displayedCreditsEvent.next(this.displayedCredits);
+          return conversionCreditsUpdate;
+        })
+      );
+    }
+    else
+    {
+      console.log("Could not retrieve the account id, please contact simon@bim42.com")
+    }
+
   }
 
 
