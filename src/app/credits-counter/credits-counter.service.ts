@@ -27,20 +27,19 @@ export class CreditsCounterService {
   }
 
   public UpdateConversionCredits(checkoutSessionId: string): Observable<IConversionCreditsUpdate> {
-    if (!this.account) {
-      this.checkAccount();
-    }
 
+    this.checkAccount();
     return this.apiService
-      .updateConversionCredits(this.account.accountIdentifier,checkoutSessionId).pipe(
-        map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
-          this.creditCount = conversionCreditsUpdate.creditsNumber;
-          this.displayedCredits = this.creditCount;
-          this.displayedCreditsEvent.next(this.displayedCredits);
-          return conversionCreditsUpdate;
-        })
-      );
+    .updateConversionCredits(this.account.accountIdentifier,checkoutSessionId).pipe(
+      map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
+        this.creditCount = conversionCreditsUpdate.creditsNumber;
+        this.displayedCredits = this.creditCount;
+        this.displayedCreditsEvent.next(this.displayedCredits);
+        return conversionCreditsUpdate;
+      })
+    );
   }
+
 
   public UpdateDisplayedCredits(creditToAdd: number): number
   {
