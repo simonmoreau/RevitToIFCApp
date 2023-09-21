@@ -57,7 +57,7 @@
     <None Include="RevitToIFCBundle.addin" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="RevitToIFCBundle.bundle\Contents\RevitToIFCBundle\" />
+    <Folder Include="RevitToIFCBundle.bundle\Contents\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="RevitToIFCBundle.bundle\PackageContents.xml" />
