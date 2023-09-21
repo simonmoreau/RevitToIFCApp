@@ -17,7 +17,7 @@ CopyToFolder $revitVersion $addinFolder
 
 # Copy to the package folder structure
 $BundleFolder = ($ProjectDir + "RevitToIFCBundle.bundle\")
-xcopy /Y /F ($TargetDir + "*.dll") ($BundleFolder + "Contents\RevitToIFCBundle")
+xcopy /Y /F ($TargetDir + "*.dll") ($BundleFolder + "Contents\")
 xcopy /Y /F ($ProjectDir + "*.addin") ($BundleFolder + "Contents\")
 
 
