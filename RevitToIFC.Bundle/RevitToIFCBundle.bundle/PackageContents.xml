@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationPackage>
+  <Components Description="Export to IFC">
+    <RuntimeRequirements OS="Win64"
+                         Platform="Revit"
+                         SeriesMin="R2018"
+                         SeriesMax="R2021" />
+    <ComponentEntry AppName="RevitToIFCBundle"
+                    Version="1.0.0"
+                    ModuleName="./Contents/RevitToIFCBundle.addin"
+                    AppDescription="Export to IFC"
+                    LoadOnCommandInvocation="False"
+                    LoadOnRevitStartup="True" />
+  </Components>
+</ApplicationPackage>
