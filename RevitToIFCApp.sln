@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RevitToIFC.Bundle", "RevitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitToIFCBundle", "RevitToIFC.Bundle\RevitToIFCBundle.csproj", "{089DD3BA-C6A5-4F6F-9122-A22A625F3FC4}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "RevitToIFC.Web", "RevitToIFC.Web\RevitToIFC.Web.esproj", "{282943E7-9A51-43E3-8415-6D4075C7BCC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,12 +29,19 @@ Global
 		{089DD3BA-C6A5-4F6F-9122-A22A625F3FC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{089DD3BA-C6A5-4F6F-9122-A22A625F3FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{089DD3BA-C6A5-4F6F-9122-A22A625F3FC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{089DD3BA-C6A5-4F6F-9122-A22A625F3FC4} = {488665C0-AB5A-43B8-8587-83AE2B3E9FCC}
+		{282943E7-9A51-43E3-8415-6D4075C7BCC7} = {DE9B7424-4852-4DD4-BED6-FAF14615B8BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00E2DA90-F745-47D6-AF54-5C457967FC50}
