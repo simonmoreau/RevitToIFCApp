@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import {
   Event,
   NavigationCancel,
@@ -7,33 +7,62 @@ import {
   NavigationStart,
   Router,
 } from '@angular/router';
-import { BroadcastService, MsalService } from '@azure/msal-angular';
-import { Logger, CryptoUtils } from 'msal';
-import { isIE, b2cPolicies } from './app-config';
+
+import { IdTokenClaims, PromptValue } from '@azure/msal-common';
+import {
+  AccountInfo,
+  AuthenticationResult,
+  EventMessage,
+  EventType,
+  InteractionStatus,
+  InteractionType,
+  PopupRequest,
+  RedirectRequest,
+  SsoSilentRequest,
+} from '@azure/msal-browser';
+import {
+  MsalService,
+  MsalBroadcastService,
+  MSAL_GUARD_CONFIG,
+  MsalGuardConfiguration,
+} from '@azure/msal-angular';
+import { b2cPolicies } from './auth-config';
+
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+
 import { UserService } from './services/user.service';
 import { NgcCookieConsentService } from 'ngx-cookieconsent';
 
 // declare gtag as a function to set and sent the events
 declare let gtag: Function;
 
+type IdTokenClaimsWithPolicyId = IdTokenClaims & {
+  acr?: string,
+  tfp?: string,
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   isIframe = false;
   loggedIn = false;
   userName: any;
   loading: boolean;
+  loginDisplay = false;
+  private readonly _destroying$ = new Subject<void>();
 
   constructor(
-    private broadcastService: BroadcastService,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
-    private userService: UserService,
+    private msalBroadcastService: MsalBroadcastService,
     private router: Router,
     private ccService: NgcCookieConsentService
   ) {
+
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         gtag('config', 'G-2S7M7HEKL6', {
@@ -62,93 +91,182 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.isIframe = window !== window.parent && !window.opener;
-    this.checkAccount();
+    this.setLoginDisplay();
 
-    // event listeners for authentication status
-    this.broadcastService.subscribe('msal:loginSuccess', (success) => {
-      // We need to reject id tokens that were not issued with the default sign-in policy.
-      // "acr" claim in the token tells us what policy is used (NOTE: for new policies (v2.0), use "tfp" instead of "acr")
-      // To learn more about b2c tokens, visit https://docs.microsoft.com/en-us/azure/active-directory-b2c/tokens-overview
-      if (success.idToken.claims['tfp'] !== b2cPolicies.names.signUpSignIn) {
-        window.alert(
-          'Password has been reset successfully. \nPlease sign-in with your new password'
-        );
-        return this.authService.logout();
-      }
+        /**
+         * You can subscribe to MSAL events as shown below. For more info,
+         * visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-angular/docs/v2-docs/events.md
+         */
+        this.msalBroadcastService.msalSubject$
+            .pipe(
+                filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+            )
+            .subscribe((result: EventMessage) => {
+                if (this.authService.instance.getAllAccounts().length === 0) {
+                    window.location.pathname = "/";
+                } else {
+                    this.setLoginDisplay();
+                }
+            });
 
-      console.log(
-        'login succeeded. id token acquired at: ' + new Date().toString()
-      );
-      console.log(success);
+            this.msalBroadcastService.inProgress$
+            .pipe(
+                filter((status: InteractionStatus) => status === InteractionStatus.None),
+                takeUntil(this._destroying$)
+            )
+            .subscribe(() => {
+                this.setLoginDisplay();
+                this.checkAndSetActiveAccount();
+            })
 
-      this.userService.refreshToken().subscribe((t) => {
-        console.log('Get a Forge Token');
-        console.log('this.router.navigateByUrl');
-        // this.router.navigateByUrl('/upload');
-      });
+            this.msalBroadcastService.msalSubject$
+            .pipe(
+                filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS
+                    || msg.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
+                    || msg.eventType === EventType.SSO_SILENT_SUCCESS),
+                takeUntil(this._destroying$)
+            )
+            .subscribe((result: EventMessage) => {
 
-      this.checkAccount();
-    });
+                let payload = result.payload as AuthenticationResult;
+                let idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
 
-    this.broadcastService.subscribe('msal:loginFailure', (error) => {
-      console.log('login failed');
-      console.log(error);
+                if (idtoken.acr === b2cPolicies.names.signUpSignIn || idtoken.tfp === b2cPolicies.names.signUpSignIn) {
+                    this.authService.instance.setActiveAccount(payload.account);
+                }
 
-      // Check for forgot password error
-      // Learn more about AAD error codes at https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
-      if (error.errorMessage.indexOf('AADB2C90118') > -1) {
-        this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-        if (isIE) {
-          this.authService.loginRedirect(b2cPolicies.authorities.resetPassword);
-        } else {
-          this.authService.loginPopup(b2cPolicies.authorities.resetPassword);
-        }
-      }
-    });
+                /**
+                 * For the purpose of setting an active account for UI update, we want to consider only the auth response resulting
+                 * from SUSI flow. "acr" claim in the id token tells us the policy (NOTE: newer policies may use the "tfp" claim instead).
+                 * To learn more about B2C tokens, visit https://docs.microsoft.com/en-us/azure/active-directory-b2c/tokens-overview
+                 */
+                // if (idtoken.acr === b2cPolicies.names.editProfile || idtoken.tfp === b2cPolicies.names.editProfile) {
 
-    // redirect callback for redirect flow (IE)
-    this.authService.handleRedirectCallback((authError, response) => {
-      if (authError) {
-        console.error('Redirect Error: ', authError.errorMessage);
-        return;
-      }
+                //     // retrieve the account from initial sing-in to the app
+                //     const originalSignInAccount = this.authService.instance.getAllAccounts()
+                //         .find((account: AccountInfo) =>
+                //             account.idTokenClaims?.oid === idtoken.oid
+                //             && account.idTokenClaims?.sub === idtoken.sub
+                //             && ((account.idTokenClaims as IdTokenClaimsWithPolicyId).acr === b2cPolicies.names.signUpSignIn
+                //                 || (account.idTokenClaims as IdTokenClaimsWithPolicyId).tfp === b2cPolicies.names.signUpSignIn)
+                //         );
 
-      console.log('Redirect Success: ', response);
-    });
+                //     let signUpSignInFlowRequest: SsoSilentRequest = {
+                //         authority: b2cPolicies.authorities.signUpSignIn.authority,
+                //         account: originalSignInAccount
+                //     };
 
-    this.authService.setLogger(
-      new Logger(
-        (logLevel, message, piiEnabled) => {
-          // console.log('MSAL Logging: ', message);
-        },
-        {
-          correlationId: CryptoUtils.createNewGuid(),
-          piiLoggingEnabled: false,
-        }
-      )
-    );
+                //     // silently login again with the signUpSignIn policy
+                //     this.authService.ssoSilent(signUpSignInFlowRequest);
+                // }
+
+                /**
+                 * Below we are checking if the user is returning from the reset password flow.
+                 * If so, we will ask the user to reauthenticate with their new password.
+                 * If you do not want this behavior and prefer your users to stay signed in instead,
+                 * you can replace the code below with the same pattern used for handling the return from
+                 * profile edit flow (see above ln. 74-92).
+                 */
+                if (idtoken.acr === b2cPolicies.names.resetPassword || idtoken.tfp === b2cPolicies.names.resetPassword) {
+                    let signUpSignInFlowRequest: RedirectRequest | PopupRequest = {
+                        authority: b2cPolicies.authorities.signUpSignIn.authority,
+                        prompt: PromptValue.LOGIN, // force user to reauthenticate with their new password
+                        scopes: []
+                    };
+
+                    this.login(signUpSignInFlowRequest);
+                }
+
+                return result;
+            });
+
+            this.msalBroadcastService.msalSubject$
+            .pipe(
+                filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_FAILURE || msg.eventType === EventType.ACQUIRE_TOKEN_FAILURE),
+                takeUntil(this._destroying$)
+            )
+            .subscribe((result: EventMessage) => {
+                // Checking for the forgot password error. Learn more about B2C error codes at
+                // https://learn.microsoft.com/azure/active-directory-b2c/error-codes
+                if (result.error && result.error.message.indexOf('AADB2C90118') > -1) {
+                    let resetPasswordFlowRequest: RedirectRequest | PopupRequest = {
+                        authority: b2cPolicies.authorities.resetPassword.authority,
+                        scopes: [],
+                    };
+
+                    this.login(resetPasswordFlowRequest);
+                };
+            });
   }
 
-  // other methods
-  checkAccount() {
-    const account = this.authService.getAccount();
-    this.loggedIn = !!account;
-    if (account) {
-      this.userName = account.name;
-      // this.router.navigateByUrl('/upload');
+  setLoginDisplay() {
+    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+  }
+
+  checkAndSetActiveAccount() {
+    /**
+     * If no active account set but there are accounts signed in, sets first account to active account
+     * To use active account set here, subscribe to inProgress$ first in your component
+     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
+     */
+    let activeAccount = this.authService.instance.getActiveAccount();
+
+    if (
+      !activeAccount &&
+      this.authService.instance.getAllAccounts().length > 0
+    ) {
+      let accounts = this.authService.instance.getAllAccounts();
+      // add your code for handling multiple accounts here
+      this.authService.instance.setActiveAccount(accounts[0]);
     }
   }
 
-  login() {
-    this.authService.loginRedirect();
-    if (isIE) {
-      this.authService.loginRedirect();
+  login(userFlowRequest?: RedirectRequest | PopupRequest) {
+    if (this.msalGuardConfig.interactionType === InteractionType.Popup) {
+      if (this.msalGuardConfig.authRequest) {
+        this.authService
+          .loginPopup({
+            ...this.msalGuardConfig.authRequest,
+            ...userFlowRequest,
+          } as PopupRequest)
+          .subscribe((response: AuthenticationResult) => {
+            this.authService.instance.setActiveAccount(response.account);
+          });
+      } else {
+        this.authService
+          .loginPopup(userFlowRequest)
+          .subscribe((response: AuthenticationResult) => {
+            this.authService.instance.setActiveAccount(response.account);
+          });
+      }
     } else {
-      this.authService.loginPopup();
+      if (this.msalGuardConfig.authRequest) {
+        this.authService.loginRedirect({
+          ...this.msalGuardConfig.authRequest,
+          ...userFlowRequest,
+        } as RedirectRequest);
+      } else {
+        this.authService.loginRedirect(userFlowRequest);
+      }
     }
   }
 
   logout() {
     this.authService.logout();
+  }
+
+  // editProfile() {
+  //   let editProfileFlowRequest: RedirectRequest | PopupRequest = {
+  //     authority: b2cPolicies.authorities.editProfile.authority,
+  //     scopes: [],
+  //   };
+
+  //   this.login(editProfileFlowRequest);
+  // }
+
+  // unsubscribe to events when component is destroyed
+  ngOnDestroy(): void {
+    this._destroying$.next(undefined);
+    this._destroying$.complete();
   }
 }

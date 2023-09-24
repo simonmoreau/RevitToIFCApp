@@ -1,4 +1,3 @@
-import { Configuration } from 'msal';
 import { MsalAngularConfiguration } from '@azure/msal-angular';
 import { environment } from 'src/environments/environment';
 

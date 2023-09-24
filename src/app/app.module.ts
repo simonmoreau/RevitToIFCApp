@@ -7,33 +7,41 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTableModule} from '@angular/material/table';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatSortModule} from '@angular/material/sort';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
-
-import { Configuration } from 'msal';
 import {
-  MsalModule,
-  MsalInterceptor,
-  MSAL_CONFIG,
-  MSAL_CONFIG_ANGULAR,
-  MsalService,
-  MsalAngularConfiguration
-} from '@azure/msal-angular';
-import { FileUploadModule} from './file-upload/file-upload.module';
+  NgcCookieConsentModule,
+  NgcCookieConsentConfig,
+} from 'ngx-cookieconsent';
 
-import { msalConfig, msalAngularConfig } from './app-config';
+// MSAL
+import { loginRequest, msalConfig } from './auth-config';
+import {
+  IPublicClientApplication,
+  PublicClientApplication,
+  InteractionType,
+} from '@azure/msal-browser';
+import {
+  MsalGuard,
+  MsalBroadcastService,
+  MsalService,
+  MSAL_GUARD_CONFIG,
+  MSAL_INSTANCE,
+  MsalGuardConfiguration,
+  MsalRedirectComponent,
+  MsalModule,
+} from '@azure/msal-angular';
+import { FileUploadModule } from './file-upload/file-upload.module';
 import { AppRoutingModule } from './app-routing.module';
 
 // Components
@@ -55,32 +63,42 @@ import { CreditsCounterComponent } from './credits-counter/credits-counter.compo
 import { environment } from '../environments/environment';
 import { ConvertionsListComponent } from './convertions-list/convertions-list.component';
 
-
-function MSALConfigFactory(): Configuration {
-  return msalConfig;
+/**
+ * Here we pass the configuration parameters to create an MSAL instance.
+ * For more info, visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-angular/docs/v2-docs/configuration.md
+ */
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication(msalConfig);
 }
 
-function MSALAngularConfigFactory(): MsalAngularConfiguration {
-  return msalAngularConfig;
+/**
+ * Set your default interaction type for MSALGuard here. If you have any
+ * additional scopes you want the user to consent upon login, add them here as well.
+ */
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: loginRequest,
+  };
 }
 
-const cookieConfig:NgcCookieConsentConfig = {
+const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
-    domain: environment.localDomain // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+    domain: environment.localDomain, // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
   },
   palette: {
     popup: {
       background: '#1c364a',
-      text: "#fff"
+      text: '#fff',
     },
     button: {
       background: '#e74727',
-      text: "#fff"
-    }
+      text: '#fff',
+    },
   },
   position: 'bottom-right',
   theme: 'classic',
-  type: 'info'
+  type: 'info',
 };
 
 @NgModule({
@@ -94,7 +112,7 @@ const cookieConfig:NgcCookieConsentConfig = {
     CheckoutCancelComponent,
     PriceComponent,
     CreditsCounterComponent,
-    ConvertionsListComponent
+    ConvertionsListComponent,
   ],
   imports: [
     BrowserModule,
@@ -117,32 +135,23 @@ const cookieConfig:NgcCookieConsentConfig = {
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    FlexLayoutModule,
     MsalModule,
     FileUploadModule,
-    NgcCookieConsentModule.forRoot(cookieConfig)
+    NgcCookieConsentModule.forRoot(cookieConfig),
   ],
   providers: [
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory,
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory,
+    },
     MsalService,
-    {
-      provide: MSAL_CONFIG,
-      useFactory: MSALConfigFactory
-    },
-    {
-      provide: MSAL_CONFIG_ANGULAR,
-      useFactory: MSALAngularConfigFactory
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InterceptorService,
-      multi: true
-    }
+    MsalGuard,
+    MsalBroadcastService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, MsalRedirectComponent],
 })
-export class AppModule { }
+export class AppModule {}
