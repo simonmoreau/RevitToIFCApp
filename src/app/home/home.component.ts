@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.profile = this.authService.getAccount();
+    this.profile = this.authService.instance.getActiveAccount();
   }
 
   onForgeCall() {

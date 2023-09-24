@@ -42,7 +42,7 @@ export class ConvertionsListComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.apiService
-      .GetUserWorkItems(this.authService.getAccount().accountIdentifier)
+      .GetUserWorkItems(this.authService.instance.getActiveAccount().homeAccountId)
       .subscribe((items) => {
         this.workItems = items;
         const workItemDataArray = items.map((item) =>

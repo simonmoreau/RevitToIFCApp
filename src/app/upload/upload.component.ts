@@ -116,7 +116,7 @@ export class UploadComponent {
         conversionObject.uploadObjectResult.uploadObject.objectKey, 
         outputName, 
         activityId,
-        authService.getAccount().accountIdentifier,
+        authService.instance.getActiveAccount().homeAccountId,
         currentFileItem.file.size,
         currentFileItem.version,
         currentFileItem.file.name).pipe(

@@ -26,39 +26,34 @@ import { IForgeToken } from './api.model';
   providedIn: 'root',
 })
 export class InterceptorService implements HttpInterceptor {
+
   isRefreshingToken = false;
-  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<
-    IForgeToken
-  >(null);
+  forgeTokenSubject: BehaviorSubject<IForgeToken> = new BehaviorSubject<IForgeToken>(null);
 
   constructor(private userService: UserService) {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    if (request.url.match(/developer.api.autodesk.com\//)) {
+  intercept(httpRequest: HttpRequest<any>, next: HttpHandler ): Observable<HttpEvent<any>>
+  {
+    if (httpRequest.url.match(/developer.api.autodesk.com\//)) {
 
-      request = this.addToken(request, this.userService.currentTokenValue);
+      httpRequest = this.addToken(httpRequest, this.userService.currentTokenValue);
 
-      return next.handle(request).pipe(
+      return next.handle(httpRequest).pipe(
         catchError(error => {
           if (error instanceof HttpErrorResponse) {
             const err: HttpErrorResponse = error as HttpErrorResponse;
             switch (err.status) {
               case 401:
-                return this.handle401Error(request, next);
+                return this.handle401Error(httpRequest, next);
               default:
                 console.log(error);
-                return this.handleError(request, next, err);
+                return this.handleError(httpRequest, next, err);
             }
-          } else {
-            return Observable.throw(error);
           }
         })
       );
     } else {
-      return next.handle(request);
+      return next.handle(httpRequest);
     }
   }
 

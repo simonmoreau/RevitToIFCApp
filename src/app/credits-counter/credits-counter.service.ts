@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
-import { Account } from 'msal/lib-commonjs/Account';
+import { AccountInfo } from '@azure/msal-browser';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,7 +12,8 @@ import { ApiService } from '../services/api.service';
   providedIn: 'root',
 })
 export class CreditsCounterService {
-  private account: Account;
+
+  private accountInfo: AccountInfo;
   public creditCount: number;
   
   public displayedCreditsEvent: EventEmitter<number>;
@@ -29,10 +30,10 @@ export class CreditsCounterService {
   public UpdateConversionCredits(checkoutSessionId: string): Observable<IConversionCreditsUpdate> {
 
     this.checkAccount();
-    if (this.account)
+    if (this.accountInfo)
     {
       return this.apiService
-      .updateConversionCredits(this.account.accountIdentifier,checkoutSessionId).pipe(
+      .updateConversionCredits(this.accountInfo.homeAccountId,checkoutSessionId).pipe(
         map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
           this.creditCount = conversionCreditsUpdate.creditsNumber;
           this.displayedCredits = this.creditCount;
@@ -59,7 +60,7 @@ export class CreditsCounterService {
   public GetConversionCredits(): Observable<IConversionCreditsUpdate> {
     this.checkAccount();
     return this.apiService
-      .GetConversionCredits(this.account.accountIdentifier)
+      .GetConversionCredits(this.accountInfo.homeAccountId)
       .pipe(
         map((conversionCreditsUpdate: IConversionCreditsUpdate) => {
 
@@ -73,9 +74,9 @@ export class CreditsCounterService {
   }
 
   checkAccount() {
-    this.account = this.authService.getAccount();
-    if (this.account) {
-      this.userName = this.account.name;
+    this.accountInfo = this.authService.instance.getActiveAccount();
+    if (this.accountInfo) {
+      this.userName = this.accountInfo.name;
     }
   }
 }
