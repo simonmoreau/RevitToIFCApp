@@ -13,7 +13,7 @@
       <div class="button-spacer"></div>
       <button mat-flat-button  *ngIf="loggedIn" [routerLink]="'/upload'">Convert</button>
       <div class="button-spacer"></div>
-      <button mat-flat-button *ngIf="!loggedIn" (click)="login()">Login</button>
+      <button mat-flat-button *ngIf="!loggedIn" (click)="userLogin()">Login</button>
       <button mat-flat-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
     </mat-toolbar>
     <div class="toolbar-margin"></div>
