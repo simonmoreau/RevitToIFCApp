@@ -62,6 +62,7 @@ import { PriceComponent } from './checkout/price/price.component';
 import { CreditsCounterComponent } from './credits-counter/credits-counter.component';
 import { environment } from '../environments/environment';
 import { ConvertionsListComponent } from './convertions-list/convertions-list.component';
+import { FooterComponent } from './footer/footer.component';
 
 /**
  * Here we pass the configuration parameters to create an MSAL instance.
@@ -113,6 +114,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     PriceComponent,
     CreditsCounterComponent,
     ConvertionsListComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

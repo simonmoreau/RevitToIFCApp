@@ -1,4 +1,4 @@
-<div fxLayout="column" fxFlexFill>
+<div>
   <mat-toolbar color="primary" class="toolbar-flexbox">
     <div class="toolbar-margin"></div>
     <mat-toolbar color="primary" class="toolbar-main">
@@ -20,31 +20,13 @@
   </mat-toolbar>
   <mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-bar>
 
-  
-  <div fxLayout="row" fxLayoutAlign="space-between" fxFlex>
-    <div fxFlex="8"></div>
-    <div fxFlex="84">
+  <div>
+    <div></div>
+    <div>
       <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
       <router-outlet *ngIf="!isIframe"></router-outlet>
     </div>
-    <div fxFlex="8"></div>
+    <div></div>
   </div>
-  <footer fxLayout="row">
-    <div class="toolbar-margin"></div>
-    <div class="mat-small">
-      <div>If you want to integrate this application into your worflow, <a href="mailto:simon@bim42.com">contact us</a>.
-      </div>
-      <div>
-        This service make use of Autodesk® Forge® services. By using it, your are suscribing to the <a href="https://forge.autodesk.com/">Forge Term of Services</a>.
-      </div>
-      <div>
-        Autodesk and Autodesk® Revit® are registered trademarks or trademarks of Autodesk, Inc., and/or its
-        subsidiaries and/or affiliates in the USA and/or other countries.
-      </div>
-      <div>
-        <a href="https://www.bim42.com/privacy/">Privacy Policy</a>
-      </div>
-    </div>
-    <div class="toolbar-margin"></div>
-  </footer>
+  <app-footer/>
 </div>
