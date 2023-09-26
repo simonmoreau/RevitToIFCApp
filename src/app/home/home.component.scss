@@ -1,13 +1,13 @@
 .mat-display-4 {
-    margin-top: 0.6em;
+    margin-top: 0.6rem;
 }
 
 mat-card {
-    min-height: 22em;
+    min-height: 22rem;
 }
 
 span.material-icons {
-    font-size: 4em;
+    font-size: 4rem;
 }
 
 mat-card-title {
@@ -16,9 +16,16 @@ mat-card-title {
 
 .picture {
     margin-bottom: 1rem;
+    height: 10rem;
 }
 
 mat-card mat-card-actions:last-of-type {
     margin-top: auto;
-    margin-bottom: 0.8em;
+    margin-bottom: 0.8rem;
 }
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
