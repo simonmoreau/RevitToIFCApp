@@ -1,0 +1,137 @@
+// src/theme.scss
+
+// 👇 Importing `Titillium Web` font for headings, you can change this if you want
+// @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,600');
+
+/* For use in src/lib/core/theming/_palette.scss */
+$md-blue: (
+    50 : #e4e7e9,
+    100 : #bbc3c9,
+    200 : #8e9ba5,
+    300 : #607280,
+    400 : #3e5465,
+    500 : #1c364a,
+    600 : #193043,
+    700 : #14293a,
+    800 : #112232,
+    900 : #091622,
+    A100 : #61a7ff,
+    A200 : #2e8bff,
+    A400 : #006ffa,
+    A700 : #0064e0,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #ffffff,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$md-red: (
+    50 : #fce9e5,
+    100 : #f8c8be,
+    200 : #f3a393,
+    300 : #ee7e68,
+    400 : #eb6347,
+    500 : #e74727,
+    600 : #e44023,
+    700 : #e0371d,
+    800 : #dd2f17,
+    900 : #d7200e,
+    A100 : #ffffff,
+    A200 : #ffd3cf,
+    A400 : #ffa39c,
+    A700 : #ff8b83,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+// 👇 1. Default theme
+$app-primary: mat-palette($md-blue);
+$app-accent: mat-palette($md-red);
+$app-warn: mat-palette($md-red);
+
+$theming-material-components-theme: mat-light-theme(
+  $app-primary,
+  $app-accent,
+  $app-warn
+);
+
+// 👇 3. Define a custom heading typography config
+$heading-font-family: "'Titillium Web', sans-serif";
+$font-weight-title: 600;
+$font-weight-body: 400;
+$typography: mat-typography-config(
+  $font-family: $heading-font-family,
+  $display-4: mat-typography-level(5.61rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+  $display-3: mat-typography-level(4.209rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+  $display-2: mat-typography-level(3.157rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $display-1: mat-typography-level(2.369rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $headline: mat-typography-level(1.777rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $title: mat-typography-level(1.333rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $subheading-2: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $subheading-1: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $body-1: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $body-2: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $caption: mat-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+  $button: mat-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+);
+
+// 👇 4. Create a foreground map
+@function my-mat-light-theme-foreground($color) {
+  $black-12-opacity:black;
+  @return (
+      base:              $color,
+      divider:           $black-12-opacity,
+      dividers:          $black-12-opacity,
+      disabled:          rgba($color, 0.38),
+      disabled-button:   rgba($color, 0.38),
+      disabled-text:     rgba($color, 0.38),
+      elevation:         $black-12-opacity,
+      hint-text:         rgba($color, 0.38),
+      secondary-text:    rgba($color, 0.54),
+      icon:              rgba($color, 0.54),
+      icons:             rgba($color, 0.54),
+      text:              rgba($color, 0.87),
+      slider-min:        rgba($color, 0.87),
+      slider-off:        rgba($color, 0.26),
+      slider-off-active: rgba($color, 0.38),
+  );
+};
+
+
+ // You can put any color here
+ $foreground: my-mat-light-theme-foreground(mat-color($md-blue, 500));
+
+ :root {
+  --color-primary: #{mat-color($app-primary)};
+  --color-accent: #{mat-color($app-accent)};
+  --color-warn: #{mat-color($app-warn)};
+  --color-grey: #{mat-color($md-blue, 50)};
+}
