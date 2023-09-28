@@ -1,0 +1,76 @@
+.card-section {
+  margin: 5% 0% 5% 0%;
+  padding: 5%;
+}
+
+.container {
+  display: flex;
+}
+
+.container .box-left {
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.container .box-right {
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 121px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.upload-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+mat-card-content.mat-display-2:hover {
+  color: var(--color-accent)
+}
+
+.mat-display-2 .material-icons {
+  font-size: 50px;
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile+label {
+  cursor: pointer;
+}
+
+.overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1rem;
+}
+
+mat-card-content.file-detail {
+  margin-bottom: 2px;
+}
+
+mat-progress-spinner {
+  margin-right: 0.5rem;
+}
+
+.horizontal {
+  display: inline-block;
+  vertical-align: middle;
+  font-style: italic;
+}
+
+.isError {
+  color: red;
+  font-weight: 800;
+}
