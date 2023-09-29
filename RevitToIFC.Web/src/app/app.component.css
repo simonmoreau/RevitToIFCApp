@@ -1,0 +1,12 @@
+@media screen and (max-width : 1200px) {
+  .layout-body {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width:850px) {
+  .layout-body {
+    display: block;
+    width: 100%;
+  }
+}

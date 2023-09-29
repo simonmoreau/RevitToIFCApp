@@ -1,5 +1,5 @@
 <div>
-  <mat-toolbar color="primary" class="toolbar-flexbox">
+  <mat-toolbar color="primary" class="toolbar-flexbox layout-margins">
     <div class="toolbar-margin"></div>
     <mat-toolbar color="primary" class="toolbar-main">
 
@@ -11,7 +11,7 @@
       <div class="button-spacer"></div>
       <button mat-flat-button [routerLink]="'/checkout'">Pricing</button>
       <div class="button-spacer"></div>
-      <button mat-flat-button  *ngIf="loggedIn" [routerLink]="'/upload'">Convert</button>
+      <button mat-flat-button *ngIf="loggedIn" [routerLink]="'/upload'">Convert</button>
       <div class="button-spacer"></div>
       <button mat-flat-button *ngIf="!loggedIn" (click)="userLogin()">Login</button>
       <button mat-flat-button color="warn" *ngIf="loggedIn" (click)="logout()">Logout</button>
@@ -20,7 +20,7 @@
   </mat-toolbar>
   <mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-bar>
 
-  <div>
+  <div class="layout-margins">
     <div></div>
     <div>
       <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
@@ -28,5 +28,7 @@
     </div>
     <div></div>
   </div>
-  <app-footer/>
+  <div class="layout-margins" style="background-color: var(--color-grey);">
+    <app-footer />
+  </div>
 </div>
