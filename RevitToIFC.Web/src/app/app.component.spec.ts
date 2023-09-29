@@ -5,10 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { BroadcastService, MsalService, MsalAngularConfiguration } from '@azure/msal-angular';
-import { MSAL_CONFIG, MSAL_CONFIG_ANGULAR } from '@azure/msal-angular';
-import { Configuration } from 'msal';
-import { msalConfig, msalAngularConfig } from './app-config';
+import { MsalService } from '@azure/msal-angular';
+
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
@@ -23,18 +21,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
-      providers: [
-        MsalService,
-        {
-          provide: MSAL_CONFIG,
-          useValue: msalConfig as Configuration
-        },
-        {
-          provide: MSAL_CONFIG_ANGULAR,
-          useValue: msalAngularConfig as MsalAngularConfiguration
-        },
-        BroadcastService
-      ]
+      providers: []
     }).compileComponents();
   }));
 
