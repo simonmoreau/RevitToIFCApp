@@ -47,8 +47,8 @@ export interface IWorkItemStatusEntity {
 
 export interface ConversionObject {
   uploadObjectResult: UploadObjectResult;
-  workItemResponse: IWorkItemResponse;
-  worfItemStatus: IWorkItemStatus;
+  workItemResponse: IWorkItemResponse | null;
+  worfItemStatus: IWorkItemStatus | null;
 }
 
 export interface IMessage {

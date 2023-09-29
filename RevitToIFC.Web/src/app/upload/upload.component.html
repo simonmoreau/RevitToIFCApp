@@ -9,10 +9,10 @@
         </label>
     </mat-card-content>
 
-    <mat-card-content *ngIf="uploader?.queue?.length > 0">
+    <mat-card-content *ngIf="uploader.queue!.length > 0">
         <div class="row">
             <div class="mat-body">
-                {{uploader?.queue?.length}} Revit files added
+                {{uploader.queue!.length}} Revit files added
             </div>
             <mat-card *ngFor="let item of uploader.queue" class="upload-item">
                 <div class="container">

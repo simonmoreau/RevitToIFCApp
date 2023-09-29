@@ -23,16 +23,16 @@ export interface WorkItemData {
   styleUrls: ['./convertions-list.component.scss'],
 })
 export class ConvertionsListComponent implements OnInit {
-  workItems: IWorkItemStatusEntity[];
-  isLoading: boolean;
-  zeroConversion: boolean;
-  hasConversions: boolean;
+  workItems!: IWorkItemStatusEntity[];
+  isLoading: boolean = true;
+  zeroConversion: boolean = true;
+  hasConversions: boolean = true;
 
   displayedColumns: string[] = ['name', 'status', 'date', 'report', 'fileUrl'];
-  dataSource: MatTableDataSource<WorkItemData>;
+  dataSource!: MatTableDataSource<WorkItemData>;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private apiService: ApiService,
@@ -42,7 +42,7 @@ export class ConvertionsListComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.apiService
-      .GetUserWorkItems(this.authService.instance.getActiveAccount().homeAccountId)
+      .GetUserWorkItems(this.authService.instance.getActiveAccount()!.homeAccountId)
       .subscribe((items) => {
         this.workItems = items;
         const workItemDataArray = items.map((item) =>

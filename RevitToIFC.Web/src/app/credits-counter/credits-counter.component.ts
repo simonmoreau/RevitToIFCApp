@@ -8,11 +8,11 @@ import { CreditsCounterService} from './credits-counter.service';
 })
 export class CreditsCounterComponent implements OnInit {
 
-  displayedCredits: number;
-  zeroCredits: boolean;
-  oneCredits: boolean;
-  moreCredits: boolean;
-  isLoading: boolean;
+  displayedCredits: number = 0;
+  zeroCredits: boolean = true;
+  oneCredits: boolean = false;
+  moreCredits: boolean = false;
+  isLoading: boolean = true;
   creditsCounterService: CreditsCounterService;
 
   constructor(private creditsService: CreditsCounterService) {

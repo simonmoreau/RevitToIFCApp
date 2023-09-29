@@ -23,8 +23,8 @@ export interface Headers {
 }
 
 export interface UploadObjectResult {
-  file: FileItem;
-  uploadObject: IUploadObject;
+  file: FileItem | null;
+  uploadObject: IUploadObject | null;
   responseText: string;
 }
 
@@ -59,30 +59,22 @@ export interface FileUploaderOptions {
 
 export class FileUploader {
 
-  public authToken: string;
+  public authToken: string = '';
   public isUploading = false;
   public queue: FileItem[] = [];
   public progress = 0;
   public _nextIndex = 0;
   public autoUpload: any;
-  public authTokenHeader: string;
+  public authTokenHeader: string = '';
   public response: EventEmitter<UploadObjectResult>;
   public onAfterAddingFileEvent: EventEmitter<FileItem>;
   public onRemoveItemEvent: EventEmitter<FileItem>;
   public forgeService: ForgeService;
   public userService: UserService;
 
-  public options: FileUploaderOptions = {
-    autoUpload: false,
-    isHTML5: true,
-    filters: [],
-    removeAfterUpload: false,
-    disableMultipart: false,
-    formatDataFunction: (item: FileItem) => item._file,
-    formatDataFunctionIsAsync: false
-  };
+  public options: FileUploaderOptions; 
 
-  protected _failFilterIndex: number;
+  protected _failFilterIndex: number = 0;
 
   public constructor(options: FileUploaderOptions, forgeService: ForgeService, userService: UserService) {
     this.setOptions(options);
@@ -91,30 +83,40 @@ export class FileUploader {
     this.onRemoveItemEvent = new EventEmitter<FileItem>();
     this.forgeService = forgeService;
     this.userService = userService;
+    this.options = {
+      autoUpload: false,
+      isHTML5: true,
+      filters: [],
+      removeAfterUpload: false,
+      disableMultipart: false,
+      formatDataFunction: (item: FileItem) => item._file,
+      formatDataFunctionIsAsync: false
+    };
   }
 
   public setOptions(options: FileUploaderOptions): void {
     this.options = Object.assign(this.options, options);
 
-    this.authToken = this.options.authToken;
+    this.authToken = this.options.authToken!;
     this.authTokenHeader = this.options.authTokenHeader || 'Authorization';
     this.autoUpload = this.options.autoUpload;
-    this.options.filters.unshift({ name: 'queueLimit', fn: this._queueLimitFilter });
+
+    this.options.filters!.unshift({ name: 'queueLimit', fn: this._queueLimitFilter });
 
     if (this.options.maxFileSize) {
-      this.options.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
+      this.options.filters!.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
     }
 
     if (this.options.allowedFileType) {
-      this.options.filters.unshift({ name: 'fileType', fn: this._fileTypeFilter });
+      this.options.filters!.unshift({ name: 'fileType', fn: this._fileTypeFilter });
     }
 
     if (this.options.allowedMimeType) {
-      this.options.filters.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
+      this.options.filters!.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
     }
 
     for (let i = 0; i < this.queue.length; i++) {
-      this.queue[ i ].url = this.options.url;
+      this.queue[ i ].url = this.options.url!;
     }
   }
 
@@ -123,7 +125,7 @@ export class FileUploader {
     for (const file of files) {
       list.push(file);
     }
-    const arrayOfFilters = this._getFilters(filters);
+    const arrayOfFilters = this._getFilters(filters!);
     const count = this.queue.length;
     const addedFileItems: FileItem[] = [];
     list.map((some: File) => {
@@ -281,17 +283,17 @@ export class FileUploader {
     return void 0;
   }
 
-  public _mimeTypeFilter(item: FileLikeObject): boolean {
-    return !(this.options.allowedMimeType && this.options.allowedMimeType.indexOf(item.type) === -1);
+  public _mimeTypeFilter(item?: FileLikeObject, options?: FileUploaderOptions): boolean {
+    return !(this.options.allowedMimeType && this.options.allowedMimeType.indexOf(item!.type) === -1);
   }
 
-  public _fileSizeFilter(item: FileLikeObject): boolean {
-    return !(this.options.maxFileSize && item.size > this.options.maxFileSize);
+  public _fileSizeFilter(item?: FileLikeObject, options?: FileUploaderOptions): boolean {
+    return !(this.options.maxFileSize && item!.size > this.options.maxFileSize);
   }
 
-  public _fileTypeFilter(item: FileLikeObject): boolean {
+  public _fileTypeFilter(item?: FileLikeObject, options?: FileUploaderOptions): boolean {
     return !(this.options.allowedFileType &&
-      this.options.allowedFileType.indexOf(FileType.getMimeClass(item)) === -1);
+      this.options.allowedFileType.indexOf(FileType.getMimeClass(item!)) === -1);
   }
 
   public _onErrorItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void {
@@ -391,7 +393,7 @@ export class FileUploader {
       // For AWS, Additional Parameters must come BEFORE Files
       if (this.options.additionalParameter !== undefined) {
         Object.keys(this.options.additionalParameter).forEach((key: string) => {
-          let paramVal = this.options.additionalParameter[ key ];
+          let paramVal = this.options.additionalParameter![ key ];
           // Allow an additional parameter to include the filename
           if (typeof paramVal === 'string' && paramVal.indexOf('{{file_name}}') >= 0) {
             paramVal = paramVal.replace('{{file_name}}', item.file.name);
@@ -404,7 +406,7 @@ export class FileUploader {
         appendFile();
       }
     } else {
-      sendable = this.options.formatDataFunction(item);
+      sendable = this.options.formatDataFunction!(item);
     }
 
     xhr.upload.onprogress = (event: any) => {
@@ -480,17 +482,17 @@ export class FileUploader {
 
   protected _getFilters(filters: FilterFunction[] | string): FilterFunction[] {
     if (!filters) {
-      return this.options.filters;
+      return this.options.filters!;
     }
     if (Array.isArray(filters)) {
       return filters;
     }
     if (typeof filters === 'string') {
       const names = filters.match(/[^\s,]+/g);
-      return this.options.filters
-        .filter((filter: any) => names.indexOf(filter.name) !== -1);
+      return this.options.filters!
+        .filter((filter: any) => names!.indexOf(filter.name) !== -1);
     }
-    return this.options.filters;
+    return this.options.filters!;
   }
 
   protected _render(): any {

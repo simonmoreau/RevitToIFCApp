@@ -12,9 +12,14 @@ export class PriceComponent implements OnInit {
   @Input() title: string;
   @Input() description: string;
   @Input() prodcutId: string;
-  loading: boolean;
+  loading: boolean = true;
 
-  constructor(private checkoutComponent: CheckoutComponent) { }
+  constructor(private checkoutComponent: CheckoutComponent) {
+    this.price = 0;
+    this.title = '';
+    this.description = '';
+    this.prodcutId = '';
+  }
 
   ngOnInit(): void {
   }

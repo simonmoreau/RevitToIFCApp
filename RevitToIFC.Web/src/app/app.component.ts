@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isIframe = false;
   loggedIn = false;
   userName: any;
-  loading: boolean;
+  loading: boolean = true;
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
 

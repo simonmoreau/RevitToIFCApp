@@ -19,18 +19,7 @@ export class CheckoutComponent implements OnInit {
     private authService: MsalService,
     private apiService: ApiService,
     private appComponent: AppComponent
-  ) {}
-
-  @Input() amount;
-  @Input() description;
-
-  handler: StripeCheckoutHandler;
-  stripe: stripe.Stripe;
-
-  confirmation: any;
-  loading = false;
-
-  ngOnInit(): void {
+  ) {
     const stripe_key = environment.stripe_key;
 
     const stripeOption: stripe.StripeOptions = {
@@ -38,6 +27,19 @@ export class CheckoutComponent implements OnInit {
     };
 
     this.stripe = Stripe(stripe_key, stripeOption);
+  }
+
+  //@Input() amount;
+  //@Input() description;
+
+  // handler: StripeCheckoutHandler;
+  stripe: stripe.Stripe;
+
+  confirmation: any;
+  loading = false;
+
+  ngOnInit(): void {
+
 
     // this.handler = StripeCheckout.configure({
     //   key: environment.stripe_key,
@@ -78,7 +80,13 @@ export class CheckoutComponent implements OnInit {
       }): string => {
         if (checkoutError) {
           alert(checkoutError.error.message);
-          return checkoutError.error.message;
+          const message: string | undefined = checkoutError.error.message;
+          if (message !== undefined) {
+            return message;
+          }
+          else {
+            return '';
+          }
         } else {
           return 'No checkoutError';
         }
@@ -111,6 +119,6 @@ export class CheckoutComponent implements OnInit {
   // Close on navigate
   @HostListener('window:popstate')
   onPopstate() {
-    this.handler.close();
+    // this.handler.close();
   }
 }

@@ -8,11 +8,11 @@ import {
 
 export class FileItem {
   public file: FileLikeObject;
-  public version: string;
+  public version: string = '';
   public _file: File;
-  public alias: string;
+  public alias: string = '';
   public url = '/';
-  public method: string;
+  public method: string = '';
   public headers: any = [];
   public withCredentials = true;
   public formData: any = [];
@@ -26,9 +26,9 @@ export class FileItem {
   public status = '';
   public isConverting = false;
   public isConverted = false;
-  public downloadUrl = null;
-  public index: number = void 0;
-  public _xhr: XMLHttpRequest;
+  public downloadUrl: string = '';
+  public index: number = 0;
+  public _xhr!: XMLHttpRequest;
   public _form: any;
 
   protected uploader: FileUploader;
@@ -49,7 +49,7 @@ export class FileItem {
       this.method = uploader.options.method || 'POST';
       this.alias = uploader.options.itemAlias || 'file';
     }
-    this.url = uploader.options.url;
+    this.url = uploader.options.url!;
     if (this.file?.size / 1024 / 1024 > 600) {
       this.isError = true;
       this.status =
@@ -163,7 +163,7 @@ export class FileItem {
     this.isCancel = false;
     this.isError = false;
     this.progress = 100;
-    this.index = void 0;
+    this.index = 0;
     this.onSuccess(response, status, headers);
   }
 
@@ -179,7 +179,7 @@ export class FileItem {
     this.isCancel = false;
     this.isError = true;
     this.progress = 0;
-    this.index = void 0;
+    this.index = 0;
     this.onError(response, status, headers);
   }
 
@@ -195,7 +195,7 @@ export class FileItem {
     this.isCancel = true;
     this.isError = false;
     this.progress = 0;
-    this.index = void 0;
+    this.index = 0;
     this.onCancel(response, status, headers);
   }
 
@@ -218,7 +218,7 @@ export class FileItem {
 
   private getRevitVersion(file: File): Observable<string> {
     if (!file) {
-      return;
+      throw new Error("No files");
     }
 
     const versionSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
@@ -261,7 +261,7 @@ export class FileItem {
  * - chunk_size:          The chunk size to be used, in bytes. Default is 64K.
  */
   private parseFile(file: File, options: IParseFileOption) {
-    const opts = typeof options === 'undefined' ? {} : options;
+    const opts: any = typeof options === 'undefined' ? {} : options;
     const fileSize = file.size;
     const chunkSize =
       typeof opts['chunk_size'] === 'undefined'
@@ -270,23 +270,23 @@ export class FileItem {
     const binary =
       typeof opts['binary'] === 'undefined' ? false : opts['binary'] === true;
     let offset = 0;
-    let readBlock = null;
+    let readBlock: any = null;
     const chunkReadCallback =
       typeof opts['chunk_read_callback'] === 'function'
         ? opts['chunk_read_callback']
-        : function () {};
+        : function () { };
     const chunkErrorCallback =
       typeof opts['error_callback'] === 'function'
         ? opts['error_callback']
-        : function () {};
+        : function () { };
 
     const onLoadHandler = (evt: ProgressEvent<FileReader>) => {
       let stopReading = false;
-      if (evt.target.error == null) {
-        offset += evt.target.result.toString().length;
-        stopReading = chunkReadCallback(evt.target.result);
+      if (evt.target!.error == null) {
+        offset += evt.target!.result!.toString().length;
+        stopReading = chunkReadCallback(evt.target!.result);
       } else {
-        chunkErrorCallback(evt.target.error);
+        chunkErrorCallback(evt.target!.error);
         return;
       }
       if (offset >= fileSize) {
@@ -316,7 +316,7 @@ export class FileItem {
     if (line.includes('Format:')) {
       const regex = /Format: (\d+)/g;
       const found = line.match(regex);
-      const version = found[0].replace('Format: ', '');
+      const version = found![0].replace('Format: ', '');
       console.log(version);
       return version;
     } else if (line.includes('Revit Build: ')) {
@@ -357,9 +357,10 @@ export class FileItem {
       }
 
       console.log(version);
+      if (version === null) throw new Error('Version is empty');
       return version;
     } else {
-      return null;
+      throw new Error('Version is empty');
     }
   }
 }

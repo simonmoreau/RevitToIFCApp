@@ -36,7 +36,7 @@ export class UploadComponent {
       // headers: [{ name: 'Authorization', value: `Bearer ${userService.currentTokenValue?.access_token}` }],
       disableMultipart: true, // 'DisableMultipart' must be 'true' for formatDataFunction to be called.
       formatDataFunctionIsAsync: true,
-      formatDataFunction: async (item) => {
+      formatDataFunction: async (item:any) => {
         return new Promise( (resolve, reject) => {
           resolve({
             name: item._file.name,
@@ -93,9 +93,9 @@ export class UploadComponent {
     // this.uploader.response.subscribe( response: IUploadObject => {this.response = response ; console.log(response); } );
 
     const createWorkItemObs = (conversionObject: ConversionObject): Observable<ConversionObject> => {
-      const currentFileItem: FileItem = conversionObject.uploadObjectResult.file;
+      const currentFileItem: FileItem = conversionObject.uploadObjectResult.file!;
       currentFileItem.isProcessing = true;
-      currentFileItem.progress = null;
+      currentFileItem.progress = 0;
       currentFileItem.status = 'Converting ...';
       let outputName = currentFileItem.file.name.split('.').slice(0, -1).join('.');
       outputName = Date.now().toString() + '-' + outputName + '.ifc';
@@ -113,27 +113,28 @@ export class UploadComponent {
       const activityId = appName + '.' + appName + 'Activity' + revitVersion + '+' + revitVersion;
 
       return this.apiService.CreateWorkItem(
-        conversionObject.uploadObjectResult.uploadObject.objectKey, 
+        conversionObject.uploadObjectResult.uploadObject!.objectKey!, 
         outputName, 
         activityId,
-        authService.instance.getActiveAccount().homeAccountId,
+        authService.instance.getActiveAccount()!.homeAccountId,
         currentFileItem.file.size,
         currentFileItem.version,
         currentFileItem.file.name).pipe(
         map((workItemResponse: IWorkItemResponse ) => {
           if (workItemResponse.workItemCreationStatus == WorkItemCreationStatus.Created)
           {
-            conversionObject.uploadObjectResult.file.downloadUrl = workItemResponse.outputUrl;
+            conversionObject.uploadObjectResult.file!.downloadUrl = workItemResponse.outputUrl;
             conversionObject.workItemResponse = workItemResponse;
             return conversionObject;
           }
           else
           {
-            conversionObject.uploadObjectResult.file.isProcessing = false;
-            conversionObject.uploadObjectResult.file.status = 'You don\'t have enough credit !';
-            conversionObject.uploadObjectResult.file.isConverted = false;
-            conversionObject.uploadObjectResult.file.isError = true;
+            conversionObject.uploadObjectResult.file!.isProcessing = false;
+            conversionObject.uploadObjectResult.file!.status = 'You don\'t have enough credit !';
+            conversionObject.uploadObjectResult.file!.isConverted = false;
+            conversionObject.uploadObjectResult.file!.isError = true;
             throwError(conversionObject);
+            throw new Error(conversionObject.uploadObjectResult.responseText)
           }
         })
       );
@@ -148,7 +149,7 @@ export class UploadComponent {
 
     const checkStatus = (conversionObject: ConversionObject): Observable<ConversionObject> => {
       return timer(0, 20000).pipe(
-        switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse.workItemId)),
+        switchMap(() => this.apiService.GetWorkItemStatus(conversionObject.workItemResponse!.workItemId)),
         first(workItemStatus => workItemStatus.status !== 'pending' && workItemStatus.status !== 'inprogress'),
         map(r => {
           conversionObject.worfItemStatus = r;
@@ -160,18 +161,18 @@ export class UploadComponent {
     const processConvertedObject = (conversionObject: ConversionObject): Observable<ConversionObject> => {
       return  of(conversionObject).pipe(
         map((cO: ConversionObject) => {
-          if (cO.worfItemStatus.status == 'success')
+          if (cO.worfItemStatus!.status == 'success')
           {
-            cO.uploadObjectResult.file.isProcessing = false;
-            cO.uploadObjectResult.file.status = 'Converted !';
-            cO.uploadObjectResult.file.isConverted = true;
+            cO.uploadObjectResult.file!.isProcessing = false;
+            cO.uploadObjectResult.file!.status = 'Converted !';
+            cO.uploadObjectResult.file!.isConverted = true;
             return cO;
           }
           else
           {
-            cO.uploadObjectResult.file.isProcessing = false;
-            cO.uploadObjectResult.file.status = 'Something when wrong, please try again. ' + cO.worfItemStatus.status;
-            cO.uploadObjectResult.file.isError = true;
+            cO.uploadObjectResult.file!.isProcessing = false;
+            cO.uploadObjectResult.file!.status = 'Something when wrong, please try again. ' + cO.worfItemStatus!.status;
+            cO.uploadObjectResult.file!.isError = true;
             return cO;
           }
         })

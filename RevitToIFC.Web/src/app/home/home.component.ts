@@ -15,7 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class HomeComponent implements OnInit {
   profile: any;
-  callContent: string;
+  callContent: string = '';
   rootURL = '/api';
 
   constructor(

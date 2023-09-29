@@ -13,12 +13,12 @@ import { ApiService } from '../services/api.service';
 })
 export class CreditsCounterService {
 
-  private accountInfo: AccountInfo;
-  public creditCount: number;
+  private accountInfo!: AccountInfo;
+  public creditCount: number = 0;
   
   public displayedCreditsEvent: EventEmitter<number>;
-  public displayedCredits;
-  public userName: string;
+  public displayedCredits: number = 0;
+  public userName: string = '';
 
   constructor(
     private authService: MsalService,
@@ -44,7 +44,7 @@ export class CreditsCounterService {
     }
     else
     {
-      console.log("Could not retrieve the account id, please contact simon@bim42.com")
+      throw new Error("Could not retrieve the account id, please contact simon@bim42.com");
     }
 
   }
@@ -74,9 +74,9 @@ export class CreditsCounterService {
   }
 
   checkAccount() {
-    this.accountInfo = this.authService.instance.getActiveAccount();
+    this.accountInfo = this.authService.instance.getActiveAccount()!;
     if (this.accountInfo) {
-      this.userName = this.accountInfo.name;
+      this.userName = this.accountInfo.name!;
     }
   }
 }

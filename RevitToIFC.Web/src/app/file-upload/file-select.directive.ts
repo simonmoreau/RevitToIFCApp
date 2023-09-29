@@ -4,7 +4,7 @@ import { FileUploader } from './file-uploader.class';
 
 @Directive({ selector: '[ng2FileSelect]' })
 export class FileSelectDirective {
-  @Input() public uploader: FileUploader;
+  @Input() public uploader!: FileUploader;
   @Output() public onFileSelected: EventEmitter<File[]> = new EventEmitter<File[]>();
 
   protected element: ElementRef;

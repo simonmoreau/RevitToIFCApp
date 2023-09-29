@@ -25,6 +25,10 @@ export class CheckoutSuccessComponent implements OnInit {
     this.isProcessing = true;
     this.isSuccess = false;
     this.isError = false;
+    this.conversionCreditsUpdate = {
+      userId: '',
+      creditsNumber: 0
+    };
   }
 
   ngOnInit(): void {

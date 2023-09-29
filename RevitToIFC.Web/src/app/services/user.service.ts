@@ -11,26 +11,26 @@ import { ApiService } from './api.service';
   providedIn: 'root',
 })
 export class UserService {
-  private forgeTokenSubject: BehaviorSubject<IForgeToken>;
-  public currentForgeToken: Observable<IForgeToken>;
+  private forgeTokenSubject: BehaviorSubject<IForgeToken | null>;
+  public currentForgeToken: Observable<IForgeToken | null>;
 
   constructor(
     private authService: MsalService,
     private apiService: ApiService
   ) {
-    this.forgeTokenSubject = new BehaviorSubject<IForgeToken>(
-      JSON.parse(localStorage.getItem('forgeToken'))
+    this.forgeTokenSubject = new BehaviorSubject<IForgeToken | null>(
+      JSON.parse(localStorage.getItem('forgeToken')!)
     );
     this.currentForgeToken = this.forgeTokenSubject.asObservable();
   }
 
-  public get currentTokenValue(): IForgeToken {
+  public get currentTokenValue(): IForgeToken | null {
     return this.forgeTokenSubject.value;
   }
 
   public getToken(): Observable<IForgeToken> {
 
-    const savedToken: IForgeToken = JSON.parse(localStorage.getItem('forgeToken'));
+    const savedToken: IForgeToken = JSON.parse(localStorage.getItem('forgeToken')!);
     if (savedToken)
     {
       return of(savedToken);
