@@ -25,11 +25,11 @@
     "@azure/msal-angular": "^3.0.4",
     "@azure/msal-browser": "^3.1.0",
     "cookieconsent": "^3.1.1",
+    "jest-editor-support": "*",
     "ngx-cookieconsent": "^4.0.2",
     "rxjs": "^7.8.1",
-    "zone.js": "^0.12.0",
-    "jest-editor-support": "*",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.12.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.9",
@@ -39,6 +39,8 @@
     "@types/jasmine": "~4.0.0",
     "@types/stripe-checkout": "^1.0.4",
     "@types/stripe-v3": "^3.1.29",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
     "eslint": "^8.49.0",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
