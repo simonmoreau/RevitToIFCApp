@@ -3,7 +3,9 @@
 }
 
 mat-card {
-    min-height: 22rem;
+    flex-grow: 1;
+    max-width:32%;
+    padding:1rem;
 }
 
 span.material-icons {
@@ -24,8 +26,12 @@ mat-card mat-card-actions:last-of-type {
     margin-bottom: 0.8rem;
 }
 
+mat-card-title {
+  font-weight: 600;
+}
+
 .container {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch
+}
