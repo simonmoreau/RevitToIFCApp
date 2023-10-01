@@ -1,38 +1,11 @@
-// src\styles.scss
+@use '@angular/material' as mat;
+@use './app-theme' as theme;
 
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
+// Include material core styles.
+@include mat.core();
 
-@import "@angular/material/theming";
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-
-@include mat-core();
-
-
-// import our custom theme                // 👈 changed
-@import "./theme.scss";                   // 👈 changed
-                                          // 👈 changed
-// import custom component themes         // 👈 changed
-@import "./custom-component-themes.scss"; // 👈 changed
-
-
-// Override typography for all Angular Material, including mat-base-typography and all components.
-@include angular-material-typography($typography);
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-
-$my-app-theme-custom: map-merge($theming-material-components-theme, (foreground: $foreground));
-
-@include angular-material-theme($my-app-theme-custom);  // 👈 changed
-@include custom-components-theme($my-app-theme-custom); // 👈 changed
+@include mat.all-component-themes(theme.$app-theme);
 
 /* You can add global styles to this file, and also import other style files */
-
 html, body { height: 100%; }
-body { margin: 0; color: mat-color($md-blue, 500);}
+body { margin: 0; color: mat.get-color-from-palette(theme.$md-blue, 500);}
