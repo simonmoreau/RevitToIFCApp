@@ -6,6 +6,8 @@
 
 @include mat.all-component-themes(theme.$app-theme);
 
+@include mat.typography-hierarchy(theme.$typography);
+
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 body { margin: 0; color: mat.get-color-from-palette(theme.$md-blue, 500);}

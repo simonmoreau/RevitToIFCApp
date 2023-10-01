@@ -85,9 +85,28 @@ $font-weight-body: 400;
 
 // Typography config based on the default, but using "Titillium Web" as the
 // default font family for all levels.
-$typography: mat.define-typography-config($font-family: $heading-font-family,
-  );
+//$typography: mat.define-typography-config(
+//  $font-family: $heading-font-family,
+//  $headline-1: mat.define-typography-level(5.61rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+//  $headline-2: mat.define-typography-level(4.209rem, $font-family: $heading-font-family, $font-weight: $font-weight-title),
+//  $headline-3: mat.define-typography-level(3.157rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $headline-4: mat.define-typography-level(2.369rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $headline-5: mat.define-typography-level(1.777rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $headline-6: mat.define-typography-level(1.333rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $subtitle-1: mat.define-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $subtitle-2: mat.define-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $body-1: mat.define-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $body-2: mat.define-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $caption: mat.define-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $button: mat.define-typography-level(1rem, $font-family: $heading-font-family, $font-weight: $font-weight-body),
+//  $overline:mat.define-typography-level(0.75rem, $font-family: $heading-font-family, $font-weight: $font-weight-body)
+//  );
 
+// Typography config based on the default, but using "Titillium Web" as the
+// default font family for all levels.
+$typography: mat.define-typography-config(
+  $font-family: $heading-font-family
+  );
 
 
 $app-theme: mat.define-light-theme((color: (primary: $app-primary, accent: $app-accent, warn: $app-warn, ),
