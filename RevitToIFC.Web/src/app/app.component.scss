@@ -1,4 +1,10 @@
 
+.full-height {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  place-content: stretch space-between;
+}
 
 .toolbar-spacer {
   flex: 1 1 auto;
@@ -12,24 +18,13 @@ a.title {
   width: 8px;
 }
 
-.toolbar-margin {
-  flex: 1 1 100%;
-  box-sizing: border-box;
-  max-width: 8%;
-}
-
-.toolbar-main {
-  flex: 1 1 100%;
-  box-sizing: border-box;
-  max-width: 84%;
-}
 
 .toolbar-flexbox {
   flex-direction: row;
   box-sizing: border-box;
   display: flex;
   place-content: stretch space-between;
-  align-items: stretch;
+  align-items: center;
 }
 
 mat-toolbar {
@@ -37,8 +32,12 @@ mat-toolbar {
 }
 
 .layout-margins {
-  padding-left: 4rem;
-  padding-right:4rem;
+  padding-left: 5rem;
+  padding-right:5rem;
+}
+
+.flex-grow {
+    flex-grow: 1;
 }
 
 @media screen and (max-width : 1200px) {
