@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   localDomain: 'localhost',
-  localUri: 'http://localhost:6420/',
+  localUri: 'http://localhost:6420',
   apiUri: '',
   ifcStorageKey: 'ifc-storage-dev',
   rvtStorageKey: 'rvt-storage-dev',

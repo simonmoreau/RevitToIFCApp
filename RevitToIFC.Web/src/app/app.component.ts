@@ -49,7 +49,6 @@ type IdTokenClaimsWithPolicyId = IdTokenClaims & {
 })
 export class AppComponent implements OnInit, OnDestroy {
   isIframe = false;
-  loggedIn = false;
   userName: any;
   loading: boolean = true;
   loginDisplay = false;
@@ -135,8 +134,8 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(this._destroying$)
       )
       .subscribe((result: EventMessage) => {
-        let payload = result.payload as AuthenticationResult;
-        let idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
+        const payload = result.payload as AuthenticationResult;
+        const idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
 
         if (
           idtoken.acr === b2cPolicies.names.signUpSignIn ||
@@ -181,7 +180,7 @@ export class AppComponent implements OnInit, OnDestroy {
           idtoken.acr === b2cPolicies.names.resetPassword ||
           idtoken.tfp === b2cPolicies.names.resetPassword
         ) {
-          let signUpSignInFlowRequest: RedirectRequest | PopupRequest = {
+          const signUpSignInFlowRequest: RedirectRequest | PopupRequest = {
             authority: b2cPolicies.authorities.signUpSignIn.authority,
             prompt: PromptValue.LOGIN, // force user to reauthenticate with their new password
             scopes: [],
@@ -206,7 +205,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // Checking for the forgot password error. Learn more about B2C error codes at
         // https://learn.microsoft.com/azure/active-directory-b2c/error-codes
         if (result.error && result.error.message.indexOf('AADB2C90118') > -1) {
-          let resetPasswordFlowRequest: RedirectRequest | PopupRequest = {
+          const resetPasswordFlowRequest: RedirectRequest | PopupRequest = {
             authority: b2cPolicies.authorities.resetPassword.authority,
             scopes: [],
           };
@@ -226,13 +225,13 @@ export class AppComponent implements OnInit, OnDestroy {
      * To use active account set here, subscribe to inProgress$ first in your component
      * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
      */
-    let activeAccount = this.authService.instance.getActiveAccount();
+    const activeAccount = this.authService.instance.getActiveAccount();
 
     if (
       !activeAccount &&
       this.authService.instance.getAllAccounts().length > 0
     ) {
-      let accounts = this.authService.instance.getAllAccounts();
+      const accounts: AccountInfo[] = this.authService.instance.getAllAccounts();
       // add your code for handling multiple accounts here
       this.authService.instance.setActiveAccount(accounts[0]);
     }
