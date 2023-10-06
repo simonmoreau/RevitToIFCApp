@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploader, UploadObjectResult } from '../file-upload/file-uploader.class';
+import { FileUploader, UploadObjectResult, FileUploaderOptions } from '../file-upload/file-uploader.class';
 import { ForgeService } from '../forge/forge.service';
 import { UserService } from '../services/user.service';
 import { ApiService } from '../services/api.service';
@@ -30,9 +30,11 @@ export class UploadComponent {
     const URL = forgeService.forgeURL + `/oss/v2/buckets/${bucketKey}/objects/${objectName}`;
 
     // TODO add the ability to cancel a workitem before the end
-    this.uploader = new FileUploader({
+
+    const fileUploaderOptions : FileUploaderOptions = {
       url: URL,
       method: 'PUT',
+      filters: [],
       // headers: [{ name: 'Authorization', value: `Bearer ${userService.currentTokenValue?.access_token}` }],
       disableMultipart: true, // 'DisableMultipart' must be 'true' for formatDataFunction to be called.
       formatDataFunctionIsAsync: true,
@@ -46,7 +48,9 @@ export class UploadComponent {
           });
         });
       }
-    }, forgeService, userService);
+    }
+
+    this.uploader = new FileUploader(fileUploaderOptions, forgeService, userService);
 
     this.hasBaseDropZoneOver = false;
     this.hasAnotherDropZoneOver = false;

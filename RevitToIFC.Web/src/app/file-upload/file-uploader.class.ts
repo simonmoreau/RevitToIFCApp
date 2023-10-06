@@ -95,7 +95,7 @@ export class FileUploader {
   }
 
   public setOptions(options: FileUploaderOptions): void {
-    this.options = Object.assign(this.options, options);
+    this.options = options;
 
     this.authToken = this.options.authToken!;
     this.authTokenHeader = this.options.authTokenHeader || 'Authorization';
