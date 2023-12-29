@@ -1,32 +1,37 @@
 mat-card {
-    min-height: 15rem;
+  min-height: 15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 mat-card-title {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .price {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 // TODO Does it still work ?
 @keyframes spinner {
-    to {transform: rotate(360deg);}
+  to {
+    transform: rotate(360deg);
   }
-   
-  .spinner:before {
-    content: '';
-    box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin-top: -10px;
-    margin-left: -10px;
-    border-radius: 50%;
-    border: 2px solid #ffffff;
-    border-top-color: #1c364a;
-    animation: spinner .8s linear infinite;
-  }
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  border-top-color: #1c364a;
+  animation: spinner .8s linear infinite;
+}

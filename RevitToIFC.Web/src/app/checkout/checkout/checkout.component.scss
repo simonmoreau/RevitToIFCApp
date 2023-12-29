@@ -1,3 +1,14 @@
 .mat-display-2 {
     margin-top: 1rem;
 }
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  column-gap: 2rem;
+}
+
+app-price {
+  flex-grow: 1;
+}
