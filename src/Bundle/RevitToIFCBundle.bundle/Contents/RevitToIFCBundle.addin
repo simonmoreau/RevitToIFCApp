@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>RevitToIFCBundle</Name>
+    <Assembly>.\RevitToIFCBundle\RevitToIFCBundle.dll</Assembly>
+    <AddInId>1ac3f34e-453b-4183-968f-47c753f60a89</AddInId>
+    <FullClassName>RevitToIFCBundle.RevitToIFCBundleApp</FullClassName>
+    <Description>"Export to IFC"</Description>
+    <VendorId>BIM42</VendorId>
+    <VendorDescription>
+    </VendorDescription>
+  </AddIn>
+</RevitAddIns>
