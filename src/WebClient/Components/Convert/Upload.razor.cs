@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Collections.Generic;
 
 namespace WebClient.Components.Convert
 {
@@ -9,11 +8,11 @@ namespace WebClient.Components.Convert
 
         private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
         private string _dragClass = DefaultDragClass;
-        private readonly List<string> _fileNames = new();
+        private readonly List<IBrowserFile> _browserFiles = new();
 
         private async Task Clear()
         {
-            _fileNames.Clear();
+            _browserFiles.Clear();
             ClearDragClass();
             await Task.Delay(100);
         }
@@ -24,20 +23,14 @@ namespace WebClient.Components.Convert
             var files = e.GetMultipleFiles();
             foreach (var file in files)
             {
-                _fileNames.Add(file.Name);
+                _browserFiles.Add(file);
             }
         }
 
-        private void RemoveFile(string fileName)
-        {
-            _fileNames.Remove(fileName);
-        }
 
         private void AddFile()
         {
-            // Upload the files here
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-            Snackbar.Add("TODO: Upload your files!");
+
         }
 
         private void SetDragClass()
