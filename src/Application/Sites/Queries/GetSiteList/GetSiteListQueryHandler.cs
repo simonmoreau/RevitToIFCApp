@@ -16,7 +16,7 @@ namespace Application.Sites.Queries.GetSiteList
 
         public async Task<SiteListVm> Handle(GetSiteListQuery request, CancellationToken cancellationToken)
         {
-            var sites = await _context.Sites
+            List<Domain.Entities.Site> sites = await _context.Sites
                 .OrderBy(v => v.Name)
                 .ToListAsync(cancellationToken);
 

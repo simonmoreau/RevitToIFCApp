@@ -9,7 +9,7 @@ namespace WebApp
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             // Add services to the container.
@@ -22,7 +22,7 @@ namespace WebApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             if (app.Environment.IsDevelopment())
             {
@@ -32,9 +32,9 @@ namespace WebApp
             if (app.Environment.IsDevelopment())
             {
                 // Initialise and seed database
-                using (var scope = app.Services.CreateScope())
+                using (IServiceScope scope = app.Services.CreateScope())
                 {
-                    var ApPInitialiser = scope.ServiceProvider.GetRequiredService<DbContextInitialiser>();
+                    DbContextInitialiser ApPInitialiser = scope.ServiceProvider.GetRequiredService<DbContextInitialiser>();
                     await ApPInitialiser.InitialiseAsync();
                     await ApPInitialiser.SeedAsync();
                 }

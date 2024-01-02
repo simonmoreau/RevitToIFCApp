@@ -22,7 +22,7 @@ namespace ApplicationTest.Objets.Queries
             GetObjetByIdQueryHandler request = new GetObjetByIdQueryHandler(_context);
 
             // Act
-            var result = await request.Handle(new GetObjetByIdQuery { Id = objectId }, CancellationToken.None);
+            Objet result = await request.Handle(new GetObjetByIdQuery { Id = objectId }, CancellationToken.None);
 
             // Assert
             Assert.IsType<Objet>(result);

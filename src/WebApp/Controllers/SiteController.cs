@@ -15,7 +15,7 @@ namespace WebApp.Controllers
         [HttpGet(Name = "GetSites")]
         public async Task<IEnumerable<Domain.Entities.Site>> GetAllSites()
         {
-            var vm = await Mediator.Send(new GetSiteListQuery());
+            SiteListVm vm = await Mediator.Send(new GetSiteListQuery());
             return vm.Sites;
         }
     }

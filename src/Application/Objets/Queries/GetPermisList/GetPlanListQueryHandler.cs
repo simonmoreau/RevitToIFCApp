@@ -18,7 +18,7 @@ namespace Application.Objets.Queries.GetPermisList
 
         public async Task<PlanListVm> Handle(GetPlanListQuery request, CancellationToken cancellationToken)
         {
-            var plan = await _context.Plans
+            List<Domain.Entities.Plan> plan = await _context.Plans
                 .OrderBy(v => v.Name)
                 .ToListAsync(cancellationToken);
 

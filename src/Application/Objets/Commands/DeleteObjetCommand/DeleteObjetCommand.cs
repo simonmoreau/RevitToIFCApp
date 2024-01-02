@@ -24,7 +24,7 @@ namespace Application.Objets.Commands.DeleteObjetCommand
 
             public async Task Handle(DeleteObjetCommand request, CancellationToken cancellationToken)
             {
-                var entity = await _context.Objets
+                Domain.Entities.Objet? entity = await _context.Objets
                     .FindAsync(request.Id);
 
                 if (entity == null)

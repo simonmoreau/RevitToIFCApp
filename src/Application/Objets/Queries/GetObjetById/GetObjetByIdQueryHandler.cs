@@ -21,7 +21,7 @@ namespace Application.Objets.Queries.GetObjetById
 
         public async Task<Objet> Handle(GetObjetByIdQuery request, CancellationToken cancellationToken)
         {
-            var objet = await _context.Objets
+            Objet? objet = await _context.Objets
                 .Where(v => v.Id == request.Id)
                 .FirstOrDefaultAsync();
 

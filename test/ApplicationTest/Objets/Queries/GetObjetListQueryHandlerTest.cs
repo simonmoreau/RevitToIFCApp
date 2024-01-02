@@ -23,7 +23,7 @@ namespace ApplicationTest.Objets.Queries
             GetObjetListQueryHandler request = new GetObjetListQueryHandler(_context);
 
             // Act 
-            var result = await request.Handle(new GetObjetListQuery(), CancellationToken.None);
+            ObjetListVm result = await request.Handle(new GetObjetListQuery(), CancellationToken.None);
 
             // Assert 
             Assert.NotNull(result);

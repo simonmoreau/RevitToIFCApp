@@ -33,7 +33,7 @@ namespace ApplicationTest.Objets.Commands
             string id = await command.Handle(new CreateObjetCommand(), CancellationToken.None);
 
             // Arrange
-            var result = await _sut.Handle(new GetObjetByIdQuery { Id = id }, CancellationToken.None);
+            Objet result = await _sut.Handle(new GetObjetByIdQuery { Id = id }, CancellationToken.None);
             Assert.IsType<Objet>(result);
             Assert.NotNull(result);
             Assert.Equal(id, result.Id);

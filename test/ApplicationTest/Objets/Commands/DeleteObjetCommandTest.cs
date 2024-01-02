@@ -30,7 +30,7 @@ namespace ApplicationTest.Objets.Commands
         {
             // Arrange : Vérification que l'objet existe dans la base
             string objectId = "ZjMxODljNzMtMjIxNC00OWM1LWI4YzEtNGFlNGVhMmNjZDQw";
-            var before = await _sut.Handle(new GetObjetByIdQuery { Id = objectId }, CancellationToken.None);
+            Objet before = await _sut.Handle(new GetObjetByIdQuery { Id = objectId }, CancellationToken.None);
             Assert.IsType<Objet>(before);
             Assert.NotNull(before);
             Assert.Equal(objectId, before.Id);

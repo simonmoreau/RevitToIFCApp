@@ -17,14 +17,14 @@ namespace ApplicationTest.Common
     {
         public static AppDbContext Create()
         {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
+            DbContextOptions<AppDbContext> options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            var context = new AppDbContext(options);
+            AppDbContext context = new AppDbContext(options);
             context.Database.EnsureCreated();
 
-            var dbContextInitialiser = new DbContextInitialiser(NullLogger<DbContextInitialiser>.Instance, context);
+            DbContextInitialiser dbContextInitialiser = new DbContextInitialiser(NullLogger<DbContextInitialiser>.Instance, context);
             dbContextInitialiser.InitialiseAsync().Wait();
             dbContextInitialiser.SeedAsync().Wait();
 

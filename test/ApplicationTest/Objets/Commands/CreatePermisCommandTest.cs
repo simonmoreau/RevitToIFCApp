@@ -43,7 +43,7 @@ namespace ApplicationTest.Objets.Commands
             }, CancellationToken.None);
 
             // Arrange
-            var result = await _sut.Handle(new GetPlanListQuery(), CancellationToken.None);
+            PlanListVm result = await _sut.Handle(new GetPlanListQuery(), CancellationToken.None);
             Assert.IsType<List<Plan>>(result.Plans);
             Assert.NotNull(result);
             Assert.Equal(1, result.Plans.Count);

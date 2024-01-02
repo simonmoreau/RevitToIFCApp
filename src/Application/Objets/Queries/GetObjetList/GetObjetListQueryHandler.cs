@@ -15,7 +15,7 @@ namespace Application.Objets.Queries.GetObjetList
 
         public async Task<ObjetListVm> Handle(GetObjetListQuery request, CancellationToken cancellationToken)
         {
-            var objets = await _context.Objets
+            List<Domain.Entities.Objet> objets = await _context.Objets
                 .OrderBy(v => v.Name)
                 .ToListAsync(cancellationToken);
 

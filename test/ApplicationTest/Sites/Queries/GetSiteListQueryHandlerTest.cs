@@ -22,7 +22,7 @@ namespace ApplicationTest.Sites.Queries
             GetSiteListQueryHandler request = new GetSiteListQueryHandler(_context);
 
             // Act 
-            var result = await request.Handle(new GetSiteListQuery(), CancellationToken.None);
+            SiteListVm result = await request.Handle(new GetSiteListQuery(), CancellationToken.None);
 
             // Assert 
             Assert.NotNull(result);

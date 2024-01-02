@@ -22,7 +22,7 @@ namespace ApplicationTest.Plans.Queries
             GetPlanListQueryHandler request = new GetPlanListQueryHandler(_context);
 
             // Act 
-            var result = await request.Handle(new GetPlanListQuery(), CancellationToken.None);
+            PlanListVm result = await request.Handle(new GetPlanListQuery(), CancellationToken.None);
 
             // Assert 
             Assert.NotNull(result);
