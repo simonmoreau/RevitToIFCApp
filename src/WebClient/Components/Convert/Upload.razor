@@ -31,7 +31,7 @@
                  </MudButton>
                  <MudButton OnClick="@Clear"
                             Color="Color.Error"
-                            Disabled="@(!_browserFiles.Any())"
+                            Disabled="@(!_revitFiles.Any())"
                             Variant="Variant.Filled">
                      Clear
                  </MudButton>
@@ -39,6 +39,6 @@
          </ButtonTemplate>
      </MudFileUpload>
 
-     <UploadedFiles BrowserFiles="_browserFiles"></UploadedFiles>
+     <UploadedFiles BrowserFiles="_revitFiles"></UploadedFiles>
 
  </MudStack>

@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 using MudBlazor;
+using WebClient.Models;
 
 namespace WebClient.Components.Convert
 {
@@ -8,11 +11,11 @@ namespace WebClient.Components.Convert
 
         private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
         private string _dragClass = DefaultDragClass;
-        private readonly List<IBrowserFile> _browserFiles = new();
+        private readonly List<RevitFile> _revitFiles = new();
 
         private async Task Clear()
         {
-            _browserFiles.Clear();
+            _revitFiles.Clear();
             ClearDragClass();
             await Task.Delay(100);
         }
@@ -23,7 +26,16 @@ namespace WebClient.Components.Convert
             var files = e.GetMultipleFiles();
             foreach (var file in files)
             {
-                _browserFiles.Add(file);
+                RevitFile revitFile = new RevitFile(file);
+                _revitFiles.Add(revitFile);
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            foreach (RevitFile revitFile in _revitFiles)
+            {
+                await revitFile.ReadPart();
             }
         }
 

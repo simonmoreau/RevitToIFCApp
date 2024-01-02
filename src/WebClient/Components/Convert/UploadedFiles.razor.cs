@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using WebClient.Models;
 
 namespace WebClient.Components.Convert
 {
     public partial class UploadedFiles
     {
         [Parameter]
-        public List<IBrowserFile> BrowserFiles { get; set; } = default!;
+        public List<RevitFile> BrowserFiles { get; set; } = default!;
 
-        private void RemoveFile(IBrowserFile file)
+        private void RemoveFile(RevitFile revitFile)
         {
-            BrowserFiles.Remove(file);
+            BrowserFiles.Remove(revitFile);
         }
 
         private void UploadFile()
