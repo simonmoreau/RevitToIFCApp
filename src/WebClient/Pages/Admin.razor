@@ -1,0 +1,99 @@
+﻿@using WebClient.Components.Convert;
+@using Autodesk.Forge.DesignAutomation.Model
+@page "/admin"
+
+<PageTitle>Admin</PageTitle>
+
+<h4>Engines</h4>
+
+@if (ListForgeApplicationsVm == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudSimpleTable Style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>Engines</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var engine in ListForgeApplicationsVm.Engines)
+            {
+                <tr>
+                    <td>@engine</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
+
+
+<h4>Appbundle</h4>
+
+@if (ListForgeApplicationsVm == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudSimpleTable Style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>Version</th>
+                <th>Package</th>
+                <th>Description</th>
+                <th>Engine</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (AppBundle appBundle in ListForgeApplicationsVm.AppBundles)
+            {
+                <tr>
+                    <td>@appBundle.Version</td>
+                    <td>@appBundle.Package</td>
+                    <td>@appBundle.Description</td>
+                    <td>@appBundle.Engine</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
+
+
+                @if (ListForgeApplicationsVm == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+        <MudSimpleTable Style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>Version</th>
+                <th>Appbundles</th>
+                <th>Description</th>
+                <th>Engine</th>
+                <th>CommandLine</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Activity activity in ListForgeApplicationsVm.Activities)
+            {
+                <tr>
+                    <td>@activity.Version</td>
+                    <td>
+                        @{
+                            var appbundles = @activity.Appbundles ?? new string[0].ToList();
+                        }
+                        @string.Join("; ",@appbundles)
+                     </td>
+                    <td>@activity.Description ?? ""</td>
+                    <td>@activity.Engine</td>
+                    <td>@activity.CommandLine</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>    
+}
