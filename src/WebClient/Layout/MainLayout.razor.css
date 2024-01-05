@@ -1,18 +1,6 @@
-.margin {
-    margin-left: 2em;
-    margin-right: 2em;
-}
-
-@media screen and (min-width: 600px) {
-    .margin {
-        margin-left: 4em;
-        margin-right: 4em;
-    }
-}
-
-@media screen and (min-width: 1280px) {
-    .margin {
-        margin-left: 8em;
-        margin-right: 8em;
-    }
+footer {
+    min-height: 5rem;
+    background-color: rgb(228, 231, 233);
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
 }

@@ -2,9 +2,11 @@
 
 <MudThemeProvider Theme="appTheme" />
 
-<MudLayout>
-    <MudAppBar Elevation="0" Color="Color.Primary">
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+<MudLayout Class="d-flex flex-column justify-space-between">
+    <MudAppBar Class="margin" Elevation="0" Color="Color.Primary">
+        <NavLink class="nav-link" href="/">
+            <MudImage Src="images/revit-to-ifc-logo-white.svg" Alt="Revit To IFC" />
+        </NavLink>
         <MudSpacer />
         <NavLink class="nav-link" href="convert">
             <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Convert
@@ -13,11 +15,37 @@
             <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Admin
         </NavLink>
         <LoginDisplay />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
-    <MudMainContent>
+    <MudMainContent Class="flex-grow-1">
         <div class="margin">
             @Body
         </div>
     </MudMainContent>
+    <footer class="margin d-flex flex-row justify-space-between">
+        <div>
+            <div>
+                <MudText Typo="Typo.caption">
+                    This service make use of Autodesk® Forge® services. By using it, your are suscribing to the <a href="https://forge.autodesk.com/">Forge Term of Services</a>.
+                </MudText>
+            </div>
+            <div>
+                <MudText Typo="Typo.caption">
+                    Autodesk and Autodesk® Revit® are registered trademarks or trademarks of Autodesk, Inc., and/or its
+                    subsidiaries and/or affiliates in the USA and/or other countries.
+                </MudText>
+            </div>
+        </div>
+        <div>
+            <div>
+                <MudText Typo="Typo.caption">
+                    <a href="mailto:simon@bim42.com">Contact us</a>
+                </MudText>
+            </div>
+            <div>
+                <MudText Typo="Typo.caption">
+                    <a href="https://www.bim42.com/privacy/">Privacy Policy</a>
+                </MudText>
+            </div>
+        </div>
+    </footer>
 </MudLayout>

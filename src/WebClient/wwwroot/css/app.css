@@ -1,3 +1,26 @@
+html,body, #app {
+    height:100%;
+}
+
+.margin {
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+@media screen and (min-width: 600px) {
+    .margin {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .margin {
+        padding-left: 8em;
+        padding-right: 8em;
+    }
+}
+
 
 h1:focus {
     outline: none;
