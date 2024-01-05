@@ -4,96 +4,93 @@
 
 <PageTitle>Admin</PageTitle>
 
-<h4>Engines</h4>
+<h1>Admin</h1>
 
 @if (ListForgeApplicationsVm == null)
 {
-    <p><em>Loading...</em></p>
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Engines">
+            <p><em>Loading...</em></p>
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudTabPanel>
+    </MudTabs>
 }
 else
 {
-    <MudSimpleTable Style="overflow-x: auto;">
-        <thead>
-            <tr>
-                <th>Engines</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var engine in ListForgeApplicationsVm.Engines)
-            {
-                <tr>
-                    <td>@engine</td>
-                </tr>
-            }
-        </tbody>
-    </MudSimpleTable>
-}
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Engines">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Engines</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var engine in ListForgeApplicationsVm.Engines)
+                    {
+                        <tr>
+                            <td>@engine</td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+        <MudTabPanel Text="Appbundle">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Package</th>
+                        <th>Description</th>
+                        <th>Engine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (AppBundle appBundle in ListForgeApplicationsVm.AppBundles)
+                    {
+                        <tr>
+                            <td>@appBundle.Version</td>
+                            <td>@appBundle.Package</td>
+                            <td>@appBundle.Description</td>
+                            <td>@appBundle.Engine</td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+        <MudTabPanel Text="Activities">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Appbundles</th>
+                        <th>Description</th>
+                        <th>Engine</th>
+                        <th>CommandLine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Activity activity in ListForgeApplicationsVm.Activities)
+                    {
+                        <tr>
+                            <td>@activity.Version</td>
+                            <td>
+                                @{
+                                    var appbundles = @activity.Appbundles ?? new string[0].ToList();
+                                }
+                                @string.Join("; ", @appbundles)
+                            </td>
+                            <td>@activity.Description ?? ""</td>
+                            <td>@activity.Engine</td>
+                            <td>@activity.CommandLine</td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+        <MudTabPanel Text="Tab Disabled" Disabled="true">
+            <MudText>Content Disabled</MudText>
+        </MudTabPanel>
+    </MudTabs>
 
-
-<h4>Appbundle</h4>
-
-@if (ListForgeApplicationsVm == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <MudSimpleTable Style="overflow-x: auto;">
-        <thead>
-            <tr>
-                <th>Version</th>
-                <th>Package</th>
-                <th>Description</th>
-                <th>Engine</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (AppBundle appBundle in ListForgeApplicationsVm.AppBundles)
-            {
-                <tr>
-                    <td>@appBundle.Version</td>
-                    <td>@appBundle.Package</td>
-                    <td>@appBundle.Description</td>
-                    <td>@appBundle.Engine</td>
-                </tr>
-            }
-        </tbody>
-    </MudSimpleTable>
-}
-
-
-                @if (ListForgeApplicationsVm == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-        <MudSimpleTable Style="overflow-x: auto;">
-        <thead>
-            <tr>
-                <th>Version</th>
-                <th>Appbundles</th>
-                <th>Description</th>
-                <th>Engine</th>
-                <th>CommandLine</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Activity activity in ListForgeApplicationsVm.Activities)
-            {
-                <tr>
-                    <td>@activity.Version</td>
-                    <td>
-                        @{
-                            var appbundles = @activity.Appbundles ?? new string[0].ToList();
-                        }
-                        @string.Join("; ",@appbundles)
-                     </td>
-                    <td>@activity.Description ?? ""</td>
-                    <td>@activity.Engine</td>
-                    <td>@activity.CommandLine</td>
-                </tr>
-            }
-        </tbody>
-    </MudSimpleTable>    
 }
