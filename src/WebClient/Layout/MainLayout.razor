@@ -8,15 +8,11 @@
             <MudImage Src="images/revit-to-ifc-logo-white.svg" Alt="Revit To IFC" />
         </NavLink>
         <MudSpacer />
-        <NavLink class="nav-link" href="convert">
-            <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Convert
-        </NavLink>
-        <NavLink class="nav-link" href="admin">
-            <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Admin
-        </NavLink>
+        <MudButton Variant="Variant.Text" Color="Color.Tertiary" Href="convert">Convert</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Tertiary" Href="admin">Admin</MudButton>
         <LoginDisplay />
     </MudAppBar>
-    <MudMainContent Class="flex-grow-1">
+    <MudMainContent Class="flex-grow-1 mb-8">
         <div class="margin">
             @Body
         </div>

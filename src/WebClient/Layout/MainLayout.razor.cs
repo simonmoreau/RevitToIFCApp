@@ -11,6 +11,7 @@ namespace WebClient.Layout
                 Primary =  "#1c364a",
                 Secondary = "#e74727",
                 Warning = "#e74727",
+                Tertiary = "#e4e7e9",
             },
             Typography = new Typography()
             {
