@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Common.Behaviors;
+using MediatR.Pipeline;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
 {
@@ -6,6 +8,7 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddTransient(typeof(IRequestExceptionHandler<,,>), typeof(RequestGenericExceptionHandler<,,>));
             return services;
         }
     }
