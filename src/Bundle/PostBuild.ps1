@@ -22,7 +22,7 @@ xcopy /Y /F ($TargetPath) ($BundleFolder + "Contents\")
 
 
 ## Zip the package
-$ReleasePath = $ProjectDir
+$ReleasePath = $TargetDir
 $ReleaseZip = ($ReleasePath + "\" + $TargetName + ".zip")
 
 if (Test-Path $ReleaseZip) { Remove-Item $ReleaseZip }
