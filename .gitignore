@@ -316,3 +316,4 @@ paket-files/
 __pycache__/
 *.pyc
 /src/WebApp/appsettings.Development.json
+/src/Bundle/RevitToIFCBundle.bundle/Contents/RevitToIFCBundle.dll
