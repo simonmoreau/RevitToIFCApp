@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DesignAutomationBridge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autodesk.Forge.DesignAutomation.Revit.2024.0.2\lib\net48\DesignAutomationBridge.dll</HintPath>
+      <HintPath>..\..\packages\Autodesk.Forge.DesignAutomation.Revit.2024.0.2\lib\net48\DesignAutomationBridge.dll</HintPath>
     </Reference>
     <Reference Include="RevitAPI">
       <HintPath>$(PROGRAMFILES)\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
@@ -54,11 +54,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="PostBuild.ps1" />
-    <None Include="RevitToIFCBundle.addin" />
+    <None Include="RevitToIFCBundle.bundle\Contents\RevitToIFCBundle.addin" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RevitToIFCBundle.bundle\Contents\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="RevitToIFCBundle.bundle\PackageContents.xml" />
   </ItemGroup>

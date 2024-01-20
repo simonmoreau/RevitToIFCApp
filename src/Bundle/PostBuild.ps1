@@ -13,12 +13,12 @@ Set-AuthenticodeSignature -FilePath $TargetPath -Certificate $cert -IncludeChain
 
 # Copy to Addin folder for debug
 $addinFolder = ($env:APPDATA + "\Autodesk\REVIT\Addins\2024")
-CopyToFolder $revitVersion $addinFolder
+xcopy /Y /F ($TargetPath) ($addinFolder)
+xcopy /Y /F ($ProjectDir + "RevitToIFCBundle.bundle\Contents\RevitToIFCBundle.addin") ($addinFolder)
 
 # Copy to the package folder structure
 $BundleFolder = ($ProjectDir + "RevitToIFCBundle.bundle\")
-xcopy /Y /F ($TargetDir + "*.dll") ($BundleFolder + "Contents\")
-xcopy /Y /F ($ProjectDir + "*.addin") ($BundleFolder + "Contents\")
+xcopy /Y /F ($TargetPath) ($BundleFolder + "Contents\")
 
 
 ## Zip the package
