@@ -23,7 +23,7 @@ namespace WebApp.Controllers
         [HttpGet(Name = "GetAllApps")]
         public async Task<ActionResult<ListForgeApplicationsVm>> GetAllApps()
         {
-            var vm = await Mediator.Send(new ListForgeApplicationsQuery());
+            ListForgeApplicationsVm vm = await Mediator.Send(new ListForgeApplicationsQuery());
             return vm;
         }
     }

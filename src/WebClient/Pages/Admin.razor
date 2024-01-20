@@ -1,4 +1,5 @@
 ﻿@using WebClient.Components.Convert;
+@using WebClient.Components.Admin;
 @using Autodesk.Forge.DesignAutomation.Model
 @page "/admin"
 
@@ -18,6 +19,9 @@
 else
 {
     <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Create App">
+            <CreateForgeApplication></CreateForgeApplication>
+        </MudTabPanel>
         <MudTabPanel Text="Engines">
             <MudSimpleTable Style="overflow-x: auto;">
                 <thead>
@@ -39,8 +43,8 @@ else
             <MudSimpleTable Style="overflow-x: auto;">
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Version</th>
-                        <th>Package</th>
                         <th>Description</th>
                         <th>Engine</th>
                     </tr>
@@ -49,8 +53,8 @@ else
                     @foreach (AppBundle appBundle in ListForgeApplicationsVm.AppBundles)
                     {
                         <tr>
+                            <td>@appBundle.Id</td>
                             <td>@appBundle.Version</td>
-                            <td>@appBundle.Package</td>
                             <td>@appBundle.Description</td>
                             <td>@appBundle.Engine</td>
                         </tr>
@@ -62,6 +66,7 @@ else
             <MudSimpleTable Style="overflow-x: auto;">
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Version</th>
                         <th>Appbundles</th>
                         <th>Description</th>
@@ -73,6 +78,7 @@ else
                     @foreach (Activity activity in ListForgeApplicationsVm.Activities)
                     {
                         <tr>
+                            <td>@activity.Id</td>
                             <td>@activity.Version</td>
                             <td>
                                 @{
@@ -82,14 +88,16 @@ else
                             </td>
                             <td>@activity.Description ?? ""</td>
                             <td>@activity.Engine</td>
-                            <td>@activity.CommandLine</td>
+                            <td>
+                                @{
+                                    var commandLines = @activity.CommandLine ?? new string[0].ToList();
+                                }
+                                @string.Join("; ", @commandLines)
+                            </td>
                         </tr>
                     }
                 </tbody>
             </MudSimpleTable>
-        </MudTabPanel>
-        <MudTabPanel Text="Tab Disabled" Disabled="true">
-            <MudText>Content Disabled</MudText>
         </MudTabPanel>
     </MudTabs>
 

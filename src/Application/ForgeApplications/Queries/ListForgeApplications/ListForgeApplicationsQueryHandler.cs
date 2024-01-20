@@ -59,14 +59,29 @@ namespace Application.ForgeApplications.Queries.ListForgeApplications
 
         private async Task<Activity> GetActivity(string activityId)
         {
-            ApiResponse<Activity> activityResponse = await _activitiesApi.GetActivityAsync(activityId);
-            return activityResponse.Content;
+            try
+            {
+                ApiResponse<Activity> activityResponse = await _activitiesApi.GetActivityAsync(activityId);
+                return activityResponse.Content;
+            }
+            catch (Exception ex)
+            {
+                return new Activity() { Id = activityId, Description = ex.Message };
+            }
         }
 
         private async Task<AppBundle> GetAppBundle(string appBundleId)
         {
-            ApiResponse<AppBundle> appBundleResponse = await _appBundlesApi.GetAppBundleAsync(appBundleId);
-            return appBundleResponse.Content;
+            try
+            {
+                ApiResponse<AppBundle> appBundleResponse = await _appBundlesApi.GetAppBundleAsync(appBundleId);
+                return appBundleResponse.Content;
+            }
+            catch (Exception ex)
+            {
+                return new AppBundle() { Id  = appBundleId , Description = ex.Message};
+            }
+
         }
 
         private async Task<AppBundleView> CreateAppBundleView(string appBundleId)

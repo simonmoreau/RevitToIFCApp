@@ -1,0 +1,20 @@
+﻿<h3>CreateForgeApplication</h3>
+
+<EditForm Model="@forgeActivityForm" OnValidSubmit="CreateForgeApp">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="App name"
+                          @bind-Value="forgeActivityForm.Name" For="@(() => forgeActivityForm.Name)" />
+            <MudTextField Label="App bundle file" Class="mt-3"
+                          @bind-Value="forgeActivityForm.AppbundleFile" For="@(() => forgeActivityForm.AppbundleFile)" />
+            <MudTextField Label="Description" Class="mt-3"
+                          @bind-Value="forgeActivityForm.Description" For="@(() => forgeActivityForm.Description)"/>
+            <MudTextField Label="Engine" HelperText="The Engine" Class="mt-3"
+                          @bind-Value="forgeActivityForm.Engine" For="@(() => forgeActivityForm.Engine)" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Create</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
