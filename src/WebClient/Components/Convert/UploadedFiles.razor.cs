@@ -59,7 +59,7 @@ namespace WebClient.Components.Convert
         {
             if (!string.IsNullOrEmpty(revitFile.Version)) return;
 
-            long maxFileSize = 1024 * 1024 * 50; // 50 MB
+            long maxFileSize = 1024 * 1024 * 600; // 600 MB
 
             string path = Path.GetTempFileName();
             await using FileStream fs = new(path, FileMode.Create);
@@ -71,15 +71,21 @@ namespace WebClient.Components.Convert
             CFStream foundStream = cf.RootStorage.GetStream("BasicFileInfo");
             byte[] foundStreamData = foundStream.GetData();
 
-            string fileInfoAsText = ASCIIEncoding.Unicode.GetString(foundStreamData);
+            string fileInfoAsText = UTF8Encoding.Unicode.GetString(foundStreamData);
+            string[] basicFileInfoParts = fileInfoAsText.Split(new char[] { '\0' });
 
-            revitFile.Version = fileInfoAsText;
             cf.Close();
 
-            Match match = Regex.Match(revitFile.Version, "(\\d{4})");
-            if (match.Success)
+            int[] partIndexes = { 5, 7 };
+
+            foreach (int partIndex in partIndexes)
             {
-                revitFile.Version = match.Groups[0].Value;
+                Match match = Regex.Match(basicFileInfoParts[partIndex], "(\\d{4})");
+                if (match.Success)
+                {
+                    revitFile.Version = match.Groups[0].Value;
+                    break;
+                }
             }
 
             return;
