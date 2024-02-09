@@ -24,7 +24,7 @@ namespace Application.Common.Behaviors
         { 
             var name = typeof(TRequest).Name;
 
-            _logger.LogError("Request Exception {@Request}", name, exception.Message, request);
+            _logger.LogError("Request Exception {@name} {@message} {@request}", name, exception.Message, request);
         }
     }
 }
