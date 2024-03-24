@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Objets.Commands.CreateObjetCommand;
 using Application.Services;
+using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
@@ -15,13 +16,11 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
 {
     public class CreateForgeApplicationCommandHandler : IRequestHandler<CreateForgeApplicationCommand, string>
     {
-        private readonly IActivitiesApi _activitiesApi;
-        private readonly IAppBundlesApi _appBundlesApi;
+        private readonly DesignAutomationClient _designAutomationClient;
 
-        public CreateForgeApplicationCommandHandler(IActivitiesApi activitiesApi, IAppBundlesApi appBundlesApi)
+        public CreateForgeApplicationCommandHandler(DesignAutomationClient designAutomationClient)
         {
-            _activitiesApi = activitiesApi;
-            _appBundlesApi = appBundlesApi;
+            _designAutomationClient = designAutomationClient;
         }
 
         public async Task<string> Handle(CreateForgeApplicationCommand request, CancellationToken cancellationToken)
@@ -33,23 +32,21 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
             appBundleBody.Description = request.Description;
             appBundleBody.Id = appBundleName;
 
-            Autodesk.Forge.Core.ApiResponse<AppBundle> createdAppBundleResponse = await _appBundlesApi.CreateAppBundleAsync(appBundleBody);
-            AppBundle createdAppBundle = createdAppBundleResponse.Content;
+            string path = @"C:\Users\smoreau\Github\RevitToIFCApp\src\Bundle\bin\Debug\RevitToIFCBundle.zip";
+            await _designAutomationClient.CreateAppBundleAsync(appBundleBody, "test", path);
 
-            // Create or update an appbundle alias
-            Alias aliasBody = new Alias();
-            aliasBody.Version = 1;
-            aliasBody.Id = $"Alias_{request.Name}";
+            //// Create or update an appbundle alias
+            //Alias aliasBody = new Alias();
+            //aliasBody.Version = 1;
+            //aliasBody.Id = $"Alias_{request.Name}";
 
-            Autodesk.Forge.Core.ApiResponse<Alias> createdAliasResponse = await _appBundlesApi.CreateAppBundleAliasAsync(appBundleName, aliasBody);
-            Alias createdAlias = createdAliasResponse.Content;
-
-            // Upload to the appBundle
-            
+            //Autodesk.Forge.Core.ApiResponse<Alias> createdAliasResponse = await _designAutomationClient.AppBundlesApi.CreateAppBundleAliasAsync(appBundleName, aliasBody);
+            //Alias createdAlias = createdAliasResponse.Content;
 
             // Create or update an activity
             Activity activity = new Activity();
-            activity.Id = $"Activity{request.Name}";
+            activity.Id = $"ConvertActivity";
+            
             activity.Description = "Revit 2024 Ifc Export Activity";
 
             string engineCommand = "$(engine.path)\\revitcoreconsole.exe";
@@ -80,22 +77,22 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
 
             activity.Engine = request.Engine;
 
-            activity.Appbundles = new List<string> { $"{createdAppBundle.Id}+test" };
+            activity.Appbundles = new List<string> { $"KMYRoaDpKQk29XvvBqzbh9ATyyyJKGHXaAypXFQErxxPr9Gc.{appBundleName}+test" };
 
-            Autodesk.Forge.Core.ApiResponse<Activity> createdActivityResponse = await _activitiesApi.CreateActivityAsync(activity);
+            Autodesk.Forge.Core.ApiResponse<Activity> createdActivityResponse = await _designAutomationClient.ActivitiesApi.CreateActivityAsync(activity);
             Activity createdActivity = createdActivityResponse.Content;
 
             // Create or update an activity alias
-
+            Alias aliasBody = new Alias();
             aliasBody = new Alias();
             aliasBody.Version = 1;
             aliasBody.Id = $"Alias{request.Name}";
 
-            Autodesk.Forge.Core.ApiResponse<Alias> createdActiviyAliasResponse = await _activitiesApi.CreateActivityAliasAsync(activity.Id, aliasBody);
+            Autodesk.Forge.Core.ApiResponse<Alias> createdActiviyAliasResponse = await _designAutomationClient.ActivitiesApi.CreateActivityAliasAsync(activity.Id, aliasBody);
             Alias createdActivityAlias = createdActiviyAliasResponse.Content;
 
 
-            return createdAppBundle.Id;
+            return appBundleName;
 
         }
     }
