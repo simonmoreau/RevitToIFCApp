@@ -47,12 +47,17 @@ namespace Application.Files.Queries
 
         public async Task<GetUploadUrlVm> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
         {
-            string scope = GetScope(Scopes.DataWrite);
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
             string key = _forgeConfiguration.BucketKey;
 
-            return new GetUploadUrlVm();
+            (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(key, "test", 10, 0, "test", twoLeggedToken.AccessToken, "data:write", "testRequest");
+
+            GetUploadUrlVm uploadUrls = new GetUploadUrlVm();
+
+            uploadUrls.Urls = test.Item1.Urls;
+
+            return uploadUrls;
         }
 
         private async Task<(Signeds3uploadResponse, string)> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, int chunksUploaded, string uploadKey, string accessToken, string projectScope, string requestId)
@@ -99,30 +104,7 @@ namespace Application.Files.Queries
             throw new OssApiException($"{requestId} Error: Fail getting upload urls after maximum retry");
         }
 
-        private void ValidateProjectScopeName(string requestId, string projectScope)
-        {
-            string scopeRegex = "^([a-zA-Z0-9.\\-_]{3,50}(,?)){1,20}$";
-            if (!(String.IsNullOrEmpty(projectScope) || Regex.Match(projectScope, scopeRegex).Success))
-            {
-                throw new FileTransferException($"{requestId} Parameter 'projectScope' doesn't pass regex test - user must submit a valid scope.");
-            }
-        }
 
-        private string GetScope(Scopes scope)
-        {
-            Type type = scope.GetType();
-            System.Reflection.MemberInfo[] memberInfos = type.GetMember(scope.ToString());
-            System.Reflection.MemberInfo? enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == type);
-            object[] valueAttributes = enumValueMemberInfo.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-            if (valueAttributes.Length > 0)
-            {
-                return ((EnumMemberAttribute)valueAttributes[0]).Value;
-            }
-            else
-            {
-                throw new NullReferenceException("Value does not exist");
-            }
-        }
     }
 
     static class Constants
