@@ -12,8 +12,12 @@ namespace WebApp
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-            Microsoft.Extensions.Configuration.IConfiguration test = null;
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
+
             // Add services to the container.
+
             builder.Services.AddApplicationServices(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
