@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Files.Queries
+namespace Application.Files.Queries.GetUploadUrl
 {
     public class GetUploadUrlVm
     {

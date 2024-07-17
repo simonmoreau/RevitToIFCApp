@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Files.Queries
+namespace Application.Files.Commands.CreateBucket
 {
-    public class GetUploadUrlQuery : IRequest<GetUploadUrlVm>
+    public class CreateBucketCommand : IRequest<string>
     {
+        public string? Name { get; set; }
     }
 }

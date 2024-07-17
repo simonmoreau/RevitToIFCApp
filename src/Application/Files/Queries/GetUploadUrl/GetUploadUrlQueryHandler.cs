@@ -21,7 +21,7 @@ using Microsoft.Extensions.Options;
 using Domain.Entities;
 using Autodesk.Authentication;
 
-namespace Application.Files.Queries
+namespace Application.Files.Queries.GetUploadUrl
 {
     public class GetUploadUrlQueryHandler : IRequestHandler<GetUploadUrlQuery, GetUploadUrlVm>
     {
@@ -34,7 +34,7 @@ namespace Application.Files.Queries
         private readonly string _accessTokenExpiredMessage = "Access token provided is invalid or expired.";
         private readonly string _forbiddenMessage = "403 (Forbidden)";
 
-        public GetUploadUrlQueryHandler(IObjectsApi objectsApi, ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient, 
+        public GetUploadUrlQueryHandler(IObjectsApi objectsApi, ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
             IConfiguration configuration, IOptions<ForgeConfiguration> forgeConfiguration)
         {
             _objectsApi = objectsApi;
@@ -42,7 +42,7 @@ namespace Application.Files.Queries
             _authenticationClient = authenticationClient;
             _configuration = configuration;
             _forgeConfiguration = forgeConfiguration.Value;
-            
+
         }
 
         public async Task<GetUploadUrlVm> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
