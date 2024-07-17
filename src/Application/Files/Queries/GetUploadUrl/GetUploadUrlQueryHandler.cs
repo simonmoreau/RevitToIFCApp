@@ -49,9 +49,17 @@ namespace Application.Files.Queries.GetUploadUrl
         {
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
-            string key = _forgeConfiguration.BucketKey;
+            string bucketKey = _forgeConfiguration.BucketKey;
+            string objectKey = "file";
+            string projectScope = "data:write";
+            string requestIdPrefix = "";
+            string uploadKey = null;
 
-            (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(key, "test", 10, 0, "test", twoLeggedToken.AccessToken, "data:write", "testRequest");
+            var requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
+
+            (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(
+                bucketKey, objectKey, 10, 0, uploadKey,
+                twoLeggedToken.AccessToken, projectScope, requestId);
 
             GetUploadUrlVm uploadUrls = new GetUploadUrlVm();
 
@@ -104,6 +112,18 @@ namespace Application.Files.Queries.GetUploadUrl
             throw new OssApiException($"{requestId} Error: Fail getting upload urls after maximum retry");
         }
 
+        private string HandleRequestId(string parentRequestId, string bucketKey, string objectKey)
+        {
+            var requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
+            requestId = requestId + ":" + GenerateSdkRequestId(bucketKey, objectKey);
+            //_forgeService.Client.DefaultRequestHeaders.Add("x-ads-request-id", requestId);
+            return requestId;
+        }
+
+        private string GenerateSdkRequestId(string bucketKey, string objectKey)
+        {
+            return bucketKey + "/" + objectKey;
+        }
 
     }
 
