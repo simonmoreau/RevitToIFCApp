@@ -7,11 +7,16 @@ using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Text;
 using WebClient.Models;
+using Autodesk.Forge.Core;
+using WebClient.Services;
 
 namespace WebClient.Components.Convert
 {
     public partial class UploadedFiles
     {
+        [Inject]
+        public IDataService _dataService { get; set; }
+
         private bool _revitFilesNeedUpdate =false;
 
         [Parameter]
@@ -32,11 +37,58 @@ namespace WebClient.Components.Convert
             BrowserFiles.Remove(revitFile);
         }
 
-        private void UploadFile()
+        private async Task UploadFile(RevitFile revitFile)
         {
             // Upload the files here
+            string bucketKey = "_forgeConfiguration.BucketKey";
+            string objectKey = "file";
+            string requestIdPrefix = "";
+
+            string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
+
+            ulong numberOfChunks = (ulong)CalculateNumberOfChunks((ulong)revitFile.Size);
+            ulong chunksUploaded = 0;
+
+            List<string> uploadUrls = await _dataService.GetUploadUrls();
+
+            long maxFileSize = 1024 * 1024 * 600; // 600 MB
+
+            using (BinaryReader reader = new BinaryReader(revitFile.OpenReadStream(maxFileSize)))
+            {
+
+            }
+
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add("TODO: Upload your files!");
+        }
+
+        private string HandleRequestId(string parentRequestId, string bucketKey, string objectKey)
+        {
+            var requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
+            requestId = requestId + ":" + GenerateSdkRequestId(bucketKey, objectKey);
+            //_forgeService.Client.DefaultRequestHeaders.Add("x-ads-request-id", requestId);
+            return requestId;
+        }
+
+        private string GenerateSdkRequestId(string bucketKey, string objectKey)
+        {
+            return bucketKey + "/" + objectKey;
+        }
+
+        private double CalculateNumberOfChunks(ulong fileSize)
+        {
+            if (fileSize == 0)
+            {
+                return 1;
+            }
+
+            double numberOfChunks = (int)Math.Truncate((double)(fileSize / Constants.ChunkSize));
+            if (fileSize % Constants.ChunkSize != 0)
+            {
+                numberOfChunks++;
+            }
+
+            return numberOfChunks;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -91,5 +143,14 @@ namespace WebClient.Components.Convert
             return;
 
         }
+
+
+    }
+
+    static class Constants
+    {
+        public const int MaxRetry = 5;
+        public const ulong ChunkSize = 5 * 1024 * 1024;
+        public const int BatchSize = 25;
     }
 }

@@ -34,5 +34,13 @@ namespace WebClient.Services
 
             return list;
         }
+
+        public async Task<List<string>> GetUploadUrls()
+        {
+            List<string>? list = await JsonSerializer.DeserializeAsync<List<string>>
+        (await _httpClient.GetStreamAsync($"files"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            return list;
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace Application.Files.Queries.GetUploadUrl
             string requestIdPrefix = "";
             string uploadKey = null;
 
-            var requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
+            string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
 
             (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(
                 bucketKey, objectKey, 10, 0, uploadKey,

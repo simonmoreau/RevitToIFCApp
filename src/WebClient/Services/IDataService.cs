@@ -6,6 +6,8 @@ namespace WebClient.Services
     {
         Task<ListForgeApplicationsVm> GetApplicationDetails();
 
+        Task<List<string>> GetUploadUrls();
+
         Task<string> CreateApplication(ForgeActivityForm forgeActivity);
     }
 }

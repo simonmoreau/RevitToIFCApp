@@ -12,7 +12,7 @@
             </MudText>
             <MudIconButton Icon="@Icons.Material.Filled.CloudUpload"
                            aria-label="add" Color="Color.Primary"
-                           OnClick="@UploadFile">
+                           OnClick="(() => UploadFile(browserFile))">
             </MudIconButton>
             <MudIconButton Icon="@Icons.Material.Filled.Delete"
                            aria-label="delete" Color="Color.Primary"
