@@ -55,7 +55,7 @@ namespace Application.Files.Queries.GetUploadUrl
             string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
 
             (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(
-                bucketKey, objectKey, 10, 0, uploadKey,
+                bucketKey, objectKey, request.ChunksNumber, uploadKey,
                 twoLeggedToken.AccessToken, projectScope, requestId);
 
             GetUploadUrlVm uploadUrls = new GetUploadUrlVm();
@@ -65,11 +65,9 @@ namespace Application.Files.Queries.GetUploadUrl
             return uploadUrls;
         }
 
-        private async Task<(Signeds3uploadResponse, string)> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, int chunksUploaded, string uploadKey, string accessToken, string projectScope, string requestId)
+        private async Task<(Signeds3uploadResponse, string)> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, string uploadKey, string accessToken, string projectScope, string requestId)
         {
             int attemptCount = 0;
-            int parts = Math.Min(numberOfChunks - chunksUploaded, Constants.BatchSize);
-            int firstPart = chunksUploaded + 1;
 
             do
             {
@@ -80,10 +78,10 @@ namespace Application.Files.Queries.GetUploadUrl
                     Signeds3uploadResponse response = await _ossClient.SignedS3UploadAsync(
                           bucketKey: bucketKey,
                           objectKey: objectKey,
-                          parts: parts,
-                          firstPart: firstPart,
+                          parts: numberOfChunks,
                           uploadKey: uploadKey,
                           accessToken: accessToken,
+                          minutesExpiration:15,
                           xAdsAcmScopes: projectScope);
 
                     return (response, accessToken);

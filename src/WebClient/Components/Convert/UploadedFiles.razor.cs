@@ -9,6 +9,8 @@ using System.Text;
 using WebClient.Models;
 using Autodesk.Forge.Core;
 using WebClient.Services;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 
 namespace WebClient.Components.Convert
 {
@@ -16,6 +18,9 @@ namespace WebClient.Components.Convert
     {
         [Inject]
         public IDataService _dataService { get; set; }
+
+        [Inject]
+        public IUploadService _uploadService { get; set; }
 
         private bool _revitFilesNeedUpdate =false;
 
@@ -46,17 +51,56 @@ namespace WebClient.Components.Convert
 
             string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
 
-            ulong numberOfChunks = (ulong)CalculateNumberOfChunks((ulong)revitFile.Size);
-            ulong chunksUploaded = 0;
-
-            List<string> uploadUrls = await _dataService.GetUploadUrls();
+            int chunksNumber = CalculateNumberOfChunks((ulong)revitFile.Size);
 
             long maxFileSize = 1024 * 1024 * 600; // 600 MB
 
-            using (BinaryReader reader = new BinaryReader(revitFile.OpenReadStream(maxFileSize)))
-            {
+            List<string> urls = await _dataService.GetUploadUrls(chunksNumber);
+            long start = 0;
+            long chunkSize = Constants.ChunkSize;
+            chunkSize = (chunksNumber > 1 ? chunkSize : revitFile.Size);
+            long end = chunkSize;
 
+
+            //3 upload chunk one by one (or in parallel) 
+            // make record with eTag array 
+            List<string> eTags = new List<string>();
+
+            MemoryStream ms = new MemoryStream();
+            await revitFile.OpenReadStream(maxAllowedSize:maxFileSize).CopyToAsync(ms);
+
+            for (int chunkIndex = 0; chunkIndex < chunksNumber; chunkIndex++)
+            {
+                long numberOfBytes = chunkSize + 1;
+                byte[] fileBytes = new byte[numberOfBytes];
+                MemoryStream memoryStream = new MemoryStream(fileBytes);
+                ms.Seek((int)start, SeekOrigin.Begin);
+                int count = ms.Read(fileBytes, 0, (int)numberOfBytes);
+                memoryStream.Write(fileBytes, 0, (int)numberOfBytes);
+                memoryStream.Position = 0;
+
+                await _uploadService.UploadChunk(memoryStream, urls[chunkIndex]);
+
+                start = end + 1;
+                chunkSize = ((start + chunkSize > revitFile.Size) ? revitFile.Size - start - 1 : chunkSize);
+                end = start + chunkSize;
             }
+            if (eTags.Count == urls.Count)
+            {
+                Console.WriteLine("[upload ALL chunks stream] succeeded ");
+                //4. tell Forge to complete the uploading
+                // Response_Complete_Upload complete_Upload = await completeUpload(uploadKey, fileSize, eTags, forge_oss_param);
+                //if (complete_Upload != null)
+                //{
+                //    Console.WriteLine("completed uploading single model ");
+                //}
+            }
+            else
+            {
+                Console.WriteLine("[some chunks stream uploading] failed ");
+            }
+
+
 
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add("TODO: Upload your files!");
@@ -75,14 +119,14 @@ namespace WebClient.Components.Convert
             return bucketKey + "/" + objectKey;
         }
 
-        private double CalculateNumberOfChunks(ulong fileSize)
+        private int CalculateNumberOfChunks(ulong fileSize)
         {
             if (fileSize == 0)
             {
                 return 1;
             }
 
-            double numberOfChunks = (int)Math.Truncate((double)(fileSize / Constants.ChunkSize));
+            int numberOfChunks = (int)Math.Truncate((double)(fileSize / Constants.ChunkSize));
             if (fileSize % Constants.ChunkSize != 0)
             {
                 numberOfChunks++;
@@ -150,7 +194,7 @@ namespace WebClient.Components.Convert
     static class Constants
     {
         public const int MaxRetry = 5;
-        public const ulong ChunkSize = 5 * 1024 * 1024;
+        public const long ChunkSize = 5 * 1024 * 1024;
         public const int BatchSize = 25;
     }
 }

@@ -24,9 +24,9 @@ namespace WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet(Name = "GetUploadUrls")]
-        public async Task<IEnumerable<string>> GetUploadUrls()
+        public async Task<IEnumerable<string>> GetUploadUrls(int chunksNumber)
         {
-            GetUploadUrlVm vm = await Mediator.Send(new GetUploadUrlQuery());
+            GetUploadUrlVm vm = await Mediator.Send(new GetUploadUrlQuery(chunksNumber));
             return vm.Urls;
         }
 

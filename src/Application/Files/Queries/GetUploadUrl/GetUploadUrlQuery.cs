@@ -9,5 +9,11 @@ namespace Application.Files.Queries.GetUploadUrl
 {
     public class GetUploadUrlQuery : IRequest<GetUploadUrlVm>
     {
+        public readonly int ChunksNumber;
+
+        public GetUploadUrlQuery(int chunksNumber)
+        {
+            ChunksNumber = chunksNumber;
+        }
     }
 }

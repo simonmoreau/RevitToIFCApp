@@ -35,10 +35,10 @@ namespace WebClient.Services
             return list;
         }
 
-        public async Task<List<string>> GetUploadUrls()
+        public async Task<List<string>> GetUploadUrls(int chunksNumber)
         {
             List<string>? list = await JsonSerializer.DeserializeAsync<List<string>>
-        (await _httpClient.GetStreamAsync($"files"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        (await _httpClient.GetStreamAsync($"files?chunksNumber={chunksNumber}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return list;
         }
