@@ -25,24 +25,21 @@ namespace Application.Files.Queries.GetUploadUrl
 {
     public class GetUploadUrlQueryHandler : IRequestHandler<GetUploadUrlQuery, GetUploadUrlVm>
     {
-        private readonly IObjectsApi _objectsApi;
+        private readonly OssClient _ossClient;
         private readonly ILogger _logger;
         private readonly AuthenticationClient _authenticationClient;
-        private readonly IConfiguration _configuration;
         private readonly ForgeConfiguration _forgeConfiguration;
 
         private readonly string _accessTokenExpiredMessage = "Access token provided is invalid or expired.";
         private readonly string _forbiddenMessage = "403 (Forbidden)";
 
-        public GetUploadUrlQueryHandler(IObjectsApi objectsApi, ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IConfiguration configuration, IOptions<ForgeConfiguration> forgeConfiguration)
+        public GetUploadUrlQueryHandler(ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient, 
+            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient)
         {
-            _objectsApi = objectsApi;
+            _ossClient = ossClient;
             _logger = logger;
             _authenticationClient = authenticationClient;
-            _configuration = configuration;
             _forgeConfiguration = forgeConfiguration.Value;
-
         }
 
         public async Task<GetUploadUrlVm> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
@@ -80,7 +77,7 @@ namespace Application.Files.Queries.GetUploadUrl
 
                 try
                 {
-                    Autodesk.Forge.Core.ApiResponse<Signeds3uploadResponse> response = await _objectsApi.SignedS3UploadAsync(
+                    Signeds3uploadResponse response = await _ossClient.SignedS3UploadAsync(
                           bucketKey: bucketKey,
                           objectKey: objectKey,
                           parts: parts,
@@ -89,7 +86,7 @@ namespace Application.Files.Queries.GetUploadUrl
                           accessToken: accessToken,
                           xAdsAcmScopes: projectScope);
 
-                    return (response.Content, accessToken);
+                    return (response, accessToken);
                 }
                 catch (OssApiException e)
                 {

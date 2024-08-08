@@ -22,9 +22,10 @@ public static class ConfigureServices
         AuthenticationClient authClient = new AuthenticationClient(sdkManager);
 
         services.AddSingleton<AuthenticationClient>(authClient);
-        services.AddSingleton(sdkManager);
+        services.AddSingleton<SDKManager>(sdkManager);
         services.AddDesignAutomation(configuration);
         services.AddOss(configuration);
+        services.AddTransient<OssClient>();
 
         services.AddAzureClients(clientBuilder =>
         {
