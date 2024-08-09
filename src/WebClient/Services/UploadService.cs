@@ -5,6 +5,7 @@ using System;
 using System.Net.Http.Headers;
 using System.Text;
 using WebClient.Models;
+using static System.Collections.Specialized.BitVector32;
 
 namespace WebClient.Services
 {
@@ -17,7 +18,7 @@ namespace WebClient.Services
             _httpClient = httpClient;
         }
 
-        public async Task UploadChunk(MemoryStream chunck, string url)
+        public async Task<string> UploadChunk(MemoryStream chunck, string url)
         {
             using (var content = new ByteArrayContent(chunck.ToArray()))
             {
@@ -28,6 +29,22 @@ namespace WebClient.Services
                 {
                     throw new Exception("Wrong response");
                 }
+
+                if (!response.Headers.Contains("ETag"))
+                {
+                    throw new Exception("Missing ETag");
+                }
+
+                HttpHeaders headers = response.Headers;
+                IEnumerable<string> values;
+                string eTag = "";
+                if (headers.TryGetValues("ETag", out values))
+                {
+                    eTag = values.First();
+                }
+
+                eTag = eTag.Replace("\"", string.Empty);
+                return eTag;
             }
         }
 

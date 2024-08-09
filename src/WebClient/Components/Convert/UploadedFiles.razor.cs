@@ -55,7 +55,7 @@ namespace WebClient.Components.Convert
 
             long maxFileSize = 1024 * 1024 * 600; // 600 MB
 
-            List<string> urls = await _dataService.GetUploadUrls(chunksNumber);
+            Signeds3uploadResponse signedsUrlResponse = await _dataService.GetUploadUrls(chunksNumber);
             long start = 0;
             long chunkSize = Constants.ChunkSize;
             chunkSize = (chunksNumber > 1 ? chunkSize : revitFile.Size);
@@ -79,16 +79,18 @@ namespace WebClient.Components.Convert
                 memoryStream.Write(fileBytes, 0, (int)numberOfBytes);
                 memoryStream.Position = 0;
 
-                await _uploadService.UploadChunk(memoryStream, urls[chunkIndex]);
+                string eTag = await _uploadService.UploadChunk(memoryStream, signedsUrlResponse.Urls[chunkIndex]);
 
+                eTags.Add(eTag);
                 start = end + 1;
                 chunkSize = ((start + chunkSize > revitFile.Size) ? revitFile.Size - start - 1 : chunkSize);
                 end = start + chunkSize;
             }
-            if (eTags.Count == urls.Count)
+            if (eTags.Count == signedsUrlResponse.Urls.Count)
             {
                 Console.WriteLine("[upload ALL chunks stream] succeeded ");
                 //4. tell Forge to complete the uploading
+                CompleteUploadResponse result = await _dataService.CompleteUpload(signedsUrlResponse.UploadKey, revitFile.Size, eTags);
                 // Response_Complete_Upload complete_Upload = await completeUpload(uploadKey, fileSize, eTags, forge_oss_param);
                 //if (complete_Upload != null)
                 //{

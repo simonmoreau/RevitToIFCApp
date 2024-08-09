@@ -23,7 +23,7 @@ using Autodesk.Authentication;
 
 namespace Application.Files.Queries.GetUploadUrl
 {
-    public class GetUploadUrlQueryHandler : IRequestHandler<GetUploadUrlQuery, GetUploadUrlVm>
+    public class GetUploadUrlQueryHandler : IRequestHandler<GetUploadUrlQuery, Signeds3uploadResponse>
     {
         private readonly OssClient _ossClient;
         private readonly ILogger _logger;
@@ -42,7 +42,7 @@ namespace Application.Files.Queries.GetUploadUrl
             _forgeConfiguration = forgeConfiguration.Value;
         }
 
-        public async Task<GetUploadUrlVm> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
+        public async Task<Signeds3uploadResponse> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
         {
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
@@ -54,18 +54,14 @@ namespace Application.Files.Queries.GetUploadUrl
 
             string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
 
-            (Signeds3uploadResponse, string) test = await GetUploadUrlsWithRetry(
+            Signeds3uploadResponse signedUrlResponse = await GetUploadUrlsWithRetry(
                 bucketKey, objectKey, request.ChunksNumber, uploadKey,
                 twoLeggedToken.AccessToken, projectScope, requestId);
 
-            GetUploadUrlVm uploadUrls = new GetUploadUrlVm();
-
-            uploadUrls.Urls = test.Item1.Urls;
-
-            return uploadUrls;
+            return signedUrlResponse;
         }
 
-        private async Task<(Signeds3uploadResponse, string)> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, string uploadKey, string accessToken, string projectScope, string requestId)
+        private async Task<Signeds3uploadResponse> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, string uploadKey, string accessToken, string projectScope, string requestId)
         {
             int attemptCount = 0;
 
@@ -84,7 +80,7 @@ namespace Application.Files.Queries.GetUploadUrl
                           minutesExpiration:15,
                           xAdsAcmScopes: projectScope);
 
-                    return (response, accessToken);
+                    return response;
                 }
                 catch (OssApiException e)
                 {

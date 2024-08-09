@@ -1,10 +1,12 @@
 ﻿using Application.Activities.Queries.GetActivity;
 using Application.Activities.Queries.ListActivities;
+using Application.Files.Commands.CompleteUpload;
 using Application.Files.Commands.CreateBucket;
 using Application.Files.Queries.GetUploadUrl;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
 using Autodesk.Forge.DesignAutomation.Model;
+using Autodesk.Oss.Model;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
@@ -24,10 +26,22 @@ namespace WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet(Name = "GetUploadUrls")]
-        public async Task<IEnumerable<string>> GetUploadUrls(int chunksNumber)
+        public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber)
         {
-            GetUploadUrlVm vm = await Mediator.Send(new GetUploadUrlQuery(chunksNumber));
-            return vm.Urls;
+            Signeds3uploadResponse vm = await Mediator.Send(new GetUploadUrlQuery(chunksNumber));
+            return vm;
+        }
+
+        /// <summary>
+        /// Complete the upload
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complete")]
+        public async Task<CompleteUploadResponse> CompleteUpload(UploadCompletion uploadCompletion)
+        {
+            CompleteUploadResponse vm = await Mediator.Send(new CompleteUploadQuery(uploadCompletion.uploadKey, uploadCompletion.size, uploadCompletion.eTags));
+            return vm;
         }
 
         /// <summary>

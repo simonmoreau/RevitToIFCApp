@@ -13,6 +13,22 @@ namespace WebClient.Services
             _httpClient = httpClient;
         }
 
+        public async Task<CompleteUploadResponse> CompleteUpload(string uploadKey, long? size, List<string> eTags)
+        {
+            object body = new { uploadKey = uploadKey, size = size, eTags = eTags };
+
+            StringContent bodyContent = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"files/complete", bodyContent);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Wrong response");
+            }
+
+            return await JsonSerializer.DeserializeAsync<CompleteUploadResponse>(await response.Content.ReadAsStreamAsync());
+        }
+
         public async Task<string> CreateApplication(ForgeActivityForm forgeActivity)
         {
             StringContent forgeActivityContent = new StringContent(JsonSerializer.Serialize(forgeActivity), Encoding.UTF8, "application/json");
@@ -35,9 +51,9 @@ namespace WebClient.Services
             return list;
         }
 
-        public async Task<List<string>> GetUploadUrls(int chunksNumber)
+        public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber)
         {
-            List<string>? list = await JsonSerializer.DeserializeAsync<List<string>>
+            Signeds3uploadResponse? list = await JsonSerializer.DeserializeAsync<Signeds3uploadResponse>
         (await _httpClient.GetStreamAsync($"files?chunksNumber={chunksNumber}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return list;
