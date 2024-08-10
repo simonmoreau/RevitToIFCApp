@@ -6,6 +6,7 @@ using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,12 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
     public class CreateForgeApplicationCommandHandler : IRequestHandler<CreateForgeApplicationCommand, string>
     {
         private readonly DesignAutomationClient _designAutomationClient;
+        private readonly Domain.Entities.ForgeConfiguration _forgeConfiguration;
 
-        public CreateForgeApplicationCommandHandler(DesignAutomationClient designAutomationClient)
+        public CreateForgeApplicationCommandHandler(DesignAutomationClient designAutomationClient, IOptions<ForgeConfiguration> forgeConfiguration)
         {
             _designAutomationClient = designAutomationClient;
+            _forgeConfiguration = forgeConfiguration.Value;
         }
 
         public async Task<string> Handle(CreateForgeApplicationCommand request, CancellationToken cancellationToken)
@@ -77,7 +80,7 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
 
             activity.Engine = request.Engine;
 
-            activity.Appbundles = new List<string> { $"KMYRoaDpKQk29XvvBqzbh9ATyyyJKGHXaAypXFQErxxPr9Gc.{appBundleName}+test" };
+            activity.Appbundles = new List<string> { $"{_forgeConfiguration.ApplicationDetail.Nickname}.{appBundleName}+test" };
 
             Autodesk.Forge.Core.ApiResponse<Activity> createdActivityResponse = await _designAutomationClient.ActivitiesApi.CreateActivityAsync(activity);
             Activity createdActivity = createdActivityResponse.Content;

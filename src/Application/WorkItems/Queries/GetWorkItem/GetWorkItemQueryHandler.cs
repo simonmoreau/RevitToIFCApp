@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.WorkItems.Queries.GetWorkItem
 {
-    public class GetWorkItemQueryHandler : IRequestHandler<GetWorkItemQuery, WorkItem>
+    public class GetWorkItemQueryHandler : IRequestHandler<GetWorkItemQuery, SavedWorkItem>
     {
         private readonly IAppDbContext _context;
         private readonly TableServiceClient _tableServiceClient;
@@ -23,12 +23,12 @@ namespace Application.WorkItems.Queries.GetWorkItem
             _tableServiceClient = tableServiceClient;
         }
 
-        public async Task<WorkItem> Handle(GetWorkItemQuery request, CancellationToken cancellationToken)
+        public async Task<SavedWorkItem> Handle(GetWorkItemQuery request, CancellationToken cancellationToken)
         {
             TableClient tableClient = _tableServiceClient.GetTableClient("workItems");
 
             // Read a single item from container
-            WorkItem workItem = await tableClient.GetEntityAsync<WorkItem>(
+            SavedWorkItem workItem = await tableClient.GetEntityAsync<SavedWorkItem>(
                 rowKey: "68719518388",
                 partitionKey: "gear-surf-surfboards"
             );

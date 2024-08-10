@@ -46,8 +46,8 @@ namespace Application.Files.Queries.GetUploadUrl
         {
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
-            string bucketKey = _forgeConfiguration.BucketKey;
-            string objectKey = "file";
+            string bucketKey = _forgeConfiguration.InputBucketKey;
+            string objectKey = request.ObjectKey;
             string projectScope = "data:write";
             string requestIdPrefix = "";
             string uploadKey = null;
@@ -58,6 +58,7 @@ namespace Application.Files.Queries.GetUploadUrl
                 bucketKey, objectKey, request.ChunksNumber, uploadKey,
                 twoLeggedToken.AccessToken, projectScope, requestId);
 
+            
             return signedUrlResponse;
         }
 

@@ -5,6 +5,7 @@ using Application.Files.Commands.CreateBucket;
 using Application.Files.Queries.GetUploadUrl;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
+using Application.WorkItems.Commands.CreateWorkItem;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss.Model;
 using MediatR;
@@ -26,9 +27,9 @@ namespace WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet(Name = "GetUploadUrls")]
-        public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber)
+        public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber, string objectKey)
         {
-            Signeds3uploadResponse vm = await Mediator.Send(new GetUploadUrlQuery(chunksNumber));
+            Signeds3uploadResponse vm = await Mediator.Send(new GetUploadUrlQuery(chunksNumber, objectKey));
             return vm;
         }
 
@@ -40,7 +41,20 @@ namespace WebApp.Controllers
         [Route("complete")]
         public async Task<CompleteUploadResponse> CompleteUpload(UploadCompletion uploadCompletion)
         {
-            CompleteUploadResponse vm = await Mediator.Send(new CompleteUploadQuery(uploadCompletion.uploadKey, uploadCompletion.size, uploadCompletion.eTags));
+            CompleteUploadResponse vm = await Mediator.Send(new CompleteUploadQuery(
+                uploadCompletion.uploadKey, uploadCompletion.size, uploadCompletion.eTags, uploadCompletion.objectKey));
+            return vm;
+        }
+
+        /// <summary>
+        /// Create a work item
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("workItem")]
+        public async Task<WorkItemStatus> CreateWorkItem(WorkItemCreation workItemCreation)
+        {
+            WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation.objectKey, workItemCreation.activityId));
             return vm;
         }
 

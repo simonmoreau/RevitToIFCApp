@@ -46,8 +46,8 @@ namespace Application.Files.Commands.CompleteUpload
         {
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
-            string bucketKey = _forgeConfiguration.BucketKey;
-            string objectKey = "file";
+            string bucketKey = _forgeConfiguration.InputBucketKey;
+            string objectKey = request.ObjectKey;
 
             Completes3uploadBody completes3UploadBody = new Completes3uploadBody();
             completes3UploadBody.UploadKey = request.UploadKey;

@@ -33,14 +33,23 @@ namespace Application.Files.Commands.CreateBucket
         {
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.BucketCreate });
 
-            var payload = new CreateBucketsPayload();
-            payload.BucketKey = _forgeConfiguration.BucketKey;
+            await CreateBucket(twoLeggedToken, _forgeConfiguration.InputBucketKey);
+            await CreateBucket(twoLeggedToken, _forgeConfiguration.OutputBucketKey);
 
-            Autodesk.Forge.Core.ApiResponse<Bucket> response = await _bucketsApi.CreateBucketAsync(payload,Region.EMEA, twoLeggedToken.AccessToken);
+            return _forgeConfiguration.OutputBucketKey;
+        }
+
+        private async Task<string> CreateBucket(TwoLeggedToken twoLeggedToken, string bucketKey)
+        {
+            CreateBucketsPayload payload = new CreateBucketsPayload();
+            payload.BucketKey = bucketKey;
+            payload.PolicyKey = PolicyKey.Temporary;
+
+            Autodesk.Forge.Core.ApiResponse<Bucket> response = await _bucketsApi.CreateBucketAsync(payload, Region.EMEA, twoLeggedToken.AccessToken);
 
             Bucket bucket = response.Content;
 
-             return bucket.BucketKey;
+            return bucket.BucketKey;
         }
     }
 }

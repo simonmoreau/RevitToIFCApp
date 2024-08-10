@@ -10,7 +10,15 @@ namespace Domain.Entities
     {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
-        public string BucketKey { get; set; }
+        public string InputBucketKey { get; set; }
+        public string OutputBucketKey { get; set; }
+        public ApplicationDetail ApplicationDetail { get; set; }
 
+    }
+
+    public class ApplicationDetail
+    {
+        public string Nickname { get; set; }
+        public string AppBundleName { get; set; }
     }
 }

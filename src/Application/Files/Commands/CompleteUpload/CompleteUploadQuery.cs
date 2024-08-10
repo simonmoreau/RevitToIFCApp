@@ -12,12 +12,14 @@ namespace Application.Files.Commands.CompleteUpload
         public readonly string UploadKey;
         public readonly long? Size;
         public readonly List<string> ETags;
+        public readonly string ObjectKey;
 
-        public CompleteUploadQuery(string uploadKey, long? size, List<string> eTags)
+        public CompleteUploadQuery(string uploadKey, long? size, List<string> eTags, string objectKey)
         {
             UploadKey = uploadKey;
             Size = size;
             ETags = eTags;
+            ObjectKey = objectKey;
         }
     }
 

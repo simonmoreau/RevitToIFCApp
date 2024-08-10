@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.WorkItems.Queries.GetWorkItem
 {
-    public class GetWorkItemQuery : IRequest<WorkItem>
+    public class GetWorkItemQuery : IRequest<SavedWorkItem>
     {
     }
 }

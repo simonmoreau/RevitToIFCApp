@@ -10,6 +10,7 @@ using WebClient.Models;
 using Autodesk.Forge.Core;
 using WebClient.Services;
 using System.Reflection.Metadata;
+using Autodesk.Forge.DesignAutomation.Model;
 using System.Reflection.PortableExecutable;
 
 namespace WebClient.Components.Convert
@@ -45,17 +46,13 @@ namespace WebClient.Components.Convert
         private async Task UploadFile(RevitFile revitFile)
         {
             // Upload the files here
-            string bucketKey = "_forgeConfiguration.BucketKey";
-            string objectKey = "file";
-            string requestIdPrefix = "";
-
-            string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
+            string objectKey = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
 
             int chunksNumber = CalculateNumberOfChunks((ulong)revitFile.Size);
 
             long maxFileSize = 1024 * 1024 * 600; // 600 MB
 
-            Signeds3uploadResponse signedsUrlResponse = await _dataService.GetUploadUrls(chunksNumber);
+            Signeds3uploadResponse signedsUrlResponse = await _dataService.GetUploadUrls(chunksNumber, objectKey);
             long start = 0;
             long chunkSize = Constants.ChunkSize;
             chunkSize = (chunksNumber > 1 ? chunkSize : revitFile.Size);
@@ -88,14 +85,13 @@ namespace WebClient.Components.Convert
             }
             if (eTags.Count == signedsUrlResponse.Urls.Count)
             {
-                Console.WriteLine("[upload ALL chunks stream] succeeded ");
                 //4. tell Forge to complete the uploading
-                CompleteUploadResponse result = await _dataService.CompleteUpload(signedsUrlResponse.UploadKey, revitFile.Size, eTags);
-                // Response_Complete_Upload complete_Upload = await completeUpload(uploadKey, fileSize, eTags, forge_oss_param);
-                //if (complete_Upload != null)
-                //{
-                //    Console.WriteLine("completed uploading single model ");
-                //}
+                CompleteUploadResponse completeUploadResponse = await _dataService.CompleteUpload(
+                    signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
+
+                //5 Create a workItem
+                WorkItemStatus status = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.ConvertActivity+AliasRVTToIFC");
+
             }
             else
             {

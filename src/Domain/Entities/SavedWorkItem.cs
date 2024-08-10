@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class WorkItem : ITableEntity
+    public class SavedWorkItem : ITableEntity
     {
         public string? Progress { get; set; }
         public string? ReportUrl { get; set; }
