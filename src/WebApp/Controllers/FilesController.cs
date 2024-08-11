@@ -6,6 +6,7 @@ using Application.Files.Queries.GetUploadUrl;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
 using Application.WorkItems.Commands.CreateWorkItem;
+using Application.WorkItems.Queries.GetWorkItemStatus;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss.Model;
 using MediatR;
@@ -55,6 +56,19 @@ namespace WebApp.Controllers
         public async Task<WorkItemStatus> CreateWorkItem(WorkItemCreation workItemCreation)
         {
             WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation.objectKey, workItemCreation.activityId));
+            return vm;
+        }
+
+        /// <summary>
+        /// Get a workITemStatus
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("status")]
+        public async Task<WorkItemStatus> CompleteUpload(string id)
+        {
+            WorkItemStatus vm = await Mediator.Send(new GetWorkItemStatusQuery(id));
+
             return vm;
         }
 
