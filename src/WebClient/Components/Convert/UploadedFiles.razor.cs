@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Text;
 using WebClient.Models;
-using Autodesk.Forge.Core;
 using WebClient.Services;
 using System.Reflection.Metadata;
 using Autodesk.Forge.DesignAutomation.Model;
@@ -45,6 +44,7 @@ namespace WebClient.Components.Convert
 
         private async Task UploadFile(RevitFile revitFile)
         {
+            revitFile.Status = FileStatus.Uploading;
             // Upload the files here
             string objectKey = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
 
@@ -85,6 +85,7 @@ namespace WebClient.Components.Convert
             }
             if (eTags.Count == signedsUrlResponse.Urls.Count)
             {
+                revitFile.Status = FileStatus.Converting;
                 //4. tell Forge to complete the uploading
                 CompleteUploadResponse completeUploadResponse = await _dataService.CompleteUpload(
                     signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
@@ -98,24 +99,12 @@ namespace WebClient.Components.Convert
                 Console.WriteLine("[some chunks stream uploading] failed ");
             }
 
-
+            revitFile.Status = FileStatus.Converted;
 
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add("TODO: Upload your files!");
         }
 
-        private string HandleRequestId(string parentRequestId, string bucketKey, string objectKey)
-        {
-            var requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
-            requestId = requestId + ":" + GenerateSdkRequestId(bucketKey, objectKey);
-            //_forgeService.Client.DefaultRequestHeaders.Add("x-ads-request-id", requestId);
-            return requestId;
-        }
-
-        private string GenerateSdkRequestId(string bucketKey, string objectKey)
-        {
-            return bucketKey + "/" + objectKey;
-        }
 
         private int CalculateNumberOfChunks(ulong fileSize)
         {
@@ -139,7 +128,9 @@ namespace WebClient.Components.Convert
             {
                 foreach (RevitFile revitFile in BrowserFiles)
                 {
+                    revitFile.Status = FileStatus.GetVersion; ;
                     await SetRevitVersion(revitFile);
+                    revitFile.Status = FileStatus.ReadyToUpload;
                 }
 
                 StateHasChanged();

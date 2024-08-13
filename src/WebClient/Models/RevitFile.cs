@@ -13,12 +13,12 @@ namespace WebClient.Models
     public class RevitFile : IBrowserFile
     {
         private readonly IBrowserFile _browserFile;
-        
+
 
         public RevitFile(IBrowserFile browserFile)
         {
-            _browserFile= browserFile;
-            
+            _browserFile = browserFile;
+            Status = FileStatus.GetVersion;
         }
 
         public string Name
@@ -50,7 +50,14 @@ namespace WebClient.Models
         public string Version
         {
             get { return _version; }
-            set {  _version = value; }
+            set { _version = value; }
+        }
+
+        private FileStatus _status;
+        public FileStatus Status
+        {
+            get { return _status; }
+            set { _status = value; }
         }
 
     }
