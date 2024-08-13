@@ -2,6 +2,7 @@
 using Application.Activities.Queries.ListActivities;
 using Application.Files.Commands.CompleteUpload;
 using Application.Files.Commands.CreateBucket;
+using Application.Files.Queries.GetDownloadUrlQuery;
 using Application.Files.Queries.GetUploadUrl;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
@@ -44,6 +45,18 @@ namespace WebApp.Controllers
         {
             CompleteUploadResponse vm = await Mediator.Send(new CompleteUploadQuery(
                 uploadCompletion.uploadKey, uploadCompletion.size, uploadCompletion.eTags, uploadCompletion.objectKey));
+            return vm;
+        }
+
+        /// <summary>
+        /// Get download url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("download")]
+        public async Task<Signeds3downloadResponse> GetDownloadUrls(string objectKey)
+        {
+            Signeds3downloadResponse vm = await Mediator.Send(new GetDownloadUrlQuery(objectKey));
             return vm;
         }
 

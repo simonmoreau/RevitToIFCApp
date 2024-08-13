@@ -127,7 +127,8 @@ namespace WebClient.Components.Convert
                             revitFile.Status = FileStatus.Error("FailedUploadOptional");
                             return;
                         case Status.Success:
-                            revitFile.DownloadUrl = "test";
+                            Signeds3downloadResponse signedDownload = await _dataService.GetDownloadUrl(objectKey);
+                            revitFile.DownloadUrl = signedDownload.Url;
                             revitFile.Status = FileStatus.Converted;
                             return;
                         default:
