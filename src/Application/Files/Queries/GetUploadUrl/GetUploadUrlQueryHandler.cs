@@ -106,7 +106,7 @@ namespace Application.Files.Queries.GetUploadUrl
 
         private string HandleRequestId(string parentRequestId, string bucketKey, string objectKey)
         {
-            var requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
+            string requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
             requestId = requestId + ":" + GenerateSdkRequestId(bucketKey, objectKey);
             //_forgeService.Client.DefaultRequestHeaders.Add("x-ads-request-id", requestId);
             return requestId;

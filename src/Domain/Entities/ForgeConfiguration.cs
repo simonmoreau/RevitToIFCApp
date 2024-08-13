@@ -20,5 +20,8 @@ namespace Domain.Entities
     {
         public string Nickname { get; set; }
         public string AppBundleName { get; set; }
+        public string OutputFileName { get; set; }
+        public string Alias { get; set; }
+        public string Description { get; set; }
     }
 }

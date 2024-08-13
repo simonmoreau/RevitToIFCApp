@@ -52,16 +52,14 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             Signeds3uploadResponse signedUploadUrl = await _ossClient.SignedS3UploadAsync(
                 twoLeggedToken.AccessToken,outputBucketKey, objectKey);
 
-            
-
             WorkItem workItem = new WorkItem()
             {
                 ActivityId = request.ActivityId,
                 Arguments = new Dictionary<string, IArgument>
                     {
-                        { "rvtFile",  new XrefTreeArgument() 
+                        { "inputFile",  new XrefTreeArgument() 
                             { Url = signedDownloadUrl.Url, Verb = Verb.Get } },
-                        { "result", new XrefTreeArgument { Verb=Verb.Put, Headers = new Dictionary<string, string>() { { "Content-Type", "binary/octet-stream" } }, Url = signedUploadUrl.Urls.First() } }
+                        { "outputFile", new XrefTreeArgument { Verb=Verb.Put, Headers = new Dictionary<string, string>() { { "Content-Type", "binary/octet-stream" } }, Url = signedUploadUrl.Urls.First() } }
                     }
             };
 

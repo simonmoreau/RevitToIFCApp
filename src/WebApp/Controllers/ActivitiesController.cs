@@ -1,5 +1,6 @@
 ﻿using Application.Activities.Queries.GetActivity;
 using Application.Activities.Queries.ListActivities;
+using Application.ForgeApplications.Commands.CreateActivity;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
 using Autodesk.Forge.DesignAutomation.Model;
@@ -29,23 +30,20 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> CreateActivity(ForgeActivity forgeActivity)
+        public async Task<ActionResult<Activity>> CreateActivity()
         {
             try
             {
-                string appBundleId = await Mediator.Send(new CreateForgeApplicationCommand()
+                Activity appBundleId = await Mediator.Send(new CreateActivityCommand()
                 {
-                    Engine = forgeActivity.Engine,
-                    Name = forgeActivity.Name,
-                    AppbundleFile = forgeActivity.AppbundleFile,
-                    Description = forgeActivity.Description
+                    Engine = "Autodesk.Revit+2024"
                 });
 
                 if (appBundleId == null)
                     return BadRequest();
 
                 return CreatedAtAction(nameof(CreateForgeApplicationCommand),
-                    new { id = appBundleId });
+                    new { id = appBundleId.Id });
             }
             catch (Exception)
             {

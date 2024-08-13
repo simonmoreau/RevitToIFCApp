@@ -20,7 +20,7 @@ namespace WebClient.Services
 
         public async Task<string> UploadChunk(MemoryStream chunck, string url)
         {
-            using (var content = new ByteArrayContent(chunck.ToArray()))
+            using (ByteArrayContent content = new ByteArrayContent(chunck.ToArray()))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                 HttpResponseMessage response = await _httpClient.PutAsync(url, content);

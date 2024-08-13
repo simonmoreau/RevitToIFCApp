@@ -46,7 +46,8 @@ namespace WebClient.Components.Convert
         {
             revitFile.Status = FileStatus.Uploading;
             // Upload the files here
-            string objectKey = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
+            string objectName = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
+            string objectKey = objectName + Path.GetExtension(revitFile.Name);
 
             int chunksNumber = CalculateNumberOfChunks((ulong)revitFile.Size);
 
@@ -91,7 +92,7 @@ namespace WebClient.Components.Convert
                     signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
 
                 //5 Create a workItem
-                WorkItemStatus status = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.ConvertActivity+AliasRVTToIFC");
+                WorkItemStatus status = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.RvtToIfcActivity+Dev");
 
             }
             else

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Application.ForgeApplications.Commands.CreateForgeApplication
 {
-    public class CreateForgeApplicationCommandHandler : IRequestHandler<CreateForgeApplicationCommand, string>
+    public class CreateForgeApplicationCommandHandler : IRequestHandler<CreateForgeApplicationCommand, AppBundle>
     {
         private readonly DesignAutomationClient _designAutomationClient;
         private readonly Domain.Entities.ForgeConfiguration _forgeConfiguration;
@@ -26,77 +26,106 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
             _forgeConfiguration = forgeConfiguration.Value;
         }
 
-        public async Task<string> Handle(CreateForgeApplicationCommand request, CancellationToken cancellationToken)
+        public async Task<AppBundle> Handle(CreateForgeApplicationCommand request, CancellationToken cancellationToken)
         {
-            string appBundleName = $"{request.Name}App";
-            // Create or update an appbundle
-            AppBundle appBundleBody = new AppBundle();
-            appBundleBody.Engine = request.Engine;
-            appBundleBody.Description = request.Description;
-            appBundleBody.Id = appBundleName;
+            string appBundleName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}AppBundle";
+            string nickname = _forgeConfiguration.ApplicationDetail.Nickname;
+            string alias = _forgeConfiguration.ApplicationDetail.Alias;
+            string description = _forgeConfiguration.ApplicationDetail.Description;
+            string engineName = request.Engine;
 
-            string path = @"C:\Users\smoreau\Github\RevitToIFCApp\src\Bundle\bin\Debug\RevitToIFCBundle.zip";
-            await _designAutomationClient.CreateAppBundleAsync(appBundleBody, "test", path);
+            // check if ZIP with bundle is here
+            string packageZipPath = request.AppbundleFile;
+            if (!System.IO.File.Exists(packageZipPath))
+            {
+                throw new Exception("Appbundle not found at " + packageZipPath);
+            }
 
-            //// Create or update an appbundle alias
-            //Alias aliasBody = new Alias();
-            //aliasBody.Version = 1;
-            //aliasBody.Id = $"Alias_{request.Name}";
+            // get defined app bundles
+            Page<string> appBundles = await _designAutomationClient.GetAppBundlesAsync();
 
-            //Autodesk.Forge.Core.ApiResponse<Alias> createdAliasResponse = await _designAutomationClient.AppBundlesApi.CreateAppBundleAliasAsync(appBundleName, aliasBody);
-            //Alias createdAlias = createdAliasResponse.Content;
+            // check if app bundle is already define
+            AppBundle newAppVersion;
+            string qualifiedAppBundleId = string.Format("{0}.{1}+{2}", nickname, appBundleName, alias);
+            if (!appBundles.Data.Contains(qualifiedAppBundleId))
+            {
+                // create an appbundle (version 1)
+                AppBundle appBundleSpec = new AppBundle()
+                {
+                    Package = appBundleName,
+                    Engine = engineName,
+                    Id = appBundleName,
+                    Description = description,
 
-            // Create or update an activity
-            Activity activity = new Activity();
-            activity.Id = $"ConvertActivity";
-            
-            activity.Description = "Revit 2024 Ifc Export Activity";
+                };
 
-            string engineCommand = "$(engine.path)\\revitcoreconsole.exe";
-            string inputCommand = "$(args[rvtFile].path)";
-            string appBundleCommand = $"$(appbundles[{appBundleName}].path)";
-            activity.CommandLine = new List<string> { $"\"{engineCommand}\" /i \"{inputCommand}\" /al \"{appBundleCommand}\"" };
+                newAppVersion = await _designAutomationClient.CreateAppBundleAsync(appBundleSpec);
+                if (newAppVersion == null)
+                {
+                    throw new Exception("Cannot create new app");
+                }
 
-            activity.Parameters = new Dictionary<string, Parameter>();
-            Parameter inputParameter = new Parameter();
-            inputParameter.Zip = false;
-            inputParameter.Ondemand = false;
-            inputParameter.Verb = Verb.Get;
-            inputParameter.Description = "Input Revit model";
-            inputParameter.Required = true;
-            inputParameter.LocalName = "$(rvtFile)";
+                // create alias pointing to v1
+                Alias aliasSpec = new Alias() { Id = alias, Version = 1 };
+                Alias newAlias = await _designAutomationClient.CreateAppBundleAliasAsync(appBundleName, aliasSpec);
+            }
+            else
+            {
+                // create new version
+                AppBundle appBundleSpec = new AppBundle()
+                {
+                    Engine = engineName,
+                    Description = appBundleName
+                };
 
-            activity.Parameters.Add("rvtFile", inputParameter);
+                newAppVersion = await _designAutomationClient.CreateAppBundleVersionAsync(appBundleName, appBundleSpec);
+                if (newAppVersion == null)
+                {
+                    throw new Exception("Cannot create new version");
+                }
 
-            Parameter resultParameter = new Parameter();
-            resultParameter.Zip = false;
-            resultParameter.Ondemand = false;
-            resultParameter.Verb = Verb.Put;
-            resultParameter.Description = "Resulting exported model";
-            resultParameter.Required = true;
-            resultParameter.LocalName = "result.ifc";
+                // update alias pointing to v+1
+                AliasPatch aliasSpec = new AliasPatch()
+                {
+                    Version = newAppVersion.Version.HasValue ? newAppVersion.Version.Value : 0,
+                };
+                Alias newAlias = await _designAutomationClient.ModifyAppBundleAliasAsync(appBundleName, alias, aliasSpec);
+            }
 
-            activity.Parameters.Add("result", resultParameter);
+            // upload the zip with .bundle
+            await UploadAppBundleBits(newAppVersion.UploadParameters, packageZipPath);
 
-            activity.Engine = request.Engine;
+            return newAppVersion;
+        }
 
-            activity.Appbundles = new List<string> { $"{_forgeConfiguration.ApplicationDetail.Nickname}.{appBundleName}+test" };
+        public async Task UploadAppBundleBits(UploadAppBundleParameters uploadParameters, string packagePath)
+        {
+            using (MultipartFormDataContent formData = new MultipartFormDataContent())
+            {
+                foreach (KeyValuePair<string, string> kv in uploadParameters.FormData)
+                {
+                    if (kv.Value != null)
+                    {
+                        formData.Add(new StringContent(kv.Value), kv.Key);
+                    }
+                }
 
-            Autodesk.Forge.Core.ApiResponse<Activity> createdActivityResponse = await _designAutomationClient.ActivitiesApi.CreateActivityAsync(activity);
-            Activity createdActivity = createdActivityResponse.Content;
+                using (StreamContent content = new StreamContent(new FileStream(packagePath, FileMode.Open)))
+                {
+                    formData.Add(content, "file");
 
-            // Create or update an activity alias
-            Alias aliasBody = new Alias();
-            aliasBody = new Alias();
-            aliasBody.Version = 1;
-            aliasBody.Id = $"Alias{request.Name}";
+                    using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uploadParameters.EndpointURL) { Content = formData })
+                    {
+                        request.Options.Set(Autodesk.Forge.Core.ForgeConfiguration.TimeoutKey, (int)TimeSpan.FromMinutes(10).TotalSeconds);
 
-            Autodesk.Forge.Core.ApiResponse<Alias> createdActiviyAliasResponse = await _designAutomationClient.ActivitiesApi.CreateActivityAliasAsync(activity.Id, aliasBody);
-            Alias createdActivityAlias = createdActiviyAliasResponse.Content;
-
-
-            return appBundleName;
-
+                        using (HttpClient client = new HttpClient())
+                        {
+                            HttpResponseMessage response = await client.SendAsync(request);
+                            response.EnsureSuccessStatusCode();
+                        }
+                    }
+                }
+            }
         }
     }
 }

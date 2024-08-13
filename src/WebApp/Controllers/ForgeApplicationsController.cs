@@ -6,6 +6,9 @@ using Application.Sites.Queries.GetSiteList;
 using Autodesk.Forge.DesignAutomation.Model;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Application.ForgeApplications.Commands.CreateActivity;
+using Application.ForgeApplications.Commands.CreateForgeApplication;
+using WebApp.Models;
 
 
 namespace WebApp.Controllers
@@ -38,6 +41,32 @@ namespace WebApp.Controllers
         {
             string vm = await Mediator.Send(new CreateNicknameCommand());
             return vm;
+        }
+
+        [HttpPost]
+        [Route("appbundle")]
+        public async Task<ActionResult<AppBundle>> CreateApplication()
+        {
+            try
+            {
+                AppBundle appBundleId = await Mediator.Send(new CreateForgeApplicationCommand()
+                {
+                    Engine = "Autodesk.Revit+2024",
+                    AppbundleFile = @"C:\Users\smoreau\Github\RevitToIFCApp\src\Bundle\bin\Debug\RevitToIFCBundle.zip"
+                });
+
+                if (appBundleId == null)
+                    return BadRequest();
+
+                return CreatedAtAction(nameof(CreateForgeApplicationCommand),
+                    new { id = appBundleId.Id });
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creating the application");
+            }
+
         }
     }
 }

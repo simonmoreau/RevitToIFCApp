@@ -21,8 +21,8 @@ namespace Application.Common.Behaviors
 
         public async Task Handle(TRequest request, TException exception, 
             RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
-        { 
-            var name = typeof(TRequest).Name;
+        {
+            string name = typeof(TRequest).Name;
 
             _logger.LogError("Request Exception {@name} {@message} {@request}", name, exception.Message, request);
         }
