@@ -91,8 +91,52 @@ namespace WebClient.Components.Convert
                     signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
 
                 //5 Create a workItem
-                WorkItemStatus status = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.RvtToIfcActivity+Dev");
+                WorkItemStatus createdWorkItemStatus = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.RvtToIfcActivity+Dev");
 
+                string workItemId = createdWorkItemStatus.Id;
+
+                while (true)
+                {
+                    // 6 Get workitem status
+                    WorkItemStatus status = await _dataService.GetWorkItemStatus(workItemId);
+
+                    switch (status.Status)
+                    {
+                        case Status.Pending:
+                            break;
+                        case Status.Inprogress:
+                            break;
+                        case Status.Cancelled:
+                            break;
+                        case Status.FailedLimitDataSize:
+                            revitFile.Status = FileStatus.Error("FailedLimitDataSize");
+                            return;
+                        case Status.FailedLimitProcessingTime:
+                            revitFile.Status = FileStatus.Error("FailedLimitProcessingTime");
+                            return;
+                        case Status.FailedDownload:
+                            revitFile.Status = FileStatus.Error("FailedDownload");
+                            return;
+                        case Status.FailedInstructions:
+                            revitFile.Status = FileStatus.Error("FailedInstructions");
+                            return;
+                        case Status.FailedUpload:
+                            revitFile.Status = FileStatus.Error("FailedUpload");
+                            return;
+                        case Status.FailedUploadOptional:
+                            revitFile.Status = FileStatus.Error("FailedUploadOptional");
+                            return;
+                        case Status.Success:
+                            revitFile.DownloadUrl = "test";
+                            revitFile.Status = FileStatus.Converted;
+                            return;
+                        default:
+                            revitFile.Status = FileStatus.Error("Unknonw error");
+                            return;
+                    }
+
+                    await Task.Delay(5000);
+                }
             }
             else
             {

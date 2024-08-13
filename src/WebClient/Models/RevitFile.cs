@@ -26,6 +26,8 @@ namespace WebClient.Models
             get { return _browserFile.Name; }
         }
 
+        public string DownloadUrl { get; set; }
+
         public DateTimeOffset LastModified
         {
             get { return _browserFile.LastModified; }

@@ -12,6 +12,8 @@ namespace WebClient.Services
 
         Task<WorkItemStatus> CreateWorkItem(string objectKey, string activityId);
 
+        Task<WorkItemStatus> GetWorkItemStatus(string workItemId);
+
         Task<string> CreateApplication(ForgeActivityForm forgeActivity);
     }
 }

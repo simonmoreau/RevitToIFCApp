@@ -42,6 +42,11 @@
             }
         }
 
+        public static FileStatus Error(string message)
+        {
+            return new FileStatus(message, false);
+        }
+
         private string _text;
         public string Text
         {

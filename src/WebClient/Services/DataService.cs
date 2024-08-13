@@ -74,5 +74,13 @@ namespace WebClient.Services
 
             return list;
         }
+
+        public async Task<WorkItemStatus> GetWorkItemStatus(string workItemId)
+        {
+            WorkItemStatus status = await JsonSerializer.DeserializeAsync<WorkItemStatus>
+        (await _httpClient.GetStreamAsync($"files/status?id={workItemId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            return status;
+        }
     }
 }
