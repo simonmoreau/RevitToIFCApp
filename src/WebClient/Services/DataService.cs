@@ -29,9 +29,10 @@ namespace WebClient.Services
             return await JsonSerializer.DeserializeAsync<CompleteUploadResponse>(await response.Content.ReadAsStreamAsync());
         }
 
-        public async Task<WorkItemStatus> CreateWorkItem(string objectKey, string activityId)
+        public async Task<WorkItemStatus> CreateWorkItem(string objectKey, string activityId, string fileName)
         {
-            object body = new { objectKey = objectKey, activityId = activityId };
+            ConversionProperties conversionProperties = new ConversionProperties() { FileName = fileName };
+            object body = new { objectKey = objectKey, activityId = activityId, conversionProperties = conversionProperties };
 
             StringContent bodyContent = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 

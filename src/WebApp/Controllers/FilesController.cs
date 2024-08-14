@@ -77,7 +77,7 @@ namespace WebApp.Controllers
         [Route("workItem")]
         public async Task<WorkItemStatus> CreateWorkItem(WorkItemCreation workItemCreation)
         {
-            WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation.objectKey, workItemCreation.activityId));
+            WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation));
             return vm;
         }
 

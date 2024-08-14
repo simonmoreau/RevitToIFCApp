@@ -31,24 +31,19 @@ namespace Application.ForgeApplications.Commands.CreateActivity
 
             string outputFile = _forgeConfiguration.ApplicationDetail.OutputFileName;
 
-            Page<string> activities = await _designAutomationClient.GetActivitiesAsync();
 
-            string qualifiedActivityId = string.Format("{0}.{1}+{2}", nickname, activityName, alias);
+            // define the activity
+            // ToDo: parametrize for different engines...
+            EngineAttribute engineAttributes = EngineAttribute.Revit;
+            string commandLine = string.Format(engineAttributes.CommandLine, appBundleName);
 
-            if (!activities.Data.Contains(qualifiedActivityId))
+            Activity activitySpec = new Activity()
             {
-                // define the activity
-                // ToDo: parametrize for different engines...
-                EngineAttribute engineAttributes = EngineAttribute.Revit;
-                string commandLine = string.Format(engineAttributes.CommandLine, appBundleName);
-
-                Activity activitySpec = new Activity()
-                {
-                    Id = activityName,
-                    Appbundles = new List<string>() { string.Format("{0}.{1}+{2}", nickname, appBundleName, alias) },
-                    CommandLine = new List<string>() { commandLine },
-                    Engine = engineName,
-                    Parameters = new Dictionary<string, Parameter>()
+                Id = activityName,
+                Appbundles = new List<string>() { string.Format("{0}.{1}+{2}", nickname, appBundleName, alias) },
+                CommandLine = new List<string>() { commandLine },
+                Engine = engineName,
+                Parameters = new Dictionary<string, Parameter>()
                     {
                         { "inputFile", new Parameter()
                             { Description = "input Revit file",
@@ -78,12 +73,18 @@ namespace Application.ForgeApplications.Commands.CreateActivity
                             }
                         }
                     },
-                    Settings = new Dictionary<string, ISetting>()
+                Settings = new Dictionary<string, ISetting>()
                     {
                         { "script", new StringSetting(){ Value = engineAttributes.Script } }
                     }
-                };
+            };
 
+            Page<string> activities = await _designAutomationClient.GetActivitiesAsync();
+
+            string qualifiedActivityId = string.Format("{0}.{1}+{2}", nickname, activityName, alias);
+
+            if (!activities.Data.Contains(qualifiedActivityId))
+            {
                 Activity newActivity = await _designAutomationClient.CreateActivityAsync(activitySpec);
 
                 // specify the alias for this Activity
@@ -92,8 +93,13 @@ namespace Application.ForgeApplications.Commands.CreateActivity
 
                 return newActivity;
             }
+            else
+            {
+                int version = await _designAutomationClient.UpdateActivityAsync(activitySpec, alias);
+                Activity newActivity = await _designAutomationClient.GetActivityAsync(qualifiedActivityId);
+                return newActivity;
+            }
 
-            return null;
         }
     }
 

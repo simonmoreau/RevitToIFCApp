@@ -1,4 +1,5 @@
 ﻿using Autodesk.Forge.DesignAutomation.Model;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.WorkItems.Commands.CreateWorkItem
@@ -7,13 +8,13 @@ namespace Application.WorkItems.Commands.CreateWorkItem
     {
         internal readonly string ObjectKey;
         internal readonly string ActivityId;
-        internal readonly string ConversionProperties;
+        internal readonly ConversionProperties ConversionProperties;
 
-        public CreateWorkItemCommand(string objectKey, string activityId)
+        public CreateWorkItemCommand(WorkItemCreation workItemCreation)
         {
-            ObjectKey = objectKey;
-            ActivityId = activityId;
-            ConversionProperties = "";
+            ObjectKey = workItemCreation.objectKey;
+            ActivityId = workItemCreation.activityId;
+            ConversionProperties = workItemCreation.conversionProperties;
 
         }
     }

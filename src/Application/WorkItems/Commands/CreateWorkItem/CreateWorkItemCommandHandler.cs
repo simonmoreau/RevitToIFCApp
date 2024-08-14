@@ -9,6 +9,7 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace Application.WorkItems.Commands.CreateWorkItem
 {
@@ -50,9 +51,10 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             };
 
             // 2. input json
+            string propertiesJson = JsonSerializer.Serialize(request.ConversionProperties);
             XrefTreeArgument inputJsonArgument = new XrefTreeArgument()
             {
-                Url = "data:application/json, " + (request.ConversionProperties.Replace("\"", "'"))
+                Url = "data:application/json, " + (propertiesJson.Replace("\"", "'"))
             };
 
             // 3. output file
