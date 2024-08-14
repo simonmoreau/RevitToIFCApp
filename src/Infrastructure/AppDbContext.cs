@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Application.Common.Interfaces;
-using MediatR;
 using Domain.Entities;
 
 namespace Infrastructure
@@ -19,15 +18,6 @@ namespace Infrastructure
 
         }
         public DbSet<Objet> Objets { get; set; }
-        public DbSet<Company> Companies { get ; set ; }
-        public DbSet<Site> Sites { get ; set ; }
-        public DbSet<ConstructionSite> ConstructionSites { get; set; }
-        public DbSet<Plan> Plans { get ; set ; }
-        public DbSet<Question> Questions { get ; set ; }
-        public DbSet<QuestionTemplate> QuestionTemplates { get ; set ; }
-        public DbSet<Answer> Answers { get; set; }
-
-        public DbSet<User> Users { get ; set ; }
         Task<int> IAppDbContext.SaveChangesAsync(CancellationToken cancellationToken)
         {
             return base.SaveChangesAsync(cancellationToken);
@@ -46,8 +36,6 @@ namespace Infrastructure
             modelBuilder.Entity<Objet>()
                 .ToTable("OBJETS");
 
-            modelBuilder.Entity<Company>()
-                .ToTable("COMPANIES");
         }
     }
 }

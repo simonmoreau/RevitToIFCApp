@@ -1,11 +1,4 @@
-﻿using Autodesk.Forge.Core;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Net.Http.Headers;
-using System.Text;
-using WebClient.Models;
-using static System.Collections.Specialized.BitVector32;
+﻿using System.Net.Http.Headers;
 
 namespace WebClient.Services
 {

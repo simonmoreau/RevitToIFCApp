@@ -1,15 +1,8 @@
-﻿using Application.ForgeApplications.Commands.CreateForgeApplication;
-using Autodesk.Forge.DesignAutomation;
+﻿using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.ForgeApplications.Commands.CreateActivity
 {
@@ -62,6 +55,15 @@ namespace Application.ForgeApplications.Commands.CreateActivity
                                 LocalName = "$(inputFile)",
                                 Ondemand = false,
                                 Required = true,
+                                Verb = Verb.Get,
+                                Zip = false
+                            }
+                        },
+                        { "inputJson", new Parameter()
+                            { Description = "input json",
+                                LocalName = "params.json",
+                                Ondemand = false,
+                                Required = false,
                                 Verb = Verb.Get,
                                 Zip = false
                             }

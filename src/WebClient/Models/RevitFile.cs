@@ -1,12 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
-using MudBlazor.Charts;
-using System.Collections;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using static MudBlazor.CategoryTypes;
-using System.IO.Packaging;
-using OpenMcdf;
 
 namespace WebClient.Models
 {

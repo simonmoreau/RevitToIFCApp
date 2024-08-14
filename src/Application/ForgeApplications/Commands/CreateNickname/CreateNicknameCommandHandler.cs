@@ -1,17 +1,9 @@
-﻿using Application.ForgeApplications.Commands.CreateForgeApplication;
-using Autodesk.Forge.DesignAutomation;
+﻿using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Authentication;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Application.Files.Queries.GetUploadUrl;
-using Autodesk.Oss;
 using Microsoft.Extensions.Options;
 
 namespace Application.ForgeApplications.Commands.CreateNickname

@@ -1,11 +1,7 @@
-﻿using Application.Common.Interfaces;
-using Application.Sites.Queries.GetSiteList;
-using Autodesk.Forge.DesignAutomation.Http;
+﻿using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Forge.Core;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace Application.ForgeApplications.Queries.ListForgeApplications
 {

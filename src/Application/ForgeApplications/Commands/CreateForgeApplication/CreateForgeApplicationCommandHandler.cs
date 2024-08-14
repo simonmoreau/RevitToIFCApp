@@ -1,17 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Application.Objets.Commands.CreateObjetCommand;
-using Application.Services;
-using Autodesk.Forge.DesignAutomation;
-using Autodesk.Forge.DesignAutomation.Http;
+﻿using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.ForgeApplications.Commands.CreateForgeApplication
 {

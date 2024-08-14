@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WebClient.Models;
 using WebClient.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebClient.Pages
 {

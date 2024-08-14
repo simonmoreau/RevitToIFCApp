@@ -1,24 +1,14 @@
 ﻿using Application.Files.Queries.GetUploadUrl;
-using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Autodesk.Authentication;
 using Autodesk.Authentication.Model;
 using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss;
 using Autodesk.Oss.Model;
-using Azure.Core;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.WorkItems.Commands.CreateWorkItem
 {
@@ -59,6 +49,12 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 Url = signedDownloadUrl.Url
             };
 
+            // 2. input json
+            XrefTreeArgument inputJsonArgument = new XrefTreeArgument()
+            {
+                Url = "data:application/json, " + (request.ConversionProperties.Replace("\"", "'"))
+            };
+
             // 3. output file
             XrefTreeArgument outputFileArgument = new XrefTreeArgument()
             {
@@ -77,6 +73,7 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 Arguments = new Dictionary<string, IArgument>()
                 {
                     { "inputFile",  inputFileArgument },
+                    { "inputJson",  inputJsonArgument },
                     { "outputFile",  outputFileArgument }
                 }
             };

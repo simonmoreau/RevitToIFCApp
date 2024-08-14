@@ -1,8 +1,6 @@
 
 using Application;
-using Application.Common.Interfaces;
 using Infrastructure;
-using Microsoft.Extensions.Configuration;
 
 namespace WebApp
 {

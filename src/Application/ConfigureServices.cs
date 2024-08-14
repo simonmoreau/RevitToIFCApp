@@ -3,10 +3,8 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Autodesk.Forge.DesignAutomation;
 using Microsoft.Extensions.Azure;
-using Azure.Data.Tables;
 using Autodesk.Oss;
 using Autodesk.SDKManager;
-using Microsoft.Extensions.Logging;
 using Autodesk.Authentication;
 using Domain.Entities;
 

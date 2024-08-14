@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using OpenMcdf;
-using System;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Text;
 using WebClient.Models;
 using WebClient.Services;
 using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
 
 namespace WebClient.Components.Convert
 {

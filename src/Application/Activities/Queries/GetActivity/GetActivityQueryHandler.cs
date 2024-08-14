@@ -1,15 +1,8 @@
 ﻿using Application.Common.Interfaces;
-using Application.Sites.Queries.GetSiteList;
 using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.DesignAutomation.Model;
 using Azure.Data.Tables;
-using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Activities.Queries.GetActivity
 {

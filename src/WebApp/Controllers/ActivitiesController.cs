@@ -1,12 +1,8 @@
-﻿using Application.Activities.Queries.GetActivity;
-using Application.Activities.Queries.ListActivities;
+﻿using Application.Activities.Queries.ListActivities;
 using Application.ForgeApplications.Commands.CreateActivity;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
-using Application.Sites.Queries.GetSiteList;
 using Autodesk.Forge.DesignAutomation.Model;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
 
 
 namespace WebApp.Controllers

@@ -1,12 +1,8 @@
 ﻿using Application.Files.Queries.GetUploadUrl;
-using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Autodesk.Authentication;
-using Autodesk.Authentication.Model;
 using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss;
-using Autodesk.Oss.Model;
-using Azure.Core;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;

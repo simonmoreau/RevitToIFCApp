@@ -1,4 +1,4 @@
-﻿namespace WebApp.Models
+﻿namespace Domain.Entities
 {
     public class WorkItemCreation
     {

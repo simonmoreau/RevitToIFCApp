@@ -1,14 +1,8 @@
-﻿using Application.Activities.Queries.GetActivity;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Autodesk.Forge.DesignAutomation.Http;
 using Autodesk.Forge.DesignAutomation.Model;
 using Azure.Data.Tables;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Activities.Queries.ListActivities
 {

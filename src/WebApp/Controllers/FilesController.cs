@@ -1,17 +1,13 @@
-﻿using Application.Activities.Queries.GetActivity;
-using Application.Activities.Queries.ListActivities;
-using Application.Files.Commands.CompleteUpload;
+﻿using Application.Files.Commands.CompleteUpload;
 using Application.Files.Commands.CreateBucket;
 using Application.Files.Queries.GetDownloadUrlQuery;
 using Application.Files.Queries.GetFiles;
 using Application.Files.Queries.GetUploadUrl;
-using Application.ForgeApplications.Commands.CreateForgeApplication;
-using Application.Sites.Queries.GetSiteList;
 using Application.WorkItems.Commands.CreateWorkItem;
 using Application.WorkItems.Queries.GetWorkItemStatus;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss.Model;
-using MediatR;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
