@@ -13,7 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,25 +52,39 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             Signeds3downloadResponse signedDownloadUrl = await _ossClient.SignedS3DownloadAsync(
                 twoLeggedToken.AccessToken,inputBucketKey, objectKey + ".rvt");
 
-            Signeds3uploadResponse signedUploadUrl = await _ossClient.SignedS3UploadAsync(
-                twoLeggedToken.AccessToken,outputBucketKey, objectKey + ".ifc");
-
-            WorkItem workItem = new WorkItem()
+            // prepare workitem arguments
+            // 1. input file
+            XrefTreeArgument inputFileArgument = new XrefTreeArgument()
             {
-                ActivityId = request.ActivityId,
-                Arguments = new Dictionary<string, IArgument>
-                    {
-                        { "inputFile",  new XrefTreeArgument() 
-                            { Url = signedDownloadUrl.Url, Verb = Verb.Get } },
-                        { "outputFile", new XrefTreeArgument 
-                        { Verb=Verb.Put, Headers = new Dictionary<string, string>() { { "Content-Type", "binary/octet-stream" } }, Url = signedUploadUrl.Urls.First() } }
-                    }
+                Url = signedDownloadUrl.Url
             };
 
+            // 3. output file
+            XrefTreeArgument outputFileArgument = new XrefTreeArgument()
+            {
+                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", outputBucketKey, objectKey + ".ifc"),
+                Verb = Verb.Put,
+                Headers = new Dictionary<string, string>()
+                {
+                    {"Authorization", "Bearer " + twoLeggedToken.AccessToken }
+                }
+            };
 
-            Autodesk.Forge.Core.ApiResponse<WorkItemStatus> createWorkItemResponse = await _designAutomationClient.WorkItemsApi.CreateWorkItemAsync(workItem);
+            // prepare & submit workitem
+            WorkItem workItemSpec = new WorkItem()
+            {
+                ActivityId = request.ActivityId,
+                Arguments = new Dictionary<string, IArgument>()
+                {
+                    { "inputFile",  inputFileArgument },
+                    { "outputFile",  outputFileArgument }
+                }
+            };
 
-            return createWorkItemResponse.Content;
+            WorkItemStatus workItemStatus = await _designAutomationClient.CreateWorkItemAsync(workItemSpec);
+
+            return workItemStatus;
+
         }
     }
 }
