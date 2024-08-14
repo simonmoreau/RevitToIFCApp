@@ -84,10 +84,10 @@ namespace WebClient.Services
             return status;
         }
 
-        public async Task<Signeds3downloadResponse> GetDownloadUrl(string objectKey)
+        public async Task<Signeds3downloadResponse> GetDownloadUrl(string objectKey, string fileName)
         {
             Signeds3downloadResponse? list = await JsonSerializer.DeserializeAsync<Signeds3downloadResponse>
-        (await _httpClient.GetStreamAsync($"files/download?objectKey={objectKey}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        (await _httpClient.GetStreamAsync($"files/download?objectKey={objectKey}&fileName={fileName}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return list;
         }

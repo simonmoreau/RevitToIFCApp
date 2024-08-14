@@ -34,9 +34,12 @@ namespace Application.Files.Queries.GetDownloadUrlQuery
 
             string bucketKey = _forgeConfiguration.OutputBucketKey;
             string objectKey = request.ObjectKey + ".ifc";
+            string outputFileName = Path.GetFileNameWithoutExtension(request.FileName) + ".ifc";
 
             Signeds3downloadResponse signedUrl = await _ossClient.SignedS3DownloadAsync(
-                twoLeggedToken.AccessToken, bucketKey, objectKey, minutesExpiration: 60);
+                twoLeggedToken.AccessToken, bucketKey, objectKey,
+                responseContentDisposition: $"attachment; filename=\"{outputFileName}\"",
+                minutesExpiration: 60);
 
 
             return signedUrl;

@@ -51,9 +51,9 @@ namespace WebApp.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("download")]
-        public async Task<Signeds3downloadResponse> GetDownloadUrls(string objectKey)
+        public async Task<Signeds3downloadResponse> GetDownloadUrls(string objectKey, string fileName)
         {
-            Signeds3downloadResponse vm = await Mediator.Send(new GetDownloadUrlQuery(objectKey));
+            Signeds3downloadResponse vm = await Mediator.Send(new GetDownloadUrlQuery(objectKey, fileName));
             return vm;
         }
 

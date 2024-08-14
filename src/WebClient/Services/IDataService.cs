@@ -7,7 +7,7 @@ namespace WebClient.Services
         Task<ListForgeApplicationsVm> GetApplicationDetails();
 
         Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber, string objectKey);
-        Task<Signeds3downloadResponse> GetDownloadUrl(string objectKey);
+        Task<Signeds3downloadResponse> GetDownloadUrl(string objectKey, string fileName);
 
         Task<CompleteUploadResponse> CompleteUpload(string uploadKey, long? size, List<string> eTags, string objectKey);
 
