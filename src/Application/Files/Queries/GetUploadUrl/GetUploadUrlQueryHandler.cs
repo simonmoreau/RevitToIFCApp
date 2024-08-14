@@ -47,7 +47,7 @@ namespace Application.Files.Queries.GetUploadUrl
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
             string bucketKey = _forgeConfiguration.InputBucketKey;
-            string objectKey = request.ObjectKey;
+            string objectKey = request.ObjectKey + ".rvt";
             string projectScope = "data:write";
             string requestIdPrefix = "";
             string uploadKey = null;
@@ -85,18 +85,8 @@ namespace Application.Files.Queries.GetUploadUrl
                 }
                 catch (OssApiException e)
                 {
-                    if (e.Message.Contains(_accessTokenExpiredMessage))
-                    {
-                        attemptCount++;
-
-                        accessToken = "_authentication.GetUpdatedAccessToken()";
-                        _logger.LogInformation("{requestId} Token expired. Trying to refresh", requestId);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("{requestId} Error: {errorMessage}", requestId, e.Message);
-                        throw;
-                    }
+                    _logger.LogWarning("{requestId} Error: {errorMessage}", requestId, e.Message);
+                    throw;
                 }
                 //} while (attemptCount < _maxRetryOnTokenExpiry);
             } while (attemptCount < 10);

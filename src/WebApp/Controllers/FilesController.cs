@@ -3,6 +3,7 @@ using Application.Activities.Queries.ListActivities;
 using Application.Files.Commands.CompleteUpload;
 using Application.Files.Commands.CreateBucket;
 using Application.Files.Queries.GetDownloadUrlQuery;
+using Application.Files.Queries.GetFiles;
 using Application.Files.Queries.GetUploadUrl;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.Sites.Queries.GetSiteList;
@@ -58,6 +59,18 @@ namespace WebApp.Controllers
         {
             Signeds3downloadResponse vm = await Mediator.Send(new GetDownloadUrlQuery(objectKey));
             return vm;
+        }
+
+        /// <summary>
+        /// List objects in bucket
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("objects")]
+        public async Task<BucketObjects> GetObjects(string bucketKey)
+        {
+            BucketObjects bucketObjects = await Mediator.Send(new GetFilesQuery(bucketKey));
+            return bucketObjects;
         }
 
         /// <summary>

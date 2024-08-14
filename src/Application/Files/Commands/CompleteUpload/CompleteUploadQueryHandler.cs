@@ -47,14 +47,15 @@ namespace Application.Files.Commands.CompleteUpload
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
 
             string bucketKey = _forgeConfiguration.InputBucketKey;
-            string objectKey = request.ObjectKey;
+            string objectKey = request.ObjectKey + ".rvt";
 
             Completes3uploadBody completes3UploadBody = new Completes3uploadBody();
             completes3UploadBody.UploadKey = request.UploadKey;
-            completes3UploadBody.Size = (int)request.Size;
+            completes3UploadBody.Size = null; // (int)request.Size;
             completes3UploadBody.ETags = request.ETags;
 
-            HttpResponseMessage response = await _ossClient.CompleteSignedS3UploadAsync(twoLeggedToken.AccessToken, bucketKey, objectKey, "application/json", completes3UploadBody);
+            HttpResponseMessage response = await _ossClient.CompleteSignedS3UploadAsync(
+                twoLeggedToken.AccessToken, bucketKey, objectKey, "application/json", completes3UploadBody);
 
             CompleteUploadResponse? completeUploadResponse = await JsonSerializer.DeserializeAsync<CompleteUploadResponse>(await response.Content.ReadAsStreamAsync());
             return completeUploadResponse;

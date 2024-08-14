@@ -47,10 +47,10 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             string objectKey = request.ObjectKey;
 
             Signeds3downloadResponse signedDownloadUrl = await _ossClient.SignedS3DownloadAsync(
-                twoLeggedToken.AccessToken,inputBucketKey, objectKey);
+                twoLeggedToken.AccessToken,inputBucketKey, objectKey + ".rvt");
 
             Signeds3uploadResponse signedUploadUrl = await _ossClient.SignedS3UploadAsync(
-                twoLeggedToken.AccessToken,outputBucketKey, objectKey);
+                twoLeggedToken.AccessToken,outputBucketKey, objectKey + ".ifc");
 
             WorkItem workItem = new WorkItem()
             {
@@ -59,7 +59,8 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                     {
                         { "inputFile",  new XrefTreeArgument() 
                             { Url = signedDownloadUrl.Url, Verb = Verb.Get } },
-                        { "outputFile", new XrefTreeArgument { Verb=Verb.Put, Headers = new Dictionary<string, string>() { { "Content-Type", "binary/octet-stream" } }, Url = signedUploadUrl.Urls.First() } }
+                        { "outputFile", new XrefTreeArgument 
+                        { Verb=Verb.Put, Headers = new Dictionary<string, string>() { { "Content-Type", "binary/octet-stream" } }, Url = signedUploadUrl.Urls.First() } }
                     }
             };
 

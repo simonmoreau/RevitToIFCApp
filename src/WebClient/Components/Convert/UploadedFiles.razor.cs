@@ -46,7 +46,7 @@ namespace WebClient.Components.Convert
             revitFile.Status = FileStatus.Uploading;
             // Upload the files here
             string objectName = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
-            string objectKey = objectName + Path.GetExtension(revitFile.Name);
+            string objectKey = objectName; // + Path.GetExtension(revitFile.Name);
 
             int chunksNumber = CalculateNumberOfChunks((ulong)revitFile.Size);
 
@@ -87,6 +87,7 @@ namespace WebClient.Components.Convert
             {
                 revitFile.Status = FileStatus.Converting;
                 //4. tell Forge to complete the uploading
+
                 CompleteUploadResponse completeUploadResponse = await _dataService.CompleteUpload(
                     signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
 
@@ -142,7 +143,7 @@ namespace WebClient.Components.Convert
             else
             {
                 Console.WriteLine("[some chunks stream uploading] failed ");
-            }
+            } 
 
             revitFile.Status = FileStatus.Converted;
 
