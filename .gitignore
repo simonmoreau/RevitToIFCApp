@@ -49,6 +49,7 @@ Thumbs.db
 # Solution-specific Files
 RevitToIFCBundle.zip
 /src/Bundle/RevitToIFCBundle.bundle/Contents/*.dll
+/src/RevitToIFCBundle/RevitToIFCBundle.bundle/Contents/*.dll
 appsettings.Development.json
 
 

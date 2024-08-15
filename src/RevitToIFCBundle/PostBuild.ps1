@@ -12,7 +12,7 @@ $cert=Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert | Where { $_.Thu
 Set-AuthenticodeSignature -FilePath $TargetPath -Certificate $cert -IncludeChain All -TimestampServer "http://timestamp.comodoca.com/authenticode"
 
 # Copy to Addin folder for debug
-$addinFolder = ($env:APPDATA + "\Autodesk\REVIT\Addins\2024")
+$addinFolder = ($env:APPDATA + "\Autodesk\REVIT\Addins\2025")
 xcopy /Y /F ($TargetPath) ($addinFolder)
 xcopy /Y /F ($ProjectDir + "RevitToIFCBundle.bundle\Contents\RevitToIFCBundle.addin") ($addinFolder)
 

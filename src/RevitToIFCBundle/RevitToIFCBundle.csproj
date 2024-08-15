@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+		<OutputType>Library</OutputType>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<!-- Create the configuration to buid various versions of Revit -->
+		<Configurations>Debug;2025;2024;2023;2022</Configurations>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Platforms>x64</Platforms>
+		<NuGetAudit>false</NuGetAudit>
+		<BuildInParallel>false</BuildInParallel>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+
+	<!-- If the configuration is a Revit version,
+    we use this configuration as a variable 
+    for the rest of the csproj -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Debug'))">
+		<RevitVersion>$(Configuration)</RevitVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+		<!-- We can only debug just ONE addin version.
+         Instead of building all versions above,
+         we just put ONE version below and switch to 'Debug' configuration
+      -->
+		<RevitVersion>2025</RevitVersion>
+		<StartAction>Program</StartAction>
+		<StartProgram>$(ProgramW6432)\Autodesk\Revit 2025\Revit.exe</StartProgram>
+		<RevitNugetVersion>$(RevitVersion).*</RevitNugetVersion>
+	</PropertyGroup>
+
+	<Choose>
+		<When Condition=" '$(RevitVersion)'=='2025' ">
+			<PropertyGroup>
+				<TargetFramework>net8.0-windows</TargetFramework>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<TargetFramework>net48</TargetFramework>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<!-- Release -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Debug'))">
+		<Optimize>true</Optimize>
+		<OutputPath>bin\$(RevitVersion)\</OutputPath>
+		<DefineConstants>REVIT$(RevitVersion)</DefineConstants>
+		<NoWarn>MSB3052</NoWarn>
+		<DebugType>None</DebugType>
+	</PropertyGroup>
+
+	<!-- Debug -->
+	<PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE;REVIT$(RevitVersion)</DefineConstants>
+		<DebugType>Full</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="RevitToIFCBundle.bundle\PackageContents.xml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="RevitToIFCBundle.bundle\PackageContents.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Get the RevitAPI.dll, RevitAPIUI.dll, AdWindows.dll and UIFramework.dll -->
+		<PackageReference Include="Autodesk.Forge.DesignAutomation.Revit" Version="$(RevitNugetVersion)" />
+		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitNugetVersion)" IncludeAssets="build; compile" PrivateAssets="All" />
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)PostBuild.ps1 -RevitVersion $(RevitVersion) -TargetName $(TargetName) -ProjectDir $(ProjectDir) -TargetPath $(TargetPath) -TargetDir $(TargetDir)" />
+	</Target>
+
+</Project>
