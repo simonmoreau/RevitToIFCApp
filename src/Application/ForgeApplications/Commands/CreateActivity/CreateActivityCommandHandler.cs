@@ -20,14 +20,14 @@ namespace Application.ForgeApplications.Commands.CreateActivity
         public async Task<Activity> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
         {
             // standard name for this sample
-            string appBundleName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}AppBundle";
-            string activityName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}Activity";
+            string appBundleName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}AppBundle{request.RevitVersion}";
+            string activityName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}Activity{request.RevitVersion}";
 
             string nickname = _forgeConfiguration.ApplicationDetail.Nickname;
             string alias = _forgeConfiguration.ApplicationDetail.Alias;
 
             string description = _forgeConfiguration.ApplicationDetail.Description;
-            string engineName = request.Engine;
+            string engineName = "Autodesk.Revit+" + request.RevitVersion;
 
             string outputFile = _forgeConfiguration.ApplicationDetail.OutputFileName;
 

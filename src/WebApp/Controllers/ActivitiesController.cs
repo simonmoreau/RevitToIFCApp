@@ -32,7 +32,7 @@ namespace WebApp.Controllers
             {
                 Activity appBundleId = await Mediator.Send(new CreateActivityCommand()
                 {
-                    Engine = "Autodesk.Revit+2024"
+                    RevitVersion = "2024"
                 });
 
                 if (appBundleId == null)

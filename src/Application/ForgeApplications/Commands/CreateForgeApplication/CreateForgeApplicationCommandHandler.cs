@@ -19,11 +19,11 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
 
         public async Task<AppBundle> Handle(CreateForgeApplicationCommand request, CancellationToken cancellationToken)
         {
-            string appBundleName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}AppBundle";
+            string appBundleName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}AppBundle{request.RevitVersion}";
             string nickname = _forgeConfiguration.ApplicationDetail.Nickname;
             string alias = _forgeConfiguration.ApplicationDetail.Alias;
             string description = _forgeConfiguration.ApplicationDetail.Description;
-            string engineName = request.Engine;
+            string engineName = "Autodesk.Revit+" + request.RevitVersion;
 
             // check if ZIP with bundle is here
             string packageZipPath = request.AppbundleFile;

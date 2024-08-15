@@ -5,6 +5,6 @@ namespace Application.ForgeApplications.Commands.CreateActivity
 {
     public class CreateActivityCommand : IRequest<Activity>
     {
-        public string? Engine { get; set; }
+        public string? RevitVersion { get; set; }
     }
 }
