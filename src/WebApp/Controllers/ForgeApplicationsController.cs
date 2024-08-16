@@ -40,21 +40,19 @@ namespace WebApp.Controllers
 
         [HttpPost]
         [Route("appbundle")]
-        public async Task<ActionResult<object>> CreateApplication()
+        public async Task<ActionResult<AppBundle>> CreateApplication()
         {
             try
             {
                 AppBundle appBundleId = await Mediator.Send(new CreateForgeApplicationCommand()
                 {
-                    RevitVersion = "Autodesk.Revit+2024",
-                    AppbundleFile = @"C:\Users\smoreau\Github\RevitToIFCApp\src\Bundle\bin\Debug\RevitToIFCBundle.zip"
+                    RevitVersion = "2024"
                 });
 
                 if (appBundleId == null)
                     return BadRequest();
 
-                return CreatedAtAction(nameof(CreateForgeApplicationCommand),
-                    new { id = appBundleId.Id });
+                return appBundleId;
             }
             catch (Exception)
             {
@@ -66,21 +64,19 @@ namespace WebApp.Controllers
 
         [HttpPost]
         [Route("applications")]
-        public async Task<ActionResult<object>> CreateFullApplication()
+        public async Task<ActionResult<List<string>>> CreateFullApplication()
         {
             try
             {
                 string[] revitVersions = ["2022", "2023", "2024", "2025"];
 
-                List<Task<string>> creationTasks = new List<Task<string>>();
+                List<string> creationIds = new List<string>();
                 foreach (string version in revitVersions)
                 {
-                    creationTasks.Add(CreateApplication(version));
+                    creationIds.Add(await CreateApplication(version));
                 }
 
-                string[] activiyIds = await Task.WhenAll(creationTasks);
-
-                return CreatedAtAction(nameof(CreateForgeApplicationCommand),new { ids = activiyIds });
+                return creationIds;
             }
             catch (Exception)
             {
@@ -94,13 +90,12 @@ namespace WebApp.Controllers
         {
             AppBundle appBundle = await Mediator.Send(new CreateForgeApplicationCommand()
             {
-                RevitVersion = version,
-                AppbundleFile = @"C:\Users\smoreau\Github\RevitToIFCApp\src\Bundle\bin\Debug\RevitToIFCBundle.zip"
+                RevitVersion = version
             });
 
             Activity activity = await Mediator.Send(new CreateActivityCommand()
             {
-                RevitVersion = "2024"
+                RevitVersion = version
             });
 
             return activity.Id;

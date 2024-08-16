@@ -25,8 +25,9 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
             string description = _forgeConfiguration.ApplicationDetail.Description;
             string engineName = "Autodesk.Revit+" + request.RevitVersion;
 
+
             // check if ZIP with bundle is here
-            string packageZipPath = request.AppbundleFile;
+            string packageZipPath = @$"C:\Users\smoreau\Github\RevitToIFCApp\src\RevitToIFCBundle\bin\{request.RevitVersion}\RevitToIFCBundle{request.RevitVersion}.zip";
             if (!System.IO.File.Exists(packageZipPath))
             {
                 throw new Exception("Appbundle not found at " + packageZipPath);
