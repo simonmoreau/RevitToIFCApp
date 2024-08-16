@@ -11,7 +11,7 @@ namespace WebClient.Services
 
         Task<CompleteUploadResponse> CompleteUpload(string uploadKey, long? size, List<string> eTags, string objectKey);
 
-        Task<WorkItemStatus> CreateWorkItem(string objectKey, string activityId, string fileName);
+        Task<WorkItemStatus> CreateWorkItem(string objectKey, string revitVersion, string fileName);
 
         Task<WorkItemStatus> GetWorkItemStatus(string workItemId);
 

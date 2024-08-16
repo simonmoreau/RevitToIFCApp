@@ -38,6 +38,13 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             string inputBucketKey = _forgeConfiguration.InputBucketKey;
             string outputBucketKey = _forgeConfiguration.OutputBucketKey;
 
+            string nickname = _forgeConfiguration.ApplicationDetail.Nickname;
+            string alias = _forgeConfiguration.ApplicationDetail.Alias;
+
+            string activityName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}Activity{request.RevitVersion}";
+
+            string activityId = string.Format("{0}.{1}+{2}", nickname, activityName, alias);
+
             string objectKey = request.ObjectKey;
 
             Signeds3downloadResponse signedDownloadUrl = await _ossClient.SignedS3DownloadAsync(
@@ -71,7 +78,7 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             // prepare & submit workitem
             WorkItem workItemSpec = new WorkItem()
             {
-                ActivityId = request.ActivityId,
+                ActivityId = activityId,
                 Arguments = new Dictionary<string, IArgument>()
                 {
                     { "inputFile",  inputFileArgument },

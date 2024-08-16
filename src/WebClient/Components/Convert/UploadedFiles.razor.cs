@@ -89,7 +89,7 @@ namespace WebClient.Components.Convert
                     signedsUrlResponse.UploadKey, revitFile.Size, eTags, objectKey);
 
                 //5 Create a workItem
-                WorkItemStatus createdWorkItemStatus = await _dataService.CreateWorkItem(objectKey, "RevitToIfc_dev.RvtToIfcActivity+Dev", revitFile.Name);
+                WorkItemStatus createdWorkItemStatus = await _dataService.CreateWorkItem(objectKey, revitFile.Version, revitFile.Name);
 
                 string workItemId = createdWorkItemStatus.Id;
 
