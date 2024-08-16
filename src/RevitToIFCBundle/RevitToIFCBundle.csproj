@@ -19,6 +19,7 @@
     for the rest of the csproj -->
 	<PropertyGroup Condition="!$(Configuration.Contains('Debug'))">
 		<RevitVersion>$(Configuration)</RevitVersion>
+		<RevitNugetVersion>$(RevitVersion).*</RevitNugetVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(Configuration.Contains('Debug'))">
