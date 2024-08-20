@@ -1,5 +1,5 @@
 @description('The name of the function app that you wish to create.')
-param appName string = 'revittoifc${uniqueString(resourceGroup().id)}'
+param appName string = 'revittoifcapp'
 
 @description('Storage Account type')
 @allowed([
@@ -26,8 +26,7 @@ param runtime string = 'dotnet'
 var hostingPlanName = appName
 var applicationInsightsName = appName
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
-var functionWorkerRuntime = runtime
-var sites_MyTestWebAppsimon_name_param = appName
+var sites_revittoifcapp_name_param = appName
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
@@ -80,17 +79,24 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 
-resource sites_MyTestWebAppsimon_name 'Microsoft.Web/sites@2023-12-01' = {
-  name: sites_MyTestWebAppsimon_name_param
+resource sites_revittoifcapp_name 'Microsoft.Web/sites@2023-12-01' = {
+  name: sites_revittoifcapp_name_param
   location: location
-  tags: {
-    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
-    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
-    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
-  }
   kind: 'app'
   properties: {
     enabled: true
+    hostNameSslStates: [
+      {
+        name: '${sites_revittoifcapp_name_param}-htfdghcthschdken.francecentral-01.azurewebsites.net'
+        sslState: 'Disabled'
+        hostType: 'Standard'
+      }
+      {
+        name: '${sites_revittoifcapp_name_param}-htfdghcthschdken.scm.francecentral-01.azurewebsites.net'
+        sslState: 'Disabled'
+        hostType: 'Repository'
+      }
+    ]
     serverFarmId: hostingPlan.id
     reserved: false
     isXenon: false
@@ -124,46 +130,32 @@ resource sites_MyTestWebAppsimon_name 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
-resource sites_MyTestWebAppsimon_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
-  name: '${sites_MyTestWebAppsimon_name_param}/ftp'
+resource sites_revittoifcapp_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  name: '${sites_revittoifcapp_name_param}/ftp'
   location: location
-  tags: {
-    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
-    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
-    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
-  }
   properties: {
     allow: false
   }
   dependsOn: [
-    sites_MyTestWebAppsimon_name
+    sites_revittoifcapp_name
   ]
 }
 
-resource sites_MyTestWebAppsimon_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
-  name: '${sites_MyTestWebAppsimon_name_param}/scm'
+resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  name: '${sites_revittoifcapp_name_param}/scm'
   location: location
-  tags: {
-    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
-    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
-    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
-  }
   properties: {
     allow: false
   }
   dependsOn: [
-    sites_MyTestWebAppsimon_name
+    sites_revittoifcapp_name
   ]
 }
 
-resource sites_MyTestWebAppsimon_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
-  name: '${sites_MyTestWebAppsimon_name_param}/web'
+
+resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
+  name: '${sites_revittoifcapp_name_param}/web'
   location: location
-  tags: {
-    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
-    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
-    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
-  }
   properties: {
     numberOfWorkers: 1
     defaultDocuments: [
@@ -185,7 +177,7 @@ resource sites_MyTestWebAppsimon_name_web 'Microsoft.Web/sites/config@2023-12-01
     logsDirectorySizeLimit: 35
     detailedErrorLoggingEnabled: false
     publishingUsername: 'REDACTED'
-    scmType: 'GitHubAction'
+    scmType: 'None'
     use32BitWorkerProcess: true
     webSocketsEnabled: false
     alwaysOn: false
@@ -236,7 +228,8 @@ resource sites_MyTestWebAppsimon_name_web 'Microsoft.Web/sites/config@2023-12-01
     azureStorageAccounts: {}
   }
   dependsOn: [
-    sites_MyTestWebAppsimon_name
+    sites_revittoifcapp_name
   ]
 }
+
 
