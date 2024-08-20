@@ -6,9 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F7ADA15B-22F3-4646-973C-308560386EC2}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		deploy.bicep = deploy.bicep
 		deploy.ps1 = deploy.ps1
 		README.md = README.md
-		deploy.bicep = deploy.bicep
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CE0382DA-C2AF-4245-8663-C7D733802A31}"
@@ -136,7 +136,6 @@ Global
 		{346AC94A-9FB9-4D3F-BE0B-1B98F2229343}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{346AC94A-9FB9-4D3F-BE0B-1B98F2229343}.Debug|Any CPU.Build.0 = Debug|x64
 		{346AC94A-9FB9-4D3F-BE0B-1B98F2229343}.Release|Any CPU.ActiveCfg = Release|x64
-		{346AC94A-9FB9-4D3F-BE0B-1B98F2229343}.Release|Any CPU.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
