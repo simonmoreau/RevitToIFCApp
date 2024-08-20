@@ -27,7 +27,7 @@ var hostingPlanName = appName
 var applicationInsightsName = appName
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
-
+var sites_MyTestWebAppsimon_name_param = appName
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
@@ -43,16 +43,29 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 }
 
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: hostingPlanName
   location: location
   sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
+    name: 'F1'
+    tier: 'Free'
+    size: 'F1'
+    family:'F'
+    capacity: 0
   }
-  properties: {}
+  properties: {
+    perSiteScaling:false
+    elasticScaleEnabled:false
+    maximumElasticWorkerCount:1
+    isSpot:false
+    reserved:false
+    isXenon:false
+    hyperV:false
+    targetWorkerCount:0
+    targetWorkerSizeId:0
+    zoneRedundant:false
+  }
 }
-
 
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
@@ -60,7 +73,170 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
   properties: {
     Application_Type: 'web'
+    Flow_Type: 'Bluefield'
     Request_Source: 'rest'
+    RetentionInDays: 90
   }
+}
+
+
+resource sites_MyTestWebAppsimon_name 'Microsoft.Web/sites@2023-12-01' = {
+  name: sites_MyTestWebAppsimon_name_param
+  location: location
+  tags: {
+    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
+    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
+    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
+  }
+  kind: 'app'
+  properties: {
+    enabled: true
+    serverFarmId: hostingPlan.id
+    reserved: false
+    isXenon: false
+    hyperV: false
+    dnsConfiguration: {}
+    vnetRouteAllEnabled: false
+    vnetImagePullEnabled: false
+    vnetContentShareEnabled: false
+    siteConfig: {
+      numberOfWorkers: 1
+      acrUseManagedIdentityCreds: false
+      alwaysOn: false
+      http20Enabled: false
+      functionAppScaleLimit: 0
+      minimumElasticInstanceCount: 0
+    }
+    scmSiteAlsoStopped: false
+    clientAffinityEnabled: true
+    clientCertEnabled: false
+    clientCertMode: 'Required'
+    hostNamesDisabled: false
+    vnetBackupRestoreEnabled: false
+    customDomainVerificationId: 'B8C6D4F97ABE756F9775858B8F74F7BCAF29557E90CF8ECF3C16F191D5188A2D'
+    containerSize: 0
+    dailyMemoryTimeQuota: 0
+    httpsOnly: true
+    redundancyMode: 'None'
+    publicNetworkAccess: 'Enabled'
+    storageAccountRequired: false
+    keyVaultReferenceIdentity: 'SystemAssigned'
+  }
+}
+
+resource sites_MyTestWebAppsimon_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  name: '${sites_MyTestWebAppsimon_name_param}/ftp'
+  location: location
+  tags: {
+    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
+    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
+    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
+  }
+  properties: {
+    allow: false
+  }
+  dependsOn: [
+    sites_MyTestWebAppsimon_name
+  ]
+}
+
+resource sites_MyTestWebAppsimon_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  name: '${sites_MyTestWebAppsimon_name_param}/scm'
+  location: location
+  tags: {
+    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
+    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
+    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
+  }
+  properties: {
+    allow: false
+  }
+  dependsOn: [
+    sites_MyTestWebAppsimon_name
+  ]
+}
+
+resource sites_MyTestWebAppsimon_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
+  name: '${sites_MyTestWebAppsimon_name_param}/web'
+  location: location
+  tags: {
+    'hidden-link: /app-insights-resource-id': '/subscriptions/cab87219-f718-41a8-aebf-03a4d79cfb15/resourceGroups/MyExampleGroup/providers/microsoft.insights/components/MyTestWebAppsimon'
+    'hidden-link: /app-insights-instrumentation-key': 'd3fba62c-067a-4235-9363-a33bc1af6694'
+    'hidden-link: /app-insights-conn-string': 'InstrumentationKey=d3fba62c-067a-4235-9363-a33bc1af6694;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=005478fd-a730-4b27-9b5d-f975302cfba4'
+  }
+  properties: {
+    numberOfWorkers: 1
+    defaultDocuments: [
+      'Default.htm'
+      'Default.html'
+      'Default.asp'
+      'index.htm'
+      'index.html'
+      'iisstart.htm'
+      'default.aspx'
+      'index.php'
+      'hostingstart.html'
+    ]
+    netFrameworkVersion: 'v8.0'
+    requestTracingEnabled: false
+    remoteDebuggingEnabled: false
+    httpLoggingEnabled: false
+    acrUseManagedIdentityCreds: false
+    logsDirectorySizeLimit: 35
+    detailedErrorLoggingEnabled: false
+    publishingUsername: 'REDACTED'
+    scmType: 'GitHubAction'
+    use32BitWorkerProcess: true
+    webSocketsEnabled: false
+    alwaysOn: false
+    managedPipelineMode: 'Integrated'
+    virtualApplications: [
+      {
+        virtualPath: '/'
+        physicalPath: 'site\\wwwroot'
+        preloadEnabled: false
+      }
+    ]
+    loadBalancing: 'LeastRequests'
+    experiments: {
+      rampUpRules: []
+    }
+    autoHealEnabled: false
+    vnetRouteAllEnabled: false
+    vnetPrivatePortsCount: 0
+    publicNetworkAccess: 'Enabled'
+    localMySqlEnabled: false
+    ipSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        action: 'Allow'
+        priority: 2147483647
+        name: 'Allow all'
+        description: 'Allow all access'
+      }
+    ]
+    scmIpSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        action: 'Allow'
+        priority: 2147483647
+        name: 'Allow all'
+        description: 'Allow all access'
+      }
+    ]
+    scmIpSecurityRestrictionsUseMain: false
+    http20Enabled: false
+    minTlsVersion: '1.2'
+    scmMinTlsVersion: '1.2'
+    ftpsState: 'FtpsOnly'
+    preWarmedInstanceCount: 0
+    elasticWebAppScaleLimit: 0
+    functionsRuntimeScaleMonitoringEnabled: false
+    minimumElasticInstanceCount: 0
+    azureStorageAccounts: {}
+  }
+  dependsOn: [
+    sites_MyTestWebAppsimon_name
+  ]
 }
 
