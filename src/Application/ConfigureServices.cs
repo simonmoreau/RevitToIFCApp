@@ -31,6 +31,7 @@ public static class ConfigureServices
         });
 
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
+        services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
 
         services.AddMediatR(cfg =>
         {
