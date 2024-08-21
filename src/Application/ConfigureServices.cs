@@ -7,6 +7,10 @@ using Autodesk.Oss;
 using Autodesk.SDKManager;
 using Autodesk.Authentication;
 using Domain.Entities;
+using Azure.Identity;
+using Microsoft.Graph;
+using Microsoft.Kiota.Abstractions.Authentication;
+
 
 namespace Application;
 
@@ -32,15 +36,24 @@ public static class ConfigureServices
 
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
+        services.Configure<AzureB2CSettings>(configuration.GetSection("AzureB2C"));
+
+
+        AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureB2C").Get<AzureB2CSettings>();
+
+        // Initialize the client credential auth provider
+        string[] scopes = new[] { "https://graph.microsoft.com/.default" };
+
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredential(azureB2CSettings.TenantId, azureB2CSettings.AppId, azureB2CSettings.ClientSecret);
+
+        //you can use a single client instance for the lifetime of the application
+        services.AddSingleton<GraphServiceClient>(sp => {
+            return new GraphServiceClient(clientSecretCredential, scopes);
+        });
 
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-            //cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-            //cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
-            //cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-            //cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
-
         });
 
         return services;
