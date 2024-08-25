@@ -39,12 +39,12 @@ public static class ConfigureServices
         services.Configure<AzureB2CSettings>(configuration.GetSection("AzureB2C"));
 
 
-        AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureB2C").Get<AzureB2CSettings>();
+        AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureAdB2C").Get<AzureB2CSettings>();
 
         // Initialize the client credential auth provider
         string[] scopes = new[] { "https://graph.microsoft.com/.default" };
 
-        ClientSecretCredential clientSecretCredential = new ClientSecretCredential(azureB2CSettings.TenantId, azureB2CSettings.AppId, azureB2CSettings.ClientSecret);
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredential(azureB2CSettings.TenantId, azureB2CSettings.ClientId, azureB2CSettings.ClientSecret);
 
         //you can use a single client instance for the lifetime of the application
         services.AddSingleton<GraphServiceClient>(sp => {

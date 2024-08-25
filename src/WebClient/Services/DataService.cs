@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using System.Text;
 using System.Text.Json;
 using WebClient.Models;
 
@@ -62,10 +63,19 @@ namespace WebClient.Services
 
         public async Task<ListForgeApplicationsVm> GetApplicationDetails()
         {
-            ListForgeApplicationsVm? list = await JsonSerializer.DeserializeAsync<ListForgeApplicationsVm>
-        (await _httpClient.GetStreamAsync($"forgeapplications"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            try
+            {
+                ListForgeApplicationsVm? list = await JsonSerializer.DeserializeAsync<ListForgeApplicationsVm>
+(await _httpClient.GetStreamAsync($"forgeapplications"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
-            return list;
+                return list;
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+                return null;
+            }
+
         }
 
         public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber, string objectKey)

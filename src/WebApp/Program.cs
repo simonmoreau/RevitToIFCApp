@@ -1,6 +1,8 @@
 
 using Application;
 using Infrastructure;
+using Microsoft.Identity.Web;
+using Stripe;
 
 namespace WebApp
 {
@@ -18,6 +20,9 @@ namespace WebApp
 
             builder.Services.AddApplicationServices(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAdB2C");
+
 
             builder.Services.AddControllers();
 

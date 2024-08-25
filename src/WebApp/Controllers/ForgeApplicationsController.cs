@@ -4,6 +4,7 @@ using Autodesk.Forge.DesignAutomation.Model;
 using Microsoft.AspNetCore.Mvc;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.ForgeApplications.Commands.CreateActivity;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace WebApp.Controllers
@@ -19,6 +20,7 @@ namespace WebApp.Controllers
         /// Get all applications details
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet(Name = "GetAllApps")]
         public async Task<ActionResult<ListForgeApplicationsVm>> GetAllApps()
         {
