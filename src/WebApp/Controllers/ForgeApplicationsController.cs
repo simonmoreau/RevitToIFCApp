@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.ForgeApplications.Commands.CreateActivity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Web;
 
 
 namespace WebApp.Controllers
@@ -12,6 +13,7 @@ namespace WebApp.Controllers
     /// <summary>
     /// Manage activities
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ForgeApplicationsController : BaseController
@@ -20,7 +22,6 @@ namespace WebApp.Controllers
         /// Get all applications details
         /// </summary>
         /// <returns></returns>
-        [Authorize]
         [HttpGet(Name = "GetAllApps")]
         public async Task<ActionResult<ListForgeApplicationsVm>> GetAllApps()
         {

@@ -16,5 +16,7 @@ namespace WebClient.Services
         Task<WorkItemStatus> GetWorkItemStatus(string workItemId);
 
         Task<string> CreateApplication(ForgeActivityForm forgeActivity);
+
+        Task<string> GetMe();
     }
 }

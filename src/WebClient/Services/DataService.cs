@@ -75,7 +75,6 @@ namespace WebClient.Services
                 exception.Redirect();
                 return null;
             }
-
         }
 
         public async Task<Signeds3uploadResponse> GetUploadUrls(int chunksNumber, string objectKey)
@@ -100,6 +99,13 @@ namespace WebClient.Services
         (await _httpClient.GetStreamAsync($"files/download?objectKey={objectKey}&fileName={fileName}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return list;
+        }
+
+        public async Task<string> GetMe()
+        {
+            string response = await _httpClient.GetStringAsync($"users");
+
+            return response;
         }
     }
 }
