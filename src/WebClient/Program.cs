@@ -21,6 +21,7 @@ builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
     options.ProviderOptions.DefaultAccessTokenScopes.Add("https://revittoifc.onmicrosoft.com/6cf133bd-e341-4a84-9985-e5f03811f7d3/API.Access");
+    options.ProviderOptions.LoginMode = "redirect";
 });
 
 builder.Services.AddMudServices();

@@ -1,6 +1,8 @@
-﻿@using WebClient.Components.Convert;
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebClient.Components.Convert;
 @using WebClient.Components.Admin;
 @using Autodesk.Forge.DesignAutomation.Model
+@attribute [Authorize]
 @page "/admin"
 
 <PageTitle>Admin</PageTitle>

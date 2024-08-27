@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using WebClient.Models;
 using WebClient.Services;
 
@@ -25,12 +26,23 @@ namespace WebClient.Components.Checkout
         [Parameter]
         public string PriceId { get; set; } = "";
 
+        [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
         private async void GotToCheckoutSession()
         {
-            CheckoutSessionDTO checkoutSession = await _dataService.GetCheckoutSession(PriceId);
-            string checkoutSessionUrl = checkoutSession.Url;
+            var user = (await AuthStat).User;
 
-            _navManager.NavigateTo(checkoutSessionUrl);
+            if (!user.Identity.IsAuthenticated)
+            {
+                _navManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(_navManager.Uri)}");
+            }
+            else
+            {
+                CheckoutSessionDTO checkoutSession = await _dataService.GetCheckoutSession(PriceId);
+                string checkoutSessionUrl = checkoutSession.Url;
+
+                _navManager.NavigateTo(checkoutSessionUrl);
+            }
+
         }
     }
 }
