@@ -15,24 +15,14 @@ namespace WebApp.Controllers
     [Route("[controller]")]
     public class ConversionCreditsController : BaseController
     {
-        [HttpPost]
+        [HttpGet(Name = "GetCheckoutSession")]
         [Route("checkout")]
-        public async Task<ActionResult<string>> CreateCheckoutSession()
+        public async Task<CheckoutSessionDTO> CreateCheckoutSession(string price)
         {
-            try
-            {
-                string url = await Mediator.Send(new CreateCheckoutSessionQuery("price_1I1FBgFjsZIqAFNU6psC3AjP", 1));
+            string domain = "https://localhost:7021";
+            CheckoutSessionDTO checkoutSession = await Mediator.Send(new CreateCheckoutSessionQuery(price, 1, domain));
 
-                if (url == null)
-                    return BadRequest();
-
-                return url;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creating the application");
-            }
+            return checkoutSession;
 
         }
     }

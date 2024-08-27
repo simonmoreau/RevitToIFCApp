@@ -12,23 +12,21 @@ using Stripe;
 
 namespace Application.ConversionCredits.Commands.CreateCheckoutSession
 {
-    public class CreateCheckoutSessionQueryHandler : IRequestHandler<CreateCheckoutSessionQuery, string>
+    public class CreateCheckoutSessionQueryHandler : IRequestHandler<CreateCheckoutSessionQuery, CheckoutSessionDTO>
     {
         private readonly ILogger _logger;
         private readonly StripeSettings _stripeSettings;
 
-
-        public CreateCheckoutSessionQueryHandler(ILogger<CreateCheckoutSessionQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<StripeSettings> stripeSettings, OssClient ossClient)
+        public CreateCheckoutSessionQueryHandler(ILogger<CreateCheckoutSessionQueryHandler> logger,
+            IOptions<StripeSettings> stripeSettings)
         {
             _logger = logger;
             _stripeSettings = stripeSettings.Value;
         }
 
-        public async Task<string> Handle(CreateCheckoutSessionQuery request, CancellationToken cancellationToken)
+        public async Task<CheckoutSessionDTO> Handle(CreateCheckoutSessionQuery request, CancellationToken cancellationToken)
         {
             StripeConfiguration.ApiKey = _stripeSettings.ApiKey;
-            string domain = "http://localhost:4242";
 
             SessionCreateOptions options = new SessionCreateOptions
             {
@@ -42,13 +40,18 @@ namespace Application.ConversionCredits.Commands.CreateCheckoutSession
                   },
                 },
                 Mode = "payment",
-                SuccessUrl = domain + "/success.html",
-                CancelUrl = domain + "/cancel.html",
+                SuccessUrl = request.Domain + "/success.html",
+                CancelUrl = request.Domain + "/cancel.html",
             };
             SessionService service = new SessionService();
             Session session = service.Create(options);
 
-            return session.Url;
+            CheckoutSessionDTO sessionResult = new CheckoutSessionDTO()
+            {
+                Url = session.Url,
+                PriceId = request.PriceId
+            };
+            return sessionResult;
         }
     }
 }

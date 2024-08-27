@@ -18,5 +18,7 @@ namespace WebClient.Services
         Task<string> CreateApplication(ForgeActivityForm forgeActivity);
 
         Task<UserDTO> GetMe();
+
+        Task<CheckoutSessionDTO> GetCheckoutSession(string priceId);
     }
 }

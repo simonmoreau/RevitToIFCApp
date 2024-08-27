@@ -1,5 +1,5 @@
-﻿@page "/checkout"
-
+﻿@using WebClient.Components.Checkout
+@page "/checkout"
 
 <PageTitle>Buy</PageTitle>
 
@@ -8,39 +8,13 @@
 <MudText Typo="Typo.h3">A price for every use</MudText>
 
 <div Class="d-flex flex-column flex-md-row gap-5">
-    <MudCard Class="flex-grow-1 d-flex flex-column justify-space-between pa-4 align-center">
-        <MudCardHeader>
-            <MudText Typo="Typo.h4">Start</MudText>
-        </MudCardHeader>
-        <MudCardHeader>
-            <MudText Typo="Typo.h6">10 conversions</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudImage Src="images/revit-to-ifc.svg" Alt="Revit To IFC" Class="rounded-lg" />
-        </MudCardContent>
-        <MudCardContent>
-            <MudText Typo="Typo.body1">10 Conversions to get you started.</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Buy</MudButton>
-        </MudCardActions>
-    </MudCard>
-    <MudCard Class="flex-grow-1 d-flex flex-column justify-space-between pa-4 align-center">
-        <MudCardHeader>
-            <MudText Typo="Typo.h4">Run</MudText>
-        </MudCardHeader>
-        <MudCardHeader>
-            <MudText Typo="Typo.h6">50 conversions</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudImage Src="images/settings.svg" Alt="Settings" Class="rounded-lg" />
-        </MudCardContent>
-        <MudCardContent>
-            <MudText Typo="Typo.body1">50 Conversions to handle your daily conversions.</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Buy</MudButton>
-        </MudCardActions>
-    </MudCard>
+    <PriceCard Title="Start"
+               SubTitle="10 conversions" 
+               Description="10 Conversions to get you started."
+               PriceId="price_1I1FBgFjsZIqAFNU6psC3AjP" />
+    <PriceCard Title="Run"
+               SubTitle="50 conversions"
+               Description="50 Conversions to handle your daily conversions."
+               PriceId="price_1I1FBgFjsZIqAFNU6psC3AjP" />
 </div>
 

@@ -16,7 +16,7 @@ namespace WebClient.Services
 
         public async Task<CompleteUploadResponse> CompleteUpload(string uploadKey, long? size, List<string> eTags, string objectKey)
         {
-            object body = new { uploadKey = uploadKey, size = size, eTags = eTags , objectKey  = objectKey };
+            object body = new { uploadKey = uploadKey, size = size, eTags = eTags, objectKey = objectKey };
 
             StringContent bodyContent = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 
@@ -107,6 +107,20 @@ namespace WebClient.Services
 (await _httpClient.GetStreamAsync($"users"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return response;
+        }
+
+        public async Task<CheckoutSessionDTO> GetCheckoutSession(string priceId)
+        {
+
+            JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
+            Stream request = await _httpClient.GetStreamAsync($"conversioncredits/checkout?price={priceId}");
+
+            CheckoutSessionDTO? response = await JsonSerializer.DeserializeAsync<CheckoutSessionDTO>(request, options);
+
+            return response;
+
+
         }
     }
 }
