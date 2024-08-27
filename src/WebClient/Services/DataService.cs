@@ -101,9 +101,10 @@ namespace WebClient.Services
             return list;
         }
 
-        public async Task<string> GetMe()
+        public async Task<UserDTO> GetMe()
         {
-            string response = await _httpClient.GetStringAsync($"users");
+            UserDTO? response = await JsonSerializer.DeserializeAsync<UserDTO>
+(await _httpClient.GetStreamAsync($"users"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
             return response;
         }

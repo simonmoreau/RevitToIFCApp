@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Users.Queries.GetUser
 {
-    public class GetUserQuery : IRequest<string>
+    public class GetUserQuery : IRequest<UserDTO>
     {
         public GetUserQuery(string userId)
         {

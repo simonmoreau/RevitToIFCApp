@@ -10,12 +10,12 @@ namespace WebClient.Pages
         public IDataService _dataService { get; set; }
 
         ListForgeApplicationsVm ListForgeApplicationsVm { get; set; }
-        string UserName { get; set; }
+        UserDTO User { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             ListForgeApplicationsVm = await _dataService.GetApplicationDetails();
-            UserName = await _dataService.GetMe();
+            User = await _dataService.GetMe();
 
         }
 

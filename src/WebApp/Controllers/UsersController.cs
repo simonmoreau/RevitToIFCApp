@@ -20,11 +20,11 @@ namespace WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet(Name = "GetMe")]
-        public async Task<string> GetMe()
+        public async Task<UserDTO> GetMe()
         {
             string? id = User.GetObjectId();
-            string vm = await Mediator.Send(new GetUserQuery(id));
-            return vm;
+            UserDTO user = await Mediator.Send(new GetUserQuery(id));
+            return user;
         }
     }
 }

@@ -17,6 +17,6 @@ namespace WebClient.Services
 
         Task<string> CreateApplication(ForgeActivityForm forgeActivity);
 
-        Task<string> GetMe();
+        Task<UserDTO> GetMe();
     }
 }

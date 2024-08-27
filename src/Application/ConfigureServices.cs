@@ -36,7 +36,7 @@ public static class ConfigureServices
 
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
-        services.Configure<AzureB2CSettings>(configuration.GetSection("AzureB2C"));
+        services.Configure<AzureB2CSettings>(configuration.GetSection("AzureAdB2C"));
 
 
         AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureAdB2C").Get<AzureB2CSettings>();

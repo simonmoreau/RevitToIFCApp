@@ -7,13 +7,13 @@
 
 <h1>Admin</h1>
 
-@if (UserName == null)
+@if (User == null)
 {
     <h1>Loading ...</h1>
 }
 else
 {
-    <h1>@UserName</h1>
+    <h1>@User.Name - Conversion Credits : @User.ConversionCredits</h1>
 }
 
 
