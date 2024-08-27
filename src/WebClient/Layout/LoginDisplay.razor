@@ -3,7 +3,7 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity?.Name!
+        <div Class="mr-8">Hello, @context.User.Identity?.Name</div>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="BeginLogOut" >Log Out</MudButton>
     </Authorized>
     <NotAuthorized>

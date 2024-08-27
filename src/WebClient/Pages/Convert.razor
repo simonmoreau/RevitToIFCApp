@@ -5,4 +5,13 @@
 
 <PageTitle>Convert</PageTitle>
 
+@if (User == null)
+{
+    <h3>Loading ...</h3>
+}
+else
+{
+    <h3>You have @User.ConversionCredits conversion credits</h3>
+}
+
 <Upload></Upload>
