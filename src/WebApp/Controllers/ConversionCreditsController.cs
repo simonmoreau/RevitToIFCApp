@@ -17,9 +17,8 @@ namespace WebApp.Controllers
     {
         [HttpGet(Name = "GetCheckoutSession")]
         [Route("checkout")]
-        public async Task<CheckoutSessionDTO> CreateCheckoutSession(string price)
+        public async Task<CheckoutSessionDTO> CreateCheckoutSession(string price, string domain)
         {
-            string domain = "https://localhost:7021";
             CheckoutSessionDTO checkoutSession = await Mediator.Send(new CreateCheckoutSessionQuery(price, 1, domain));
 
             return checkoutSession;

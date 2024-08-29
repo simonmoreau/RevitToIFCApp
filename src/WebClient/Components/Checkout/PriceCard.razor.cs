@@ -37,7 +37,9 @@ namespace WebClient.Components.Checkout
             }
             else
             {
-                CheckoutSessionDTO checkoutSession = await _dataService.GetCheckoutSession(PriceId);
+                string domain = _navManager.BaseUri;
+
+                CheckoutSessionDTO checkoutSession = await _dataService.GetCheckoutSession(PriceId, domain);
                 string checkoutSessionUrl = checkoutSession.Url;
 
                 _navManager.NavigateTo(checkoutSessionUrl);

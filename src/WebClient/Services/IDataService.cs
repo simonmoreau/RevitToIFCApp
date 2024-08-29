@@ -19,6 +19,6 @@ namespace WebClient.Services
 
         Task<UserDTO> GetMe();
 
-        Task<CheckoutSessionDTO> GetCheckoutSession(string priceId);
+        Task<CheckoutSessionDTO> GetCheckoutSession(string priceId, string domain);
     }
 }

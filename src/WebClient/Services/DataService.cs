@@ -109,12 +109,12 @@ namespace WebClient.Services
             return response;
         }
 
-        public async Task<CheckoutSessionDTO> GetCheckoutSession(string priceId)
+        public async Task<CheckoutSessionDTO> GetCheckoutSession(string priceId, string domain)
         {
 
             JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
-            Stream request = await _httpClient.GetStreamAsync($"conversioncredits/checkout?price={priceId}");
+            Stream request = await _httpClient.GetStreamAsync($"conversioncredits/checkout?price={priceId}&domain={domain}");
 
             CheckoutSessionDTO? response = await JsonSerializer.DeserializeAsync<CheckoutSessionDTO>(request, options);
 

@@ -40,8 +40,8 @@ namespace Application.ConversionCredits.Commands.CreateCheckoutSession
                   },
                 },
                 Mode = "payment",
-                SuccessUrl = request.Domain + "/success.html",
-                CancelUrl = request.Domain + "/cancel.html",
+                SuccessUrl = request.Domain + "success.html",
+                CancelUrl = request.Domain + "cancel.html",
             };
             SessionService service = new SessionService();
             Session session = service.Create(options);
