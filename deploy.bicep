@@ -1,31 +1,21 @@
 @description('The name of the function app that you wish to create.')
-param appName string = 'revittoifcapp'
+param appName string
 
-@description('Storage Account type')
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_RAGRS'
-])
-param storageAccountType string = 'Standard_LRS'
+@description('Specifies all secrets {"secretName":"","secretValue":""} wrapped in a secure object.')
+@secure()
+param secretsObject object
 
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
-@description('Location for Application Insights')
-param appInsightsLocation string
-
-@description('The language worker runtime to load in the function app.')
-@allowed([
-  'node'
-  'dotnet'
-  'java'
-])
-param runtime string = 'dotnet'
-
 var hostingPlanName = appName
 var applicationInsightsName = appName
-var storageAccountName = 'rvttoifc${uniqueString(resourceGroup().id)}'
+var storageAccountName = uniqueString(resourceGroup().id)
+var keyVaultName = '${appName}Vault'
+
+var skuName = 'standard'
+var storageAccountType = 'Standard_LRS'
+
 var sites_revittoifcapp_name_param = appName
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -41,6 +31,36 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
+resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
+  name: keyVaultName
+  location: location
+  properties: {
+    accessPolicies:[]
+    enableRbacAuthorization: true
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 90
+    enabledForDeployment: false
+    enabledForDiskEncryption: false
+    enabledForTemplateDeployment: false
+    tenantId: subscription().tenantId
+    sku: {
+      name: skuName
+      family: 'A'
+    }
+    networkAcls: {
+      defaultAction: 'Allow'
+      bypass: 'AzureServices'
+    }
+  }
+}
+
+resource key 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = [for secret in secretsObject.secrets: {
+  name: secret.secretName
+  parent: vault
+  properties: {
+    value: secret.secretValue
+  }
+}]
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: hostingPlanName
@@ -68,7 +88,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
 
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
-  location: appInsightsLocation
+  location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -98,7 +118,7 @@ resource sites_revittoifcapp_name 'Microsoft.Web/sites@2023-12-01' = {
       }
     ]
     serverFarmId: hostingPlan.id
-    reserved: false
+    reserved: true
     isXenon: false
     hyperV: false
     dnsConfiguration: {}
@@ -132,7 +152,6 @@ resource sites_revittoifcapp_name 'Microsoft.Web/sites@2023-12-01' = {
 
 resource sites_revittoifcapp_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
   name: '${sites_revittoifcapp_name_param}/ftp'
-  location: location
   properties: {
     allow: false
   }
@@ -143,7 +162,6 @@ resource sites_revittoifcapp_name_ftp 'Microsoft.Web/sites/basicPublishingCreden
 
 resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
   name: '${sites_revittoifcapp_name_param}/scm'
-  location: location
   properties: {
     allow: false
   }
@@ -155,7 +173,6 @@ resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCreden
 
 resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
   name: '${sites_revittoifcapp_name_param}/web'
-  location: location
   properties: {
     numberOfWorkers: 1
     defaultDocuments: [

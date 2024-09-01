@@ -3,6 +3,9 @@ using Application;
 using Infrastructure;
 using Microsoft.Identity.Web;
 using Stripe;
+using Azure.Security.KeyVault;
+using Microsoft.Extensions.Configuration;
+using Azure.Identity;
 
 namespace WebApp
 {
@@ -15,6 +18,9 @@ namespace WebApp
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
 
+            builder.Configuration.AddAzureKeyVault(
+                new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+                new DefaultAzureCredential());
 
             // Add services to the container.
 

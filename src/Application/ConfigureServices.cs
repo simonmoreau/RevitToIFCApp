@@ -9,8 +9,6 @@ using Autodesk.Authentication;
 using Domain.Entities;
 using Azure.Identity;
 using Microsoft.Graph;
-using Microsoft.Kiota.Abstractions.Authentication;
-
 
 namespace Application;
 
