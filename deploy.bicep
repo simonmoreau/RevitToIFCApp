@@ -77,7 +77,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
     elasticScaleEnabled:false
     maximumElasticWorkerCount:1
     isSpot:false
-    reserved:false
+    reserved:true
     isXenon:false
     hyperV:false
     targetWorkerCount:0
@@ -151,30 +151,28 @@ resource sites_revittoifcapp_name 'Microsoft.Web/sites@2023-12-01' = {
 }
 
 resource sites_revittoifcapp_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
-  name: '${sites_revittoifcapp_name_param}/ftp'
+  parent: sites_revittoifcapp_name
+  name: 'ftp'
   properties: {
     allow: false
   }
-  dependsOn: [
-    sites_revittoifcapp_name
-  ]
 }
 
 resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
-  name: '${sites_revittoifcapp_name_param}/scm'
+  parent: sites_revittoifcapp_name
+  name: 'scm'
   properties: {
     allow: false
   }
-  dependsOn: [
-    sites_revittoifcapp_name
-  ]
 }
 
 
 resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
-  name: '${sites_revittoifcapp_name_param}/web'
+  parent: sites_revittoifcapp_name
+  name: 'web'
   properties: {
     numberOfWorkers: 1
+    linuxFxVersion: 'DOTNETCORE|8.0'
     defaultDocuments: [
       'Default.htm'
       'Default.html'
@@ -186,7 +184,6 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
       'index.php'
       'hostingstart.html'
     ]
-    netFrameworkVersion: 'v8.0'
     requestTracingEnabled: false
     remoteDebuggingEnabled: false
     httpLoggingEnabled: false
@@ -244,9 +241,6 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
     minimumElasticInstanceCount: 0
     azureStorageAccounts: {}
   }
-  dependsOn: [
-    sites_revittoifcapp_name
-  ]
 }
 
 
