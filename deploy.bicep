@@ -25,7 +25,7 @@ param runtime string = 'dotnet'
 
 var hostingPlanName = appName
 var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var storageAccountName = 'rvttoifc${uniqueString(resourceGroup().id)}'
 var sites_revittoifcapp_name_param = appName
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
