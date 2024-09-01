@@ -10,12 +10,6 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:6420",
             "webRoot": "${workspaceFolder}"
-        },
-        {
-            "name": "Attach to .NET Functions",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:azureFunctions.pickProcess}"
         }
     ]
 }

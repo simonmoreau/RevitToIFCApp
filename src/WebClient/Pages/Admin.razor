@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebClient.Components.Convert;
+@using WebClient.Components.Admin;
+@using Autodesk.Forge.DesignAutomation.Model
+@attribute [Authorize]
+@page "/admin"
+
+<PageTitle>Admin</PageTitle>
+
+<h1>Admin</h1>
+
+@if (User == null)
+{
+    <h1>Loading ...</h1>
+}
+else
+{
+    <h1>@User.Name - Conversion Credits : @User.ConversionCredits</h1>
+}
+
+
+@if (ListForgeApplicationsVm == null)
+{
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Engines">
+            <p><em>Loading...</em></p>
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudTabPanel>
+    </MudTabs>
+}
+else
+{
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Create App">
+            <CreateForgeApplication></CreateForgeApplication>
+        </MudTabPanel>
+        <MudTabPanel Text="Engines">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Engines</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var engine in ListForgeApplicationsVm.Engines)
+                    {
+                        <tr>
+                            <td>@engine</td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+        <MudTabPanel Text="Appbundle">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Version</th>
+                        <th>Description</th>
+                        <th>Engine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (AppBundle appBundle in ListForgeApplicationsVm.AppBundles)
+                    {
+                        <tr>
+                            <td>@appBundle.Id</td>
+                            <td>@appBundle.Version</td>
+                            <td>@appBundle.Description</td>
+                            <td>@appBundle.Engine</td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+        <MudTabPanel Text="Activities">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Version</th>
+                        <th>Appbundles</th>
+                        <th>Description</th>
+                        <th>Engine</th>
+                        <th>CommandLine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Activity activity in ListForgeApplicationsVm.Activities)
+                    {
+                        <tr>
+                            <td>@activity.Id</td>
+                            <td>@activity.Version</td>
+                            <td>
+                                @{
+                                    var appbundles = @activity.Appbundles ?? new string[0].ToList();
+                                }
+                                @string.Join("; ", @appbundles)
+                            </td>
+                            <td>@activity.Description ?? ""</td>
+                            <td>@activity.Engine</td>
+                            <td>
+                                @{
+                                    var commandLines = @activity.CommandLine ?? new string[0].ToList();
+                                }
+                                @string.Join("; ", @commandLines)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+    </MudTabs>
+
+}

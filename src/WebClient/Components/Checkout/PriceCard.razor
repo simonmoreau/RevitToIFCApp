@@ -1,0 +1,17 @@
+﻿<MudCard Class="flex-grow-1 d-flex flex-column justify-space-between pa-4 align-center">
+    <MudCardHeader>
+        <MudText Typo="Typo.h4">@Title</MudText>
+    </MudCardHeader>
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">@SubTitle</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudImage Src="images/revit-to-ifc.svg" Alt="Revit To IFC" Class="rounded-lg" />
+    </MudCardContent>
+    <MudCardContent>
+        <MudText Typo="Typo.body1">@Description</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="GotToCheckoutSession">Buy</MudButton>
+    </MudCardActions>
+</MudCard>

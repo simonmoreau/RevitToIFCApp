@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebClient.Components.Convert;
+@attribute [Authorize]
+@page "/convert"
+
+<PageTitle>Convert</PageTitle>
+
+@if (User == null)
+{
+    <h3 Class="mt-4">Loading ...</h3>
+}
+else
+{
+    <h3 Class="mt-4">You have @User.ConversionCredits conversion credits</h3>
+}
+
+<Upload></Upload>

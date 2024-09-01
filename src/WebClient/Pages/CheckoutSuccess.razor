@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@page "/checkout/success"
+
+<PageTitle>Purchase complete</PageTitle>
+
+
+<MudContainer Class="mt-20">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Thanks for your purchase!</MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center">You can now start converting your Revit files.</MudText>
+    <MudButton Align="Align.Center" Variant="Variant.Filled" Color="Color.Primary" Href="convert">Start Converting</MudButton>
+</MudContainer>

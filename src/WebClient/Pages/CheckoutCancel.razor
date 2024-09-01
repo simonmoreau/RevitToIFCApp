@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@page "/checkout/cancel"
+
+<PageTitle>Purchase canceled</PageTitle>
+
+<MudContainer Class="mt-20">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Your purchase have been canceled.</MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center">No fund have been withdrawn</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="checkout">Buy Conversions</MudButton>
+</MudContainer>
+
+@code {
+
+}
