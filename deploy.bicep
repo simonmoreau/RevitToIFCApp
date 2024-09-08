@@ -166,6 +166,20 @@ resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCreden
   }
 }
 
+resource sites_revittoifcapp_name_static_site 'Microsoft.Web/staticSites@2022-09-01' = {
+  name: sites_revittoifcapp_name_param
+  location: 'westeurope'
+  sku:{
+    name: 'Free'
+    tier: 'Free'
+  }
+  properties: {
+    allowConfigFileUpdates: true
+    provider: 'GitHub'
+    repositoryUrl: 'https://github.com/simonmoreau/RevitToIFCApp'
+    branch: 'master'
+  }
+}
 
 resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: sites_revittoifcapp_name

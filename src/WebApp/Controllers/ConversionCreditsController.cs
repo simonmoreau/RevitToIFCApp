@@ -15,7 +15,7 @@ namespace WebApp.Controllers
     [Route("[controller]")]
     public class ConversionCreditsController : BaseController
     {
-        [HttpGet(Name = "GetCheckoutSession")]
+        [HttpGet]
         [Route("checkout")]
         public async Task<CheckoutSessionDTO> CreateCheckoutSession(string price, string domain)
         {
