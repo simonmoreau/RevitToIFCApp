@@ -143,9 +143,6 @@ namespace WebClient.Components.Convert
             } 
 
             revitFile.Status = FileStatus.Converted;
-
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-            Snackbar.Add("TODO: Upload your files!");
         }
 
 

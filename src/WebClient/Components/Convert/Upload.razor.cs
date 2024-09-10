@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using MudBlazor;
 using System.Collections.ObjectModel;
 using WebClient.Models;
 
@@ -6,16 +7,21 @@ namespace WebClient.Components.Convert
 {
     public partial class Upload
     {
-
-        private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+        private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
         private string _dragClass = DefaultDragClass;
         private readonly ObservableCollection<RevitFile> _revitFiles = new();
+        private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
-        private async Task Clear()
+        private async Task ClearAsync()
         {
+            await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
             _revitFiles.Clear();
             ClearDragClass();
-            await Task.Delay(100);
+        }
+
+        private Task OpenFilePickerAsync()
+        {
+            return _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
         }
 
         private void OnInputFileChanged(InputFileChangeEventArgs e)
@@ -29,16 +35,23 @@ namespace WebClient.Components.Convert
             }
         }
 
-        private void AddFile()
+        private void UploadAll()
         {
-
+            foreach (RevitFile revitFile in _revitFiles)
+            {
+                
+            }
         }
 
         private void SetDragClass()
-            => _dragClass = $"{DefaultDragClass} mud-border-primary";
+        {
+            _dragClass = $"{DefaultDragClass} mud-border-primary";
+        }
 
         private void ClearDragClass()
-            => _dragClass = DefaultDragClass;
+        {
+            _dragClass = DefaultDragClass;
+        }
     }
 }
 

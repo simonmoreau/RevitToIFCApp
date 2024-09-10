@@ -1,44 +1,56 @@
-﻿@inject ISnackbar Snackbar
+﻿@using WebClient.Models
 
-<MudStack Style="width: 100%">
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                      AppendMultipleFiles
-                    Accept=".rvt,.rfa"
-                    OnFilesChanged="OnInputFileChanged"
-                    Hidden="@false"
-                    InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                    InputStyle="opacity:0"
-                    @ondragenter="@SetDragClass"
-                    @ondragleave="@ClearDragClass"
-                    @ondragend="@ClearDragClass">
-         <SelectedTemplate>
-             <MudPaper Height="300px"
-                       Outlined="true"
-                       Class="@_dragClass">
-                 <MudText Typo="Typo.h6">
-                     Drag and drop files here or click
-                 </MudText>
-             </MudPaper>
-         </SelectedTemplate>
-         <ButtonTemplate>
-             <MudToolBar DisableGutters="true"
-                         Class="relative d-flex justify-end gap-4 z-30">
-                 <MudButton HtmlTag="label"
-                            Color="Color.Primary"
-                            for="@context.Id"
-                            Variant="Variant.Filled">
-                     Add files
-                 </MudButton>
-                 <MudButton OnClick="@Clear"
-                            Color="Color.Error"
-                            Disabled="@(!_revitFiles.Any())"
-                            Variant="Variant.Filled">
-                     Clear
-                 </MudButton>
-             </MudToolBar>
-         </ButtonTemplate>
-     </MudFileUpload>
+    <MudStack Style="width: 100%">
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                       @ref="@_fileUpload"
+                       OnFilesChanged="OnInputFileChanged"
+                       AppendMultipleFiles
+                       Hidden="@false"
+                       InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                       InputStyle="opacity:0"
+                       tabindex="-1"
+                       @ondrop="@ClearDragClass"
+                       @ondragenter="@SetDragClass"
+                       @ondragleave="@ClearDragClass"
+                       @ondragend="@ClearDragClass">
+            <ActivatorContent>
+                <MudPaper Height="300px"
+                          Outlined="true"
+                          Class="@_dragClass">
+                    <MudText Typo="Typo.h6">
+                        Drag and drop Revit files here or click
+                    </MudText>
+                @foreach (RevitFile revitFile in _revitFiles)
+                    {
+                        <MudChip T="string"
+                                 Color="Color.Dark"
+                                 Text="@revitFile.Name"
+                                 tabindex="-1" />
+                    }
+                </MudPaper>
+            </ActivatorContent>
+        </MudFileUpload>
+        <MudToolBar Gutters="@false"
+                    Class="relative d-flex justify-end gap-4">
+            <MudButton Color="Color.Primary"
+                       OnClick="@OpenFilePickerAsync"
+                       Variant="Variant.Filled">
+                Add
+            </MudButton>
+            <MudButton Color="Color.Primary"
+                       Disabled="@(!_revitFiles.Any())"
+                       OnClick="@UploadAll"
+                       Variant="Variant.Filled">
+                Convert All
+            </MudButton>
+            <MudButton Color="Color.Error"
+                   Disabled="@(!_revitFiles.Any())"
+                       OnClick="@ClearAsync"
+                       Variant="Variant.Filled">
+                Clear
+            </MudButton>
+        </MudToolBar>
+    <UploadedFiles BrowserFiles="_revitFiles"></UploadedFiles>
+    </MudStack>
 
-     <UploadedFiles BrowserFiles="_revitFiles"></UploadedFiles>
-
- </MudStack>
+     
