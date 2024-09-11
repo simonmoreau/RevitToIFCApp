@@ -14,6 +14,8 @@ var storageAccountName = uniqueString(resourceGroup().id)
 var keyVaultName = '${appName}Vault'
 var identitiesName = '${appName}Identities'
 var apiSiteName = '${appName}API'
+var roleAssignmentName = '${appName}APIRole'
+var roleDefinitionId = 'de139f84-1756-47ae-9be6-808fbbe84772'
 var apiUrl = '${toLower(apiSiteName)}.azurewebsites.net'
 var scmUrl = '${toLower(apiSiteName)}.scm.azurewebsites.net'
 var frontEndSiteName = '${appName}Site'
@@ -292,6 +294,34 @@ resource revittoifcapp_id_88be_simonmoreau_RevitToIFCApp_b00a 'Microsoft.Managed
     audiences: [
       'api://AzureADTokenExchange'
     ]
+  }
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(revittoifcapp_identities.id, resourceGroup().id, roleDefinitionId)
+  scope: resourceGroup()
+  properties: {
+    description: roleAssignmentName
+    principalId: revittoifcapp_identities.properties.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
+    principalType: 'ServicePrincipal' // See https://docs.microsoft.com/azure/role-based-access-control/role-assignments-template#new-service-principal to understand why this property is included.
+  }
+}
+
+
+resource sourceControl 'Microsoft.Web/sites/sourcecontrols@2023-01-01' = {
+  parent: sites_revittoifcapp_api
+  name: 'web'
+  properties: {
+    repoUrl: 'https://github.com/simonmoreau/RevitToIFCApp'
+    branch: 'master'
+    isManualIntegration: false
+    deploymentRollbackEnabled: false
+    isMercurial: false
+    isGitHubAction: true
+    gitHubActionConfiguration: {
+      generateWorkflowFile: false
+    }
   }
 }
 
