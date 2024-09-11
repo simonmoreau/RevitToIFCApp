@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - revittoifcapp
+name: Build and deploy ASP.Net Core app to Azure Web App - RevitToIfcAppAPI
 
 on:
   push:
@@ -51,15 +51,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6B3AC51525624716A85179E140F59912 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EF2EE42E61A54295BD47B552424BF65D }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_34984AD97EBA4C64A333017386FD0029 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EA99AF84D90546E495CBC508334A6070 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7284DA1D7954457BBD70FBBCCAB50CED }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_255CA8D400AC4DE590EC76E7801326FB }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'revittoifcapp'
+          app-name: 'RevitToIfcAppAPI'
           slot-name: 'Production'
           package: .
           

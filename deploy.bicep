@@ -217,7 +217,7 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
     logsDirectorySizeLimit: 35
     detailedErrorLoggingEnabled: false
     publishingUsername: 'REDACTED'
-    scmType: 'GitHubAction'
+    scmType: 'None'
     use32BitWorkerProcess: true
     webSocketsEnabled: false
     alwaysOn: false
@@ -277,51 +277,6 @@ resource revittoifcapp_revittoifcapp_azurewebsites_net 'Microsoft.Web/sites/host
   properties: {
     siteName: toLower(apiSiteName)
     hostNameType: 'Verified'
-  }
-}
-
-resource revittoifcapp_identities 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
-  name: identitiesName
-  location: location
-}
-
-resource revittoifcapp_id_88be_simonmoreau_RevitToIFCApp_b00a 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-07-31-preview' = {
-  parent: revittoifcapp_identities
-  name: 'simonmoreau-RevitToIFCApp-b00a'
-  properties: {
-    issuer: 'https://token.actions.githubusercontent.com'
-    subject: 'repo:simonmoreau/RevitToIFCApp:environment:production'
-    audiences: [
-      'api://AzureADTokenExchange'
-    ]
-  }
-}
-
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(revittoifcapp_identities.id, resourceGroup().id, roleDefinitionId)
-  scope: resourceGroup()
-  properties: {
-    description: roleAssignmentName
-    principalId: revittoifcapp_identities.properties.principalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
-    principalType: 'ServicePrincipal' // See https://docs.microsoft.com/azure/role-based-access-control/role-assignments-template#new-service-principal to understand why this property is included.
-  }
-}
-
-
-resource sourceControl 'Microsoft.Web/sites/sourcecontrols@2023-01-01' = {
-  parent: sites_revittoifcapp_api
-  name: 'web'
-  properties: {
-    repoUrl: 'https://github.com/simonmoreau/RevitToIFCApp'
-    branch: 'master'
-    isManualIntegration: false
-    deploymentRollbackEnabled: false
-    isMercurial: false
-    isGitHubAction: true
-    gitHubActionConfiguration: {
-      generateWorkflowFile: false
-    }
   }
 }
 
