@@ -186,9 +186,9 @@ resource sites_revittoifcapp_name_static_site 'Microsoft.Web/staticSites@2022-09
   }
   properties: {
     allowConfigFileUpdates: true
-    provider: 'GitHub'
-    repositoryUrl: 'https://github.com/simonmoreau/RevitToIFCApp'
-    branch: 'master'
+    stagingEnvironmentPolicy:'Enabled'
+    provider: 'None'
+    enterpriseGradeCdnStatus:'Disabled'
   }
 }
 
