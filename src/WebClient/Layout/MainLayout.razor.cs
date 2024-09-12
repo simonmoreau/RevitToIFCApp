@@ -6,7 +6,7 @@ namespace WebClient.Layout
     {
         MudTheme appTheme = new MudTheme()
         {
-            Palette = new PaletteLight()
+            PaletteLight = new PaletteLight()
             {
                 Primary =  "#1c364a",
                 Secondary = "#e74727",
