@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
 using MudBlazor.Services;
 using WebClient;
 using WebClient.Services;
@@ -9,13 +10,21 @@ WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+Uri baseAdresse = new Uri(builder.HostEnvironment.BaseAddress);
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = baseAdresse });
+
+string url = builder.Configuration.GetValue<string>("APIAdress");
+var apiAdress = new Uri(url);
+
+builder.Services.AddTransient<ApiAuthorizationMessageHandler>();
 
 builder.Services
-    .AddHttpClient<IDataService, DataService>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+    .AddHttpClient<IDataService, DataService>(client => client.BaseAddress = apiAdress)
+    .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
-builder.Services.AddHttpClient<IUploadService, UploadService>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddHttpClient<IUploadService, UploadService>(client => client.BaseAddress = apiAdress);
 
 builder.Services.AddMsalAuthentication(options =>
 {
