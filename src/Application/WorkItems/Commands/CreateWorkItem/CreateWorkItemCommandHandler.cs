@@ -47,20 +47,22 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             string nickname = _forgeConfiguration.ApplicationDetail.Nickname;
             string alias = _forgeConfiguration.ApplicationDetail.Alias;
 
-            string activityName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}Activity{request.RevitVersion}";
+            string activityName = BuildActiviyName(request.RevitVersion);
 
             string activityId = string.Format("{0}.{1}+{2}", nickname, activityName, alias);
 
             string objectKey = request.ObjectKey;
 
-            Signeds3downloadResponse signedDownloadUrl = await _ossClient.SignedS3DownloadAsync(
-                twoLeggedToken.AccessToken, inputBucketKey, objectKey + ".rvt");
-
             // prepare workitem arguments
             // 1. input file
             XrefTreeArgument inputFileArgument = new XrefTreeArgument()
             {
-                Url = signedDownloadUrl.Url
+                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", inputBucketKey, objectKey + ".rvt"),
+                Verb = Verb.Get,
+                Headers = new Dictionary<string, string>()
+                {
+                    {"Authorization", "Bearer " + twoLeggedToken.AccessToken }
+                }
             };
 
             // 2. input json
@@ -114,6 +116,25 @@ namespace Application.WorkItems.Commands.CreateWorkItem
 
             return workItemStatus;
 
+        }
+
+        private string BuildActiviyName(string revitVersion)
+        {
+            int revitVersionNum = 0;
+                
+            if (!Int32.TryParse(revitVersion, out revitVersionNum))
+            {
+                throw new Exception("Revit version not found");
+            }
+
+            if (revitVersionNum < 2022)
+            {
+                revitVersionNum = 2022;
+            }
+
+            string activityName = $"{_forgeConfiguration.ApplicationDetail.AppBundleName}Activity{revitVersionNum.ToString()}";
+
+            return activityName;
         }
 
     }
