@@ -7,10 +7,12 @@ namespace Domain.Entities
     {
         public string? Progress { get; set; }
         public string? ReportUrl { get; set; }
+        public Uri? DebugInfoUrl { get; set; }
         public string? FileUrl { get; set; }
         public string? InputUrl { get; set; }
         public string? Status { get; set; }
         public string? UserId { get; set; }
+        public string? WorkItemId { get; set; }
         public DateTime TimeQueued { get; set; }
         public int Size { get; set; }
         public string? Version { get; set; }

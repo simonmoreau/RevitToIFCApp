@@ -36,7 +36,6 @@ public static class ConfigureServices
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
         services.Configure<AzureB2CSettings>(configuration.GetSection("AzureAdB2C"));
 
-
         AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureAdB2C").Get<AzureB2CSettings>();
 
         // Initialize the client credential auth provider

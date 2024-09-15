@@ -18,12 +18,14 @@ namespace WebApp
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
 
-            builder.Configuration.AddAzureKeyVault(
-                new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-                new DefaultAzureCredential());
+            if (!builder.Environment.IsDevelopment())
+            {
+                builder.Configuration.AddAzureKeyVault(
+                    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+                    new DefaultAzureCredential());
+            }
 
             // Add services to the container.
-
             builder.Services.AddApplicationServices(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
