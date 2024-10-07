@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services
+namespace Application.Common.Services
 {
     internal class AdditionalParameterRetriever
     {
@@ -16,7 +16,7 @@ namespace Application.Services
 
             if (string.IsNullOrWhiteSpace(attributeName))
             {
-                throw new System.ArgumentException("Parameter cannot be null", nameof(attributeName));
+                throw new ArgumentException("Parameter cannot be null", nameof(attributeName));
             }
 
             return $"extension_{b2cExtensionAppClientId}_{attributeName}";

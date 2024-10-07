@@ -6,6 +6,7 @@ using Stripe;
 using Azure.Security.KeyVault;
 using Microsoft.Extensions.Configuration;
 using Azure.Identity;
+using Microsoft.Extensions.Azure;
 
 namespace WebApp
 {
@@ -21,7 +22,7 @@ namespace WebApp
             if (!builder.Environment.IsDevelopment())
             {
                 builder.Configuration.AddAzureKeyVault(
-                    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+                    new Uri(builder.Configuration["KeyVault:VaultUri"]),
                     new DefaultAzureCredential());
             }
 

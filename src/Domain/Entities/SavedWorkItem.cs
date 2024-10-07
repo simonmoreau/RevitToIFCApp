@@ -5,6 +5,8 @@ namespace Domain.Entities
 {
     public class SavedWorkItem : ITableEntity
     {
+        public DateTime? Created { get; set; }
+        public DateTime? LastModified { get; set; }
         public string? Progress { get; set; }
         public string? ReportUrl { get; set; }
         public Uri? DebugInfoUrl { get; set; }

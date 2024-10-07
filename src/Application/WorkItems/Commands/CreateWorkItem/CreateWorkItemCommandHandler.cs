@@ -1,5 +1,5 @@
-﻿using Application.Files.Queries.GetUploadUrl;
-using Application.Services;
+﻿using Application.Common.Services;
+using Application.Files.Queries.GetUploadUrl;
 using Autodesk.Authentication;
 using Autodesk.Authentication.Model;
 using Autodesk.Forge.DesignAutomation;
@@ -20,21 +20,21 @@ namespace Application.WorkItems.Commands.CreateWorkItem
     public class CreateWorkItemCommandHandler : IRequestHandler<CreateWorkItemCommand, WorkItemStatus>
     {
         private readonly DesignAutomationClient _designAutomationClient;
+        private readonly ISavedWorkItemService _savedWorkItemService;
         private readonly OssClient _ossClient;
         private readonly ILogger<GetUploadUrlQueryHandler> _logger;
         private readonly AuthenticationClient _authenticationClient;
         private readonly ForgeConfiguration _forgeConfiguration;
-        private readonly TableServiceClient _tableServiceClient;
 
         public CreateWorkItemCommandHandler(DesignAutomationClient designAutomationClient,ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient, TableServiceClient tableServiceClient)
+            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient, ISavedWorkItemService savedWorkItemService)
         {
             _ossClient = ossClient;
             _logger = logger;
             _authenticationClient = authenticationClient;
             _forgeConfiguration = forgeConfiguration.Value;
             _designAutomationClient = designAutomationClient;
-            _tableServiceClient = tableServiceClient;
+            _savedWorkItemService = savedWorkItemService;
         }
 
         public async Task<WorkItemStatus> Handle(CreateWorkItemCommand request, CancellationToken cancellationToken)
@@ -97,22 +97,7 @@ namespace Application.WorkItems.Commands.CreateWorkItem
 
             WorkItemStatus workItemStatus = await _designAutomationClient.CreateWorkItemAsync(workItemSpec);
 
-            SavedWorkItem savedWorkItem = new SavedWorkItem();
-            savedWorkItem.PartitionKey = "workItems";
-            savedWorkItem.RowKey = workItemStatus.Id;
-            savedWorkItem.UserId = request.UserId;
-            savedWorkItem.Version = request.RevitVersion;
-            savedWorkItem.UpdateStatus(workItemStatus);
-
-            TableClient tableClient = _tableServiceClient.GetTableClient("workItems");
-            tableClient.CreateIfNotExists();
-
-            Azure.Response response = await tableClient.AddEntityAsync<SavedWorkItem>(savedWorkItem);
-
-            if (response.IsError)
-            {
-                throw new Exception(response.ReasonPhrase);
-            }
+            await _savedWorkItemService.CreateSavedWorkItemStatus(workItemStatus, request.UserId, request.RevitVersion);
 
             return workItemStatus;
 

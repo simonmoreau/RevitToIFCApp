@@ -1,5 +1,5 @@
 ﻿using Application.Common.Exceptions;
-using Application.Services;
+using Application.Common.Services;
 using Application.WorkItems.Queries.GetWorkItem;
 using Domain.Entities;
 using MediatR;
