@@ -249,10 +249,15 @@ resource sites_revittoifcapp_name_static_site 'Microsoft.Web/staticSites@2022-09
   }
 }
 
+var staticWebSiteUrl = sites_revittoifcapp_name_static_site.properties.defaultHostname
+
 resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: sites_revittoifcapp_api
   name: 'web'
   properties: {
+    cors: {
+      allowedOrigins: ['http://localhost','http:://${staticWebSiteUrl}']
+    }
     appSettings: [
       {
         name: 'ManagedIdentityClientId'
