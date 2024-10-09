@@ -15,8 +15,13 @@ Uri baseAdresse = new Uri(builder.HostEnvironment.BaseAddress);
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = baseAdresse });
 
-string url = builder.Configuration.GetValue<string>("APIAdress");
-var apiAdress = new Uri(url);
+Uri apiAdress = baseAdresse;
+
+if (!builder.HostEnvironment.IsDevelopment())
+{
+    string url = builder.Configuration.GetValue<string>("APIAdress");
+    apiAdress = new Uri(url);
+}
 
 builder.Services.AddTransient<ApiAuthorizationMessageHandler>();
 
