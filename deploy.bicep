@@ -4,6 +4,9 @@ param applicationName string
 @description('Specifies the application name.')
 param applicationContext string
 
+@description('The Id of the subscription.')
+param subscriptionId string
+
 @description('Specifies all secrets {"secretName":"","secretValue":""} wrapped in a secure object.')
 @secure()
 param secretsObject object
@@ -17,6 +20,7 @@ var appServicePlanName = 'asp-${toLower(applicationFullName)}'
 var storageAccountName = 'st${uniqueString(resourceGroup().id)}'
 var keyVaultName = 'kv-${toLower(applicationFullName)}'
 var applicationInsightsName = 'appi-${toLower(applicationFullName)}'
+var userAssignedIdentitiesName = 'id-${toLower(applicationFullName)}'
 
 var staticSiteName = 'stapp-${toLower(applicationFullName)}'
 // var hostNameBindingsName = 'hnb-${toLower(applicationFullName)}'
@@ -24,6 +28,24 @@ var apiUrl = '${toLower(applicationName)}.azurewebsites.net'
 var scmUrl = '${toLower(applicationName)}.scm.azurewebsites.net'
 var budgetName = 'bg-${toLower(applicationFullName)}'
 
+
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  name: userAssignedIdentitiesName
+  location: 'francecentral'
+}
+
+// Configured federated identity credentials to allow Github Actions
+resource userAssignedIdentities_app_bim42_prod_f_id_a382_name_simonmoreau_RevitToIFCApp_8b5a 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-07-31-preview' = {
+  parent: userAssignedIdentity
+  name: 'simonmoreau-RevitToIFCApp-8b5a'
+  properties: {
+    issuer: 'https://token.actions.githubusercontent.com'
+    subject: 'repo:simonmoreau/RevitToIFCApp:environment:production'
+    audiences: [
+      'api://AzureADTokenExchange'
+    ]
+  }
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
@@ -65,6 +87,16 @@ resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   }
 }
 
+resource KeyVaultSecretsUserRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'KeyVaultSecretsUser')
+  scope: vault
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+  }
+}
+
+
 resource key 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = [for secret in secretsObject.secrets: {
   name: secret.secretName
   parent: vault
@@ -80,6 +112,7 @@ resource connectionStringKey 'Microsoft.KeyVault/vaults/secrets@2024-04-01-previ
     value: storageAccountConnectionString
   }
 }
+
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: appServicePlanName
@@ -123,7 +156,10 @@ resource sites_revittoifcapp_api 'Microsoft.Web/sites@2023-12-01' = {
   location: location
   kind: 'app,linux'
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${userAssignedIdentity.name}': {}
+    }
   }
   properties: {
     enabled: true
@@ -169,7 +205,16 @@ resource sites_revittoifcapp_api 'Microsoft.Web/sites@2023-12-01' = {
     redundancyMode: 'None'
     publicNetworkAccess: 'Enabled'
     storageAccountRequired: false
-    keyVaultReferenceIdentity: 'SystemAssigned'
+    keyVaultReferenceIdentity: userAssignedIdentity.id
+  }
+}
+
+resource WebsiteContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'WebsiteContributor')
+  scope: sites_revittoifcapp_api
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', 'de139f84-1756-47ae-9be6-808fbbe84772')
   }
 }
 
@@ -282,6 +327,8 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
     azureStorageAccounts: {}
   }
 }
+
+
 
 
 
