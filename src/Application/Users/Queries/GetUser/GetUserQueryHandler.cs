@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Services;
 using Application.WorkItems.Queries.GetWorkItem;
 using Domain.Entities;
 using MediatR;
@@ -25,16 +26,13 @@ namespace Application.Users.Queries.GetUser
 
         public async Task<UserDTO> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-            // Declare the names of the custom attributes
-            const string customAttributeName = "ConversionCredits";
+           string conversionCreditsAttributeName = AdditionalParameterRetriever.GetConversionCreditsAttributeName(_azureB2CSettings.B2cExtensionAppClientId);
 
-            string ConversionCreditsAttributeName = GetCompleteAttributeName(customAttributeName);
-
-            string selects = $"displayName,id,mail,mobilePhone,{ConversionCreditsAttributeName}";
+           string selects = $"displayName,id,mail,mobilePhone,{conversionCreditsAttributeName}";
 
             Microsoft.Graph.Models.User? user = await _graphServiceClient.Users[request.UserId].GetAsync((requestConfiguration) =>
             {
-                requestConfiguration.QueryParameters.Select = new string[] {"Id", "displayName",ConversionCreditsAttributeName };
+                requestConfiguration.QueryParameters.Select = new string[] {"Id", "displayName",conversionCreditsAttributeName };
             });
 
             if (user == null)
@@ -43,11 +41,10 @@ namespace Application.Users.Queries.GetUser
             }
 
             decimal credis = 0;
-            if (user.AdditionalData.ContainsKey(ConversionCreditsAttributeName))
+            if (user.AdditionalData.ContainsKey(conversionCreditsAttributeName))
             {
-                credis = (decimal)user.AdditionalData[ConversionCreditsAttributeName];
+                credis = (decimal)user.AdditionalData[conversionCreditsAttributeName];
             }
-            
 
             UserDTO userDTO = new UserDTO()
             {
@@ -58,14 +55,6 @@ namespace Application.Users.Queries.GetUser
             return userDTO;
         }
 
-        private string GetCompleteAttributeName(string attributeName)
-        {
-            if (string.IsNullOrWhiteSpace(attributeName))
-            {
-                throw new System.ArgumentException("Parameter cannot be null", nameof(attributeName));
-            }
 
-            return $"extension_{_azureB2CSettings.B2cExtensionAppClientId}_{attributeName}";
-        }
     }
 }

@@ -24,7 +24,7 @@ namespace Application.WorkItems.Queries.GetWorkItem
             // Read a single item from container
             SavedWorkItem workItem = await tableClient.GetEntityAsync<SavedWorkItem>(
                 rowKey: "68719518388",
-                partitionKey: "gear-surf-surfboards"
+                partitionKey: "workItems"
             );
 
             return workItem;

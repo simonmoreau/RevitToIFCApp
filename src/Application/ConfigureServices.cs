@@ -9,6 +9,7 @@ using Autodesk.Authentication;
 using Domain.Entities;
 using Azure.Identity;
 using Microsoft.Graph;
+using Application.Common.Services;
 
 namespace Application;
 
@@ -26,16 +27,17 @@ public static class ConfigureServices
         services.AddDesignAutomation(configuration);
         services.AddOss(configuration);
         services.AddTransient<OssClient>();
+        services.AddSingleton<ISavedWorkItemService, SavedWorkItemService>();
 
         services.AddAzureClients(clientBuilder =>
         {
-            clientBuilder.AddTableServiceClient(configuration["Azure:ConnectionString"]);
+            clientBuilder.AddTableServiceClient(configuration.GetSection("Storage"));
+            clientBuilder.UseCredential(new DefaultAzureCredential());
         });
 
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
         services.Configure<AzureB2CSettings>(configuration.GetSection("AzureAdB2C"));
-
 
         AzureB2CSettings? azureB2CSettings = configuration.GetSection("AzureAdB2C").Get<AzureB2CSettings>();
 

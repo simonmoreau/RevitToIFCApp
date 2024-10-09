@@ -9,6 +9,7 @@ using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss.Model;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 using WebApp.Models;
 
 
@@ -77,7 +78,8 @@ namespace WebApp.Controllers
         [Route("workItem")]
         public async Task<WorkItemStatus> CreateWorkItem(WorkItemCreation workItemCreation)
         {
-            WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation));
+            string? id = User.GetObjectId();
+            WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation, id));
             return vm;
         }
 

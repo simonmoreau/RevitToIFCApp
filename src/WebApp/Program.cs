@@ -6,6 +6,7 @@ using Stripe;
 using Azure.Security.KeyVault;
 using Microsoft.Extensions.Configuration;
 using Azure.Identity;
+using Microsoft.Extensions.Azure;
 
 namespace WebApp
 {
