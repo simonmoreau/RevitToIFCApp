@@ -18,7 +18,7 @@ namespace WebApp
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
 
-            string userAssignedClientId = builder.Configuration["KeyVaultName"];
+            string userAssignedClientId = builder.Configuration["ManagedIdentityClientId"];
 
             DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { 
                 ManagedIdentityClientId = userAssignedClientId 
