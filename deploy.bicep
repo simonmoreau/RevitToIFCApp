@@ -253,6 +253,16 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
   parent: sites_revittoifcapp_api
   name: 'web'
   properties: {
+    appSettings: [
+      {
+        name: 'ManagedIdentityClientId'
+        value: userAssignedIdentity.properties.clientId
+      }
+      {
+        name: 'KeyVaultName'
+        value: keyVaultName
+      }
+    ]
     numberOfWorkers: 1
     linuxFxVersion: 'DOTNETCORE|8.0'
     defaultDocuments: [
@@ -373,3 +383,6 @@ resource budget 'Microsoft.Consumption/budgets@2023-11-01' = {
     }
   }
 }
+
+
+output AZUREAPPSERVICE_CLIENTID string = userAssignedIdentity.properties.clientId
