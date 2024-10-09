@@ -18,9 +18,15 @@ namespace WebApp
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
 
+            string userAssignedClientId = builder.Configuration["KeyVaultName"];
+
+            DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { 
+                ManagedIdentityClientId = userAssignedClientId 
+            });
+
             builder.Configuration.AddAzureKeyVault(
                 new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-                new DefaultAzureCredential());
+                credential);
 
             // Add services to the container.
 
