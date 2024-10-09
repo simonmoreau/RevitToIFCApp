@@ -38,6 +38,10 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
+// Determine our connection string
+var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+
+
 resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
@@ -68,6 +72,14 @@ resource key 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = [for secre
     value: secret.secretValue
   }
 }]
+
+resource connectionStringKey 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = {
+  name: 'Azure--ConnectionString'
+  parent: vault
+  properties: {
+    value: storageAccountConnectionString
+  }
+}
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: appServicePlanName
