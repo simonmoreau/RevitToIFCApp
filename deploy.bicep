@@ -59,15 +59,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-resource StorageTableDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, 'bicep-roleassignments', 'StorageTableDataContributor')
-  scope: storageAccount
-  properties: {
-    principalId: userAssignedIdentity.properties.principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
-  }
-}
-
 resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
@@ -88,15 +79,6 @@ resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
       defaultAction: 'Allow'
       bypass: 'AzureServices'
     }
-  }
-}
-
-resource KeyVaultSecretsUserRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, 'bicep-roleassignments', 'KeyVaultSecretsUser')
-  scope: vault
-  properties: {
-    principalId: userAssignedIdentity.properties.principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
   }
 }
 
@@ -205,15 +187,6 @@ resource sites_revittoifcapp_api 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
-resource WebsiteContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, 'bicep-roleassignments', 'WebsiteContributor')
-  scope: sites_revittoifcapp_api
-  properties: {
-    principalId: userAssignedIdentity.properties.principalId
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', 'de139f84-1756-47ae-9be6-808fbbe84772')
-  }
-}
-
 resource sites_revittoifcapp_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
   parent: sites_revittoifcapp_api
   name: 'ftp'
@@ -252,7 +225,7 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
   name: 'web'
   properties: {
     cors: {
-      allowedOrigins: ['http://localhost','http:://${staticWebSiteUrl}']
+      allowedOrigins: ['http://localhost','https://${staticWebSiteUrl}']
     }
     appSettings: [
       {
@@ -386,6 +359,36 @@ resource budget 'Microsoft.Consumption/budgets@2023-11-01' = {
         contactEmails: contactEmails
       }
     }
+  }
+}
+
+resource StorageTableDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'StorageTableDataContributor')
+  scope: storageAccount
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
+    principalType:'ServicePrincipal'
+  }
+}
+
+resource WebsiteContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'WebsiteContributor')
+  scope: sites_revittoifcapp_api
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', 'de139f84-1756-47ae-9be6-808fbbe84772')
+    principalType:'ServicePrincipal'
+  }
+}
+
+resource KeyVaultSecretsUserRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'KeyVaultSecretsUser')
+  scope: vault
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+    principalType:'ServicePrincipal'
   }
 }
 
