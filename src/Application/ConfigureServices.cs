@@ -10,6 +10,9 @@ using Domain.Entities;
 using Azure.Identity;
 using Microsoft.Graph;
 using Application.Common.Services;
+using Microsoft.Identity.Web;
+using Stripe;
+using Azure.Security.KeyVault;
 
 namespace Application;
 
@@ -29,12 +32,6 @@ public static class ConfigureServices
         services.AddTransient<OssClient>();
         services.AddSingleton<ISavedWorkItemService, SavedWorkItemService>();
 
-        services.AddAzureClients(clientBuilder =>
-        {
-            clientBuilder.AddTableServiceClient(configuration.GetSection("Storage"));
-            clientBuilder.UseCredential(new DefaultAzureCredential());
-        });
-
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
         services.Configure<AzureB2CSettings>(configuration.GetSection("AzureAdB2C"));
@@ -47,7 +44,8 @@ public static class ConfigureServices
         ClientSecretCredential clientSecretCredential = new ClientSecretCredential(azureB2CSettings.TenantId, azureB2CSettings.ClientId, azureB2CSettings.ClientSecret);
 
         //you can use a single client instance for the lifetime of the application
-        services.AddSingleton<GraphServiceClient>(sp => {
+        services.AddSingleton<GraphServiceClient>(sp =>
+        {
             return new GraphServiceClient(clientSecretCredential, scopes);
         });
 
@@ -58,4 +56,6 @@ public static class ConfigureServices
 
         return services;
     }
+
+
 }

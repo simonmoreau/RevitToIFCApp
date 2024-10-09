@@ -17,13 +17,12 @@ param location string = resourceGroup().location
 var applicationFullName = '${applicationContext}-${applicationName}'
 var apiSiteName = 'app-${toLower(applicationFullName)}'
 var appServicePlanName = 'asp-${toLower(applicationFullName)}'
-var storageAccountName = 'st${uniqueString(resourceGroup().id)}'
+var storageAccountName = 'rvt2ifc${uniqueString(resourceGroup().id)}'
 var keyVaultName = 'kv-${toLower(applicationFullName)}'
 var applicationInsightsName = 'appi-${toLower(applicationFullName)}'
 var userAssignedIdentitiesName = 'id-${toLower(applicationFullName)}'
 
 var staticSiteName = 'stapp-${toLower(applicationFullName)}'
-// var hostNameBindingsName = 'hnb-${toLower(applicationFullName)}'
 var apiUrl = '${toLower(applicationName)}.azurewebsites.net'
 var scmUrl = '${toLower(applicationName)}.scm.azurewebsites.net'
 var budgetName = 'bg-${toLower(applicationFullName)}'
@@ -60,9 +59,14 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-// Determine our connection string
-var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-
+resource StorageTableDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, 'bicep-roleassignments', 'StorageTableDataContributor')
+  scope: storageAccount
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
+  }
+}
 
 resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
@@ -104,14 +108,6 @@ resource key 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = [for secre
     value: secret.secretValue
   }
 }]
-
-resource connectionStringKey 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = {
-  name: 'Azure--ConnectionString'
-  parent: vault
-  properties: {
-    value: storageAccountConnectionString
-  }
-}
 
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
@@ -266,6 +262,10 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
       {
         name: 'KeyVaultName'
         value: keyVaultName
+      }
+      {
+        name: 'StorageAccountName'
+        value: storageAccountName
       }
     ]
     numberOfWorkers: 1

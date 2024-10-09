@@ -21,16 +21,17 @@ namespace WebApp
 
             string userAssignedClientId = builder.Configuration["ManagedIdentityClientId"];
 
-            DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { 
-                ManagedIdentityClientId = userAssignedClientId 
-            });
-
-            builder.Configuration.AddAzureKeyVault(
-                new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-                credential);
 
             // Add services to the container.
-
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddDevAzureServices(builder);
+            }
+            else
+            {
+                builder.Services.AddAzureServices(builder);
+            }
+            
             builder.Services.AddApplicationServices(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -85,6 +86,43 @@ namespace WebApp
             app.MapFallbackToFile("index.html");
 
             app.Run();
+        }
+    }
+
+    public static class ConfigureAzureServices
+    {
+        public static IServiceCollection AddDevAzureServices(this IServiceCollection services, WebApplicationBuilder builder)
+        {
+            services.AddAzureClients(clientBuilder =>
+            {
+                clientBuilder.AddTableServiceClient(builder.Configuration.GetSection("Storage"));
+                clientBuilder.UseCredential(new DefaultAzureCredential());
+            });
+
+            return services;
+        }
+        public static IServiceCollection AddAzureServices(this IServiceCollection services, WebApplicationBuilder builder)
+        {
+            string storageAccountName = builder.Configuration["StorageAccountName"];
+            string tableEndpoint = $"https://{storageAccountName}.table.core.windows.net/";
+            string userAssignedClientId = builder.Configuration["ManagedIdentityClientId"];
+            string keyVaultEndPoint = $"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/";
+
+            DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                ManagedIdentityClientId = userAssignedClientId
+            });
+
+            builder.Configuration.AddAzureKeyVault(new Uri(keyVaultEndPoint), credential);
+
+            services.AddAzureClients(clientBuilder =>
+            {
+                clientBuilder.AddTableServiceClient(new Uri(tableEndpoint));
+
+                clientBuilder.UseCredential(credential);
+            });
+
+            return services;
         }
     }
 }
