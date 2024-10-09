@@ -1,35 +1,35 @@
-@description('The name of the function app that you wish to create.')
-param appName string
+@description('Specifies the application name.')
+param applicationName string
+
+@description('Specifies the application name.')
+param applicationContext string
 
 @description('Specifies all secrets {"secretName":"","secretValue":""} wrapped in a secure object.')
 @secure()
 param secretsObject object
 
-@description('Location for all resources.')
+@description('Specifies the location for server and database')
 param location string = resourceGroup().location
 
-var hostingPlanName = appName
-var applicationInsightsName = appName
-var storageAccountName = uniqueString(resourceGroup().id)
-var keyVaultName = '${appName}Vault'
-var identitiesName = '${appName}Identities'
-var apiSiteName = '${appName}API'
-var roleAssignmentName = '${appName}APIRole'
-var roleDefinitionId = 'de139f84-1756-47ae-9be6-808fbbe84772'
-var apiUrl = '${toLower(apiSiteName)}.azurewebsites.net'
-var scmUrl = '${toLower(apiSiteName)}.scm.azurewebsites.net'
-var frontEndSiteName = '${appName}Site'
+var applicationFullName = '${applicationContext}-${applicationName}'
+var apiSiteName = 'app-${toLower(applicationFullName)}'
+var appServicePlanName = 'asp-${toLower(applicationFullName)}'
+var storageAccountName = 'st${uniqueString(resourceGroup().id)}'
+var keyVaultName = 'kv-${toLower(applicationFullName)}'
+var applicationInsightsName = 'appi-${toLower(applicationFullName)}'
 
-var skuName = 'standard'
-var storageAccountType = 'Standard_LRS'
-
+var staticSiteName = 'stapp-${toLower(applicationFullName)}'
+// var hostNameBindingsName = 'hnb-${toLower(applicationFullName)}'
+var apiUrl = '${toLower(applicationName)}.azurewebsites.net'
+var scmUrl = '${toLower(applicationName)}.scm.azurewebsites.net'
+var budgetName = 'bg-${toLower(applicationFullName)}'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
   sku: {
-    name: storageAccountType
+    name: 'Standard_LRS'
   }
   kind: 'Storage'
   properties: {
@@ -51,7 +51,7 @@ resource vault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
     enabledForTemplateDeployment: false
     tenantId: subscription().tenantId
     sku: {
-      name: skuName
+      name: 'standard'
       family: 'A'
     }
     networkAcls: {
@@ -70,7 +70,7 @@ resource key 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = [for secre
 }]
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: hostingPlanName
+  name: appServicePlanName
   location: location
   sku: {
     name: 'F1'
@@ -178,7 +178,7 @@ resource sites_revittoifcapp_name_scm 'Microsoft.Web/sites/basicPublishingCreden
 }
 
 resource sites_revittoifcapp_name_static_site 'Microsoft.Web/staticSites@2022-09-01' = {
-  name: frontEndSiteName
+  name: staticSiteName
   location: 'westeurope'
   sku:{
     name: 'Free'
@@ -271,12 +271,46 @@ resource sites_revittoifcapp_name_web 'Microsoft.Web/sites/config@2023-12-01' = 
   }
 }
 
-resource revittoifcapp_revittoifcapp_azurewebsites_net 'Microsoft.Web/sites/hostNameBindings@2023-12-01' = {
-  parent: sites_revittoifcapp_api
-  name: apiUrl
+
+
+@description('The total amount of cost or usage to track with the budget')
+param amount int = 15
+
+@description('The time covered by a budget. Tracking of the amount will be reset based on the time grain.')
+@allowed([
+  'Monthly'
+  'Quarterly'
+  'Annually'
+])
+param timeGrain string = 'Monthly'
+param startDate string = utcNow('2024-10-01')
+
+var firstThreshold = 90
+var secondThreshold = 110
+var contactEmails = ['simon@bim42.com']
+
+resource budget 'Microsoft.Consumption/budgets@2023-11-01' = {
+  name: budgetName
   properties: {
-    siteName: toLower(apiSiteName)
-    hostNameType: 'Verified'
+    timePeriod: {
+      startDate: startDate
+    }
+    timeGrain: timeGrain
+    amount: amount
+    category: 'Cost'
+    notifications: {
+      NotificationForExceededBudget1: {
+        enabled: true
+        operator: 'GreaterThan'
+        threshold: firstThreshold
+        contactEmails: contactEmails
+      }
+      NotificationForExceededBudget2: {
+        enabled: true
+        operator: 'GreaterThan'
+        threshold: secondThreshold
+        contactEmails: contactEmails
+      }
+    }
   }
 }
-
