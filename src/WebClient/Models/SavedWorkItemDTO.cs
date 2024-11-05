@@ -2,6 +2,7 @@
 {
     public class SavedWorkItemDTO
     {
+        public string? DownloadUrl { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string? Progress { get; set; }

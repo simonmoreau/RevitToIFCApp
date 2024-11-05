@@ -1,9 +1,19 @@
-﻿
+﻿@using WebClient.Models
 
-<MudDataGrid Items="@SavedWorkItems">
+<MudDataGrid T="SavedWorkItemDTO" Items="@SavedWorkItems">
     <Columns>
         <PropertyColumn Property="x => x.Created" Title="Created"/>
         <PropertyColumn Property="x => x.FileName" Title="FileName"/>
         <PropertyColumn Property="x => x.Status" Title="Status"/>
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Icon="@Icons.Material.Filled.Download" Size="@Size.Small"
+                                   class="@(context.Item.DownloadUrl != null ? "visible" : "invisible")"
+                                   aria-label="download" Color="Color.Primary" Href="@context.Item.DownloadUrl">
+                    </MudIconButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
