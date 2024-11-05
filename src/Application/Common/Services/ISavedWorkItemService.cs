@@ -1,10 +1,12 @@
 ﻿using Autodesk.Forge.DesignAutomation.Model;
+using Domain.Entities;
 
 namespace Application.Common.Services
 {
     public interface ISavedWorkItemService
     {
-        Task CreateSavedWorkItemStatus(WorkItemStatus workItemStatus, string userId, string revitVersion);
+        Task CreateSavedWorkItemStatus(WorkItemStatus workItemStatus, string userId, string revitVersion, string objectKey, string fileName);
+        Task<List<SavedWorkItem>> GetSavedWorkItems(string userId);
         Task UpdateSavedWorkItemStatus(WorkItemStatus workItemStatus);
     }
 }
