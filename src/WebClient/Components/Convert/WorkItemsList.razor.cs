@@ -32,6 +32,7 @@ namespace WebClient.Components.Convert
         {
             if (savedWorkItem.ObjectKey == null) return;
             if (savedWorkItem.FileName == null) return;
+            if (savedWorkItem.Status != "Success") return;
 
             Signeds3downloadResponse signedDownload = await _dataService.GetDownloadUrl(savedWorkItem.ObjectKey, savedWorkItem.FileName);
 
