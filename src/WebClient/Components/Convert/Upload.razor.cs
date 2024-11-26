@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Collections.ObjectModel;
 using WebClient.Models;
+using WebClient.Services;
 
 namespace WebClient.Components.Convert
 {
     public partial class Upload
     {
+        [Inject]
+        public IDataService _dataService { get; set; }
+
+        [Inject]
+        public IUploadService _uploadService { get; set; }
+
         private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
         private string _dragClass = DefaultDragClass;
         public readonly ObservableCollection<RevitFile> RevitFiles = new();
@@ -32,15 +40,28 @@ namespace WebClient.Components.Convert
             {
                 RevitFile revitFile = new RevitFile(file);
                 RevitFiles.Add(revitFile);
+                revitFile.FileRemoved += RevitFileRemoved;
             }
         }
 
-        private void UploadAll()
+        private void RevitFileRemoved(object? sender, EventArgs e)
         {
+            if (sender == null) return;
+            RevitFile revitFile = (RevitFile)sender;
+            if (revitFile == null) return;
+            RevitFiles.Remove(revitFile);
+            StateHasChanged();
+        }
+
+        private async Task UploadAll()
+        {
+            List<Task> uploadTasks =  new List<Task>();
             foreach (RevitFile revitFile in RevitFiles)
             {
-                
+                uploadTasks.Add(revitFile.UploadFile(_dataService, _uploadService));
             }
+
+            await Task.WhenAll(uploadTasks);
         }
 
         private void SetDragClass()

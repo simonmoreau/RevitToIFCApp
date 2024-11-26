@@ -53,10 +53,11 @@ namespace WebClient.Models
         public FileStatus Status
         {
             get { return _status; }
-            set { _status = value;  }
+            set { _status = value; }
         }
 
         public event EventHandler<EventArgs> StatusChanged;
+        public event EventHandler<EventArgs> FileRemoved;
 
         private void RaiseStatusChanged()
         {
@@ -67,10 +68,19 @@ namespace WebClient.Models
             handler(this, new EventArgs());
         }
 
+        public void RaiseFileRemoved()
+        {
+            var handler = FileRemoved;
+            if (handler == null)
+                return;
+
+            handler(this, new EventArgs());
+        }
+
         public async Task UploadFile(IDataService dataService, IUploadService uploadService)
         {
             Status = FileStatus.Uploading;
-            
+
             // Upload the files here
             string objectName = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
             string objectKey = objectName; // + Path.GetExtension(revitFile.Name);
@@ -118,7 +128,7 @@ namespace WebClient.Models
                     signedsUrlResponse.UploadKey, Size, eTags, objectKey);
 
                 Status = FileStatus.Converting;
-                
+
 
                 //5 Create a workItem
                 WorkItemStatus createdWorkItemStatus = await dataService.CreateWorkItem(objectKey, Version, Name);

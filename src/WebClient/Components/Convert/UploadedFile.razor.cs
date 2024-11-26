@@ -29,7 +29,7 @@ namespace WebClient.Components.Convert
 
         private void RemoveFile()
         {
-            //BrowserFiles.Remove(revitFile);
+            RevitFile.RaiseFileRemoved();
         }
 
         private async Task UploadFile()
