@@ -9,13 +9,13 @@ namespace WebClient.Components.Convert
     {
         private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
         private string _dragClass = DefaultDragClass;
-        private readonly ObservableCollection<RevitFile> _revitFiles = new();
+        public readonly ObservableCollection<RevitFile> RevitFiles = new();
         private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
         private async Task ClearAsync()
         {
             await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
-            _revitFiles.Clear();
+            RevitFiles.Clear();
             ClearDragClass();
         }
 
@@ -31,13 +31,13 @@ namespace WebClient.Components.Convert
             foreach (IBrowserFile file in files)
             {
                 RevitFile revitFile = new RevitFile(file);
-                _revitFiles.Add(revitFile);
+                RevitFiles.Add(revitFile);
             }
         }
 
         private void UploadAll()
         {
-            foreach (RevitFile revitFile in _revitFiles)
+            foreach (RevitFile revitFile in RevitFiles)
             {
                 
             }

@@ -20,7 +20,7 @@
                     <MudText Typo="Typo.h6">
                         Drag and drop Revit files here or click
                     </MudText>
-                @foreach (RevitFile revitFile in _revitFiles)
+                @foreach (RevitFile revitFile in RevitFiles)
                     {
                         <MudChip T="string"
                                  Color="Color.Dark"
@@ -38,19 +38,26 @@
                 Add
             </MudButton>
             <MudButton Color="Color.Primary"
-                       Disabled="@(!_revitFiles.Any())"
+                       Disabled="@(!RevitFiles.Any())"
                        OnClick="@UploadAll"
                        Variant="Variant.Filled">
                 Convert All
             </MudButton>
             <MudButton Color="Color.Error"
-                   Disabled="@(!_revitFiles.Any())"
+                   Disabled="@(!RevitFiles.Any())"
                        OnClick="@ClearAsync"
                        Variant="Variant.Filled">
                 Clear
             </MudButton>
         </MudToolBar>
-    <UploadedFiles BrowserFiles="_revitFiles"></UploadedFiles>
+        <div class="d-flex flex-column align-stretch" Width="100%">
+    @foreach (RevitFile revitFile in RevitFiles)
+    {
+            <UploadedFile RevitFile="revitFile"></UploadedFile>
+    }
+</div>
+
+    
     </MudStack>
 
      
