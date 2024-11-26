@@ -4,6 +4,7 @@ using Application.Files.Queries.GetDownloadUrlQuery;
 using Application.Files.Queries.GetFiles;
 using Application.Files.Queries.GetUploadUrl;
 using Application.WorkItems.Commands.CreateWorkItem;
+using Application.WorkItems.Queries.GetWorkItem;
 using Application.WorkItems.Queries.GetWorkItemStatus;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss.Model;
@@ -80,6 +81,19 @@ namespace WebApp.Controllers
         {
             string? id = User.GetObjectId();
             WorkItemStatus vm = await Mediator.Send(new CreateWorkItemCommand(workItemCreation, id));
+            return vm;
+        }
+
+        /// <summary>
+        /// Get recent work items
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("workItem")]
+        public async Task<List<SavedWorkItem>> GetWorkItems()
+        {
+            string? userId = User.GetObjectId();
+            List<SavedWorkItem> vm = await Mediator.Send(new GetWorkItemsQuery(userId));
             return vm;
         }
 

@@ -1,0 +1,21 @@
+﻿@using WebClient.Models
+
+<div class="d-flex flex-row justify-space-between align-center mud-elevation-1 rounded white pa-2 my-2">
+    <MudText Typo="Typo.body1" Class="flex-grow-1" >@RevitFile.Name</MudText>
+    <MudText Typo="Typo.body1" Class="flex-grow-1" >@RevitFile.Status.Text</MudText>
+    <MudText Typo="Typo.body1" Class="flex-grow-1">@RevitFile.Version</MudText>
+
+    <MudProgressCircular class="@(RevitFile.Status.IsLoading ? "visible" : "invisible")" Color="Color.Primary" Indeterminate="true" />
+    <MudIconButton Icon="@Icons.Material.Filled.Download"
+                   class="@(RevitFile.DownloadUrl != null ? "visible" : "invisible")"
+                   aria-label="download" Color="Color.Primary" Href="@RevitFile.DownloadUrl">
+    </MudIconButton>
+    <MudIconButton Icon="@Icons.Material.Filled.CloudUpload"
+                   aria-label="add" Color="Color.Primary"
+                   OnClick="(() => UploadFile())">
+    </MudIconButton>
+    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                   aria-label="delete" Color="Color.Primary"
+                   OnClick="(() => RemoveFile())">
+    </MudIconButton>
+</div>

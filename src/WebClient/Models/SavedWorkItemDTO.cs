@@ -1,10 +1,8 @@
-﻿using Azure;
-using Azure.Data.Tables;
-
-namespace Domain.Entities
+﻿namespace WebClient.Models
 {
-    public class SavedWorkItem : ITableEntity
+    public class SavedWorkItemDTO
     {
+        public string? DownloadUrl { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string? Progress { get; set; }
@@ -30,6 +28,5 @@ namespace Domain.Entities
         public string? PartitionKey { get; set; }
         public string? RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
-        public ETag ETag { get; set; }
     }
 }

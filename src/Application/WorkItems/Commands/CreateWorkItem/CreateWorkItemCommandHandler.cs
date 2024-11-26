@@ -97,7 +97,7 @@ namespace Application.WorkItems.Commands.CreateWorkItem
 
             WorkItemStatus workItemStatus = await _designAutomationClient.CreateWorkItemAsync(workItemSpec);
 
-            await _savedWorkItemService.CreateSavedWorkItemStatus(workItemStatus, request.UserId, request.RevitVersion);
+            await _savedWorkItemService.CreateSavedWorkItemStatus(workItemStatus, request.UserId, request.RevitVersion, request.ObjectKey, request.ConversionProperties.FileName);
 
             return workItemStatus;
 

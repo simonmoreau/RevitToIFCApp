@@ -1,4 +1,5 @@
 ﻿using Autodesk.Forge.DesignAutomation.Model;
+using Azure;
 using Azure.Data.Tables;
 using Domain.Entities;
 using System;
@@ -20,7 +21,7 @@ namespace Application.Common.Services
             _tableServiceClient = tableServiceClient;
         }
 
-        public async Task CreateSavedWorkItemStatus(WorkItemStatus workItemStatus, string userId, string revitVersion)
+        public async Task CreateSavedWorkItemStatus(WorkItemStatus workItemStatus, string userId, string revitVersion, string objectKey, string fileName)
         {
             SavedWorkItem savedWorkItem = new SavedWorkItem();
             savedWorkItem.PartitionKey = _partitionKey;
@@ -29,6 +30,8 @@ namespace Application.Common.Services
             savedWorkItem.Version = revitVersion;
             savedWorkItem.Created = DateTime.UtcNow;
             savedWorkItem.LastModified = DateTime.UtcNow;
+            savedWorkItem.ObjectKey = objectKey;
+            savedWorkItem.FileName = fileName;
             savedWorkItem.UpdateStatus(workItemStatus);
 
             TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
@@ -57,6 +60,24 @@ namespace Application.Common.Services
             {
                 throw new Exception(response.ReasonPhrase);
             }
+        }
+
+        public async Task<List<SavedWorkItem>> GetSavedWorkItems(string userId)
+        {
+            TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
+            tableClient.CreateIfNotExists();
+
+            AsyncPageable<SavedWorkItem> queryResults = tableClient.QueryAsync<SavedWorkItem>(ent => 
+            ent.UserId == userId && ent.Created >= DateTime.Now.AddDays(-30));
+
+            List<SavedWorkItem> savedWorkItems = new List<SavedWorkItem>();
+
+            await foreach (SavedWorkItem savedWorkItem in queryResults)
+            {
+                savedWorkItems.Add(savedWorkItem);
+            }
+
+            return savedWorkItems;
         }
     }
 }

@@ -111,7 +111,6 @@ namespace WebClient.Services
 
         public async Task<CheckoutSessionDTO> GetCheckoutSession(string priceId, string domain)
         {
-
             JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
             Stream request = await _httpClient.GetStreamAsync($"conversioncredits/checkout?price={priceId}&domain={domain}");
@@ -120,7 +119,15 @@ namespace WebClient.Services
 
             return response;
 
+        }
 
+        public async Task<List<SavedWorkItemDTO>> GetSavedWorkItems()
+        {
+            Stream response = await _httpClient.GetStreamAsync($"files/workItem");
+            JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            List<SavedWorkItemDTO> savedWorkItems = await JsonSerializer.DeserializeAsync<List<SavedWorkItemDTO>>(response, options);
+
+            return savedWorkItems;
         }
     }
 }
