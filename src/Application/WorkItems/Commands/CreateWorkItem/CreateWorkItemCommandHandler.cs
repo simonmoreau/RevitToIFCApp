@@ -83,6 +83,13 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 }
             };
 
+            // 3. onComplete callback
+            XrefTreeArgument onCompleteArgument = new XrefTreeArgument()
+            {
+                Url = string.Format("https://mouse-joint-mutt.ngrok-free.app/{0}", "callback/oncomplete"),
+                Verb = Verb.Post
+            };
+
             // prepare & submit workitem
             WorkItem workItemSpec = new WorkItem()
             {
@@ -91,7 +98,8 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 {
                     { "inputFile",  inputFileArgument },
                     { "inputJson",  inputJsonArgument },
-                    { "outputFile",  outputFileArgument }
+                    { "outputFile",  outputFileArgument },
+                    { "onComplete",  onCompleteArgument }
                 }
             };
 
