@@ -86,7 +86,7 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             // 3. onComplete callback
             XrefTreeArgument onCompleteArgument = new XrefTreeArgument()
             {
-                Url = string.Format("https://mouse-joint-mutt.ngrok-free.app/{0}", "callback/oncomplete"),
+                Url = $"{_forgeConfiguration.CallbackUrl}/callback/oncomplete",
                 Verb = Verb.Post
             };
 

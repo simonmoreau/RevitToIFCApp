@@ -36,7 +36,7 @@ namespace WebClient.Components.Convert
 
             Signeds3downloadResponse signedDownload = await _dataService.GetDownloadUrl(savedWorkItem.ObjectKey, savedWorkItem.FileName);
 
-            savedWorkItem.DownloadUrl = signedDownload.Url;
+            savedWorkItem.DownloadUrl = signedDownload?.Url;
         }
     }
 }

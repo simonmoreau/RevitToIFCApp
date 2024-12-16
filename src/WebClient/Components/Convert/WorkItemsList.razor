@@ -2,7 +2,7 @@
 
 <MudDataGrid T="SavedWorkItemDTO" Items="@SavedWorkItems">
     <Columns>
-        <PropertyColumn Property="x => x.Created" Title="Created"/>
+        <PropertyColumn Property="x => x.Created" Title="Created" InitialDirection="SortDirection.Descending"/>
         <PropertyColumn Property="x => x.FileName" Title="FileName"/>
         <PropertyColumn Property="x => x.Status" Title="Status"/>
         <TemplateColumn CellClass="d-flex justify-end">

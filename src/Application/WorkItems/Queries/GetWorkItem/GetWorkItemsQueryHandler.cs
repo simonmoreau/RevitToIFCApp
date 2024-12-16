@@ -20,9 +20,9 @@ namespace Application.WorkItems.Queries.GetWorkItem
 
         public async Task<List<SavedWorkItem>> Handle(GetWorkItemsQuery request, CancellationToken cancellationToken)
         {
-            List<SavedWorkItem> savedWorkItems = await _savedWorkItemService.GetSavedWorkItems(request.UserId);
+            List<SavedWorkItem> savedWorkItems = _savedWorkItemService.GetSavedWorkItems(request.UserId);
 
-            return savedWorkItems;
+            return await Task.FromResult<List<SavedWorkItem>>(savedWorkItems);
         }
     }
 }

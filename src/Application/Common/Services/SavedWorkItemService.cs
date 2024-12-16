@@ -3,6 +3,7 @@ using Azure;
 using Azure.Data.Tables;
 using Domain.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,17 +63,17 @@ namespace Application.Common.Services
             }
         }
 
-        public async Task<List<SavedWorkItem>> GetSavedWorkItems(string userId)
+        public List<SavedWorkItem> GetSavedWorkItems(string userId)
         {
             TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
             tableClient.CreateIfNotExists();
 
-            AsyncPageable<SavedWorkItem> queryResults = tableClient.QueryAsync<SavedWorkItem>(ent => 
+            Pageable<SavedWorkItem> queryResults = tableClient.Query<SavedWorkItem>(ent => 
             ent.UserId == userId && ent.Created >= DateTime.Now.AddDays(-30));
 
             List<SavedWorkItem> savedWorkItems = new List<SavedWorkItem>();
 
-            await foreach (SavedWorkItem savedWorkItem in queryResults)
+            foreach (SavedWorkItem savedWorkItem in queryResults)
             {
                 savedWorkItems.Add(savedWorkItem);
             }
