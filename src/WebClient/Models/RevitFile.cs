@@ -168,7 +168,7 @@ namespace WebClient.Models
                             return;
                         case Models.Status.Success:
                             Signeds3downloadResponse signedDownload = await dataService.GetDownloadUrl(objectKey, Name);
-                            DownloadUrl = signedDownload.Url;
+                            DownloadUrl = signedDownload?.Url;
                             Status = FileStatus.Converted;
                             return;
                         default:

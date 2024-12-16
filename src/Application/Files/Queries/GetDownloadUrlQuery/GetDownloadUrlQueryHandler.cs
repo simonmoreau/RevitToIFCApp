@@ -39,8 +39,13 @@ namespace Application.Files.Queries.GetDownloadUrlQuery
             Signeds3downloadResponse signedUrl = await _ossClient.SignedS3DownloadAsync(
                 twoLeggedToken.AccessToken, bucketKey, objectKey,
                 responseContentDisposition: $"attachment; filename=\"{outputFileName}\"",
-                minutesExpiration: 60);
+                minutesExpiration: 60,
+                throwOnError:false);
 
+            if (signedUrl == null)
+            {
+                signedUrl = new Signeds3downloadResponse();
+            }
 
             return signedUrl;
         }

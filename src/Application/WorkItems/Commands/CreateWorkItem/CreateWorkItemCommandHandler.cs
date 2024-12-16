@@ -57,7 +57,8 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             // 1. input file
             XrefTreeArgument inputFileArgument = new XrefTreeArgument()
             {
-                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", inputBucketKey, objectKey + ".rvt"),
+                //Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", inputBucketKey, ),
+                Url = $"urn:adsk.objects:os.object:{inputBucketKey}/{objectKey}.rvt",
                 Verb = Verb.Get,
                 Headers = new Dictionary<string, string>()
                 {
@@ -75,12 +76,19 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             // 3. output file
             XrefTreeArgument outputFileArgument = new XrefTreeArgument()
             {
-                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", outputBucketKey, objectKey + ".ifc"),
+                Url = $"urn:adsk.objects:os.object:{outputBucketKey}/{objectKey}.ifc",
                 Verb = Verb.Put,
                 Headers = new Dictionary<string, string>()
                 {
                     {"Authorization", "Bearer " + twoLeggedToken.AccessToken }
                 }
+            };
+
+            // 3. onComplete callback
+            XrefTreeArgument onCompleteArgument = new XrefTreeArgument()
+            {
+                Url = $"{_forgeConfiguration.CallbackUrl}/callback/oncomplete",
+                Verb = Verb.Post
             };
 
             // prepare & submit workitem
@@ -91,7 +99,8 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 {
                     { "inputFile",  inputFileArgument },
                     { "inputJson",  inputJsonArgument },
-                    { "outputFile",  outputFileArgument }
+                    { "outputFile",  outputFileArgument },
+                    { "onComplete",  onCompleteArgument }
                 }
             };
 

@@ -7,7 +7,7 @@
         public string InputBucketKey { get; set; }
         public string OutputBucketKey { get; set; }
         public ApplicationDetail ApplicationDetail { get; set; }
-
+        public string CallbackUrl { get; set; }
     }
 
     public class ApplicationDetail

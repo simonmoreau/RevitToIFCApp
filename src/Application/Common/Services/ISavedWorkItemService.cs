@@ -6,7 +6,7 @@ namespace Application.Common.Services
     public interface ISavedWorkItemService
     {
         Task CreateSavedWorkItemStatus(WorkItemStatus workItemStatus, string userId, string revitVersion, string objectKey, string fileName);
-        Task<List<SavedWorkItem>> GetSavedWorkItems(string userId);
+        List<SavedWorkItem> GetSavedWorkItems(string userId);
         Task UpdateSavedWorkItemStatus(WorkItemStatus workItemStatus);
     }
 }

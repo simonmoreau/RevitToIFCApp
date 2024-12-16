@@ -18,6 +18,7 @@ namespace WebApp
 
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
+            builder.Services.AddIdentityServices();
 
             string userAssignedClientId = builder.Configuration["ManagedIdentityClientId"];
 
