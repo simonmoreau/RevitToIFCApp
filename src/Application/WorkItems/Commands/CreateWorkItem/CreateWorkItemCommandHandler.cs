@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph.Models;
+using System;
 using System.Runtime.Serialization;
 using System.Text.Json;
 
@@ -21,13 +22,15 @@ namespace Application.WorkItems.Commands.CreateWorkItem
     {
         private readonly DesignAutomationClient _designAutomationClient;
         private readonly ISavedWorkItemService _savedWorkItemService;
+        private readonly IConversionCreditService _conversionCreditService;
         private readonly OssClient _ossClient;
         private readonly ILogger<GetUploadUrlQueryHandler> _logger;
         private readonly AuthenticationClient _authenticationClient;
         private readonly ForgeConfiguration _forgeConfiguration;
 
         public CreateWorkItemCommandHandler(DesignAutomationClient designAutomationClient,ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient, ISavedWorkItemService savedWorkItemService)
+            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient,
+            ISavedWorkItemService savedWorkItemService, IConversionCreditService conversionCreditService)
         {
             _ossClient = ossClient;
             _logger = logger;
@@ -35,10 +38,22 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             _forgeConfiguration = forgeConfiguration.Value;
             _designAutomationClient = designAutomationClient;
             _savedWorkItemService = savedWorkItemService;
+            _conversionCreditService = conversionCreditService;
         }
 
         public async Task<WorkItemStatus> Handle(CreateWorkItemCommand request, CancellationToken cancellationToken)
         {
+            int credits = await _conversionCreditService.GetConversionCredits(request.UserId);
+
+            if (credits == 0)
+            {
+                return new WorkItemStatus()
+                {
+                    Status = Autodesk.Forge.DesignAutomation.Model.Status.FailedInstructions,
+                    Progress = "You don't have enought credits to convert this file."
+                };
+            }
+
             TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite, Scopes.DataRead });
 
             string inputBucketKey = _forgeConfiguration.InputBucketKey;

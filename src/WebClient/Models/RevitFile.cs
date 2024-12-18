@@ -129,62 +129,18 @@ namespace WebClient.Models
 
                 Status = FileStatus.Converting;
 
-
                 //5 Create a workItem
                 WorkItemStatus createdWorkItemStatus = await dataService.CreateWorkItem(objectKey, Version, Name);
 
-                string workItemId = createdWorkItemStatus.Id;
-
-                while (true)
+                if (createdWorkItemStatus.Status == Models.Status.FailedInstructions)
                 {
-                    // 6 Get workitem status
-                    WorkItemStatus status = await dataService.GetWorkItemStatus(workItemId);
-
-                    switch (status.Status)
-                    {
-                        case Models.Status.Pending:
-                            break;
-                        case Models.Status.Inprogress:
-                            break;
-                        case Models.Status.Cancelled:
-                            break;
-                        case Models.Status.FailedLimitDataSize:
-                            Status = FileStatus.Error("FailedLimitDataSize");
-                            return;
-                        case Models.Status.FailedLimitProcessingTime:
-                            Status = FileStatus.Error("FailedLimitProcessingTime");
-                            return;
-                        case Models.Status.FailedDownload:
-                            Status = FileStatus.Error("FailedDownload");
-                            return;
-                        case Models.Status.FailedInstructions:
-                            Status = FileStatus.Error("FailedInstructions");
-                            return;
-                        case Models.Status.FailedUpload:
-                            Status = FileStatus.Error("FailedUpload");
-                            return;
-                        case Models.Status.FailedUploadOptional:
-                            Status = FileStatus.Error("FailedUploadOptional");
-                            return;
-                        case Models.Status.Success:
-                            Signeds3downloadResponse signedDownload = await dataService.GetDownloadUrl(objectKey, Name);
-                            DownloadUrl = signedDownload?.Url;
-                            Status = FileStatus.Converted;
-                            return;
-                        default:
-                            Status = FileStatus.Error("Unknonw error");
-                            return;
-                    }
-
-                    await Task.Delay(5000);
+                    Status = FileStatus.Error(createdWorkItemStatus.Progress);
                 }
             }
             else
             {
-                Console.WriteLine("[some chunks stream uploading] failed ");
+                Status = FileStatus.Error("The upload to the service failed. Please try again.");
             }
-
-            Status = FileStatus.Converted;
         }
 
 

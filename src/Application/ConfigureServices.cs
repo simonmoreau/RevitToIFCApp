@@ -31,6 +31,7 @@ public static class ConfigureServices
         services.AddOss(configuration);
         services.AddTransient<OssClient>();
         services.AddSingleton<ISavedWorkItemService, SavedWorkItemService>();
+        services.AddSingleton<IConversionCreditService, ConversionCreditService>();
 
         services.Configure<ForgeConfiguration>(configuration.GetSection("Forge"));
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
