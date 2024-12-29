@@ -30,16 +30,13 @@ namespace Application.WorkItems.Queries.GetWorkItemStatus
             _forgeConfiguration = forgeConfiguration.Value;
             _designAutomationClient = designAutomationClient;
             _savedWorkItemService = savedWorkItemService;
-
-
         }
+
         public async Task<WorkItemStatus> Handle(GetWorkItemStatusQuery request, CancellationToken cancellationToken)
         {
             string id = request.WorkItemId;
-            WorkItemStatus workItemStatus = await _designAutomationClient.GetWorkitemStatusAsync(id);
 
-            await _savedWorkItemService.UpdateSavedWorkItemStatus(workItemStatus);
-
+            WorkItemStatus workItemStatus = await _savedWorkItemService.GetSavedWorkItemStatus(id);
 
             return workItemStatus;
 

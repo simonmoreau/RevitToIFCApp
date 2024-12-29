@@ -1,4 +1,5 @@
-﻿using Autodesk.Forge.DesignAutomation.Model;
+﻿using Application.WorkItems.Commands.UpdateWorkItemStatus;
+using Autodesk.Forge.DesignAutomation.Model;
 using Azure;
 using Azure.Data.Tables;
 using Domain.Entities;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,7 +57,7 @@ namespace Application.Common.Services
             savedWorkItem.UpdateStatus(workItemStatus);
             savedWorkItem.LastModified = DateTime.UtcNow;
 
-            Azure.Response response = await tableClient.UpdateEntityAsync(savedWorkItem, Azure.ETag.All );
+            Azure.Response response = await tableClient.UpdateEntityAsync(savedWorkItem, Azure.ETag.All);
 
             if (response.IsError)
             {
@@ -68,7 +70,7 @@ namespace Application.Common.Services
             TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
             tableClient.CreateIfNotExists();
 
-            Pageable<SavedWorkItem> queryResults = tableClient.Query<SavedWorkItem>(ent => 
+            Pageable<SavedWorkItem> queryResults = tableClient.Query<SavedWorkItem>(ent =>
             ent.UserId == userId && ent.Created >= DateTime.Now.AddDays(-30));
 
             List<SavedWorkItem> savedWorkItems = new List<SavedWorkItem>();
@@ -79,6 +81,34 @@ namespace Application.Common.Services
             }
 
             return savedWorkItems;
+        }
+
+        public async Task<SavedWorkItem> GetSavedWorkItem(string workItemId)
+        {
+            TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
+            tableClient.CreateIfNotExists();
+
+            SavedWorkItem savedWorkItem = await tableClient.GetEntityAsync<SavedWorkItem>(_partitionKey, workItemId);
+
+            return savedWorkItem;
+        }
+
+        public async Task<WorkItemStatus> GetSavedWorkItemStatus(string workItemId)
+        {
+            TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
+            tableClient.CreateIfNotExists();
+
+            SavedWorkItem savedWorkItem = await tableClient.GetEntityAsync<SavedWorkItem>(_partitionKey, workItemId);
+
+            WorkItemStatus status = new WorkItemStatus()
+            {
+                Status = WorkItemStatusDTO.ToEnum<Status>(savedWorkItem.Status),
+                Progress = savedWorkItem.Progress,
+                ReportUrl = savedWorkItem.ReportUrl,
+                Id = savedWorkItem.WorkItemId,
+            };
+
+            return status;
         }
     }
 }

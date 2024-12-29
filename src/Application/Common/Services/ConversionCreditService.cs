@@ -44,11 +44,21 @@ namespace Application.Common.Services
 
             user.AdditionalData[_conversionCreditsAttributeName] = credits;
 
-            User? updatedUser = await _graphServiceClient.Users[user.Id].PatchAsync(user);
+            var requestBody = new User
+            {
+                AdditionalData = new Dictionary<string, object>
+                {
+                    {
+                        _conversionCreditsAttributeName , credits.ToString()
+                    }
+                },
+            };
+
+            User? updatedUser = await _graphServiceClient.Users[user.Id].PatchAsync(requestBody);
 
             if (updatedUser == null)
             {
-                throw new NotFoundException($"The user {userId} was not updated.", userId);
+                updatedUser = await GetUser(userId);
             }
 
             return decimal.ToInt16((decimal)updatedUser.AdditionalData[_conversionCreditsAttributeName]);
