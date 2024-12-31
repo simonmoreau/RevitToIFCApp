@@ -1,9 +1,12 @@
 ﻿using Application.Activities.Queries.ListActivities;
 using Application.ConversionCredits.Commands.CreateCheckoutSession;
+using Application.ConversionCredits.Commands.FulfillCheckout;
 using Application.ForgeApplications.Commands.CreateActivity;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Autodesk.Forge.DesignAutomation.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 
 
 namespace WebApp.Controllers
@@ -12,6 +15,7 @@ namespace WebApp.Controllers
     /// Manage activities
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class ConversionCreditsController : BaseController
     {
@@ -19,10 +23,20 @@ namespace WebApp.Controllers
         [Route("checkout")]
         public async Task<CheckoutSessionDTO> CreateCheckoutSession(string price, string domain)
         {
-            CheckoutSessionDTO checkoutSession = await Mediator.Send(new CreateCheckoutSessionQuery(price, 1, domain));
+            string? userId = User.GetObjectId();
+            CheckoutSessionDTO checkoutSession = await Mediator.Send(new CreateCheckoutSessionQuery(price, 1, domain, userId));
 
             return checkoutSession;
 
+        }
+
+        [HttpPost]
+        [Route("fulfill")]
+        public async Task<string> FulfillCheckoutSession([FromBody] string sessionId)
+        {
+            string result = await Mediator.Send(new FulfillCheckoutCommand(sessionId));
+
+            return result;
         }
     }
 }

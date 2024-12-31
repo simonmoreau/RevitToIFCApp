@@ -121,6 +121,23 @@ namespace WebClient.Services
 
         }
 
+        public async Task<string> FullfilCheckoutSession(string sessionId)
+        {
+            JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
+            StringContent content = new StringContent(JsonSerializer.Serialize(sessionId), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"conversioncredits/fulfill", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Wrong response");
+            }
+
+            return await JsonSerializer.DeserializeAsync<string>(await response.Content.ReadAsStreamAsync());
+
+        }
+
         public async Task<List<SavedWorkItemDTO>> GetSavedWorkItems()
         {
             Stream response = await _httpClient.GetStreamAsync($"files/workItem");

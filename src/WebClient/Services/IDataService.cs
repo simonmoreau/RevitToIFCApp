@@ -21,5 +21,6 @@ namespace WebClient.Services
 
         Task<CheckoutSessionDTO> GetCheckoutSession(string priceId, string domain);
         Task<List<SavedWorkItemDTO>> GetSavedWorkItems();
+        Task<string> FullfilCheckoutSession(string sessionId);
     }
 }

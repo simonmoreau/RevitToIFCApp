@@ -40,7 +40,8 @@ namespace Application.ConversionCredits.Commands.CreateCheckoutSession
                   },
                 },
                 Mode = "payment",
-                SuccessUrl = request.Domain + "checkout/success",
+                Metadata = new Dictionary<string, string> { { "user_id", request.UserId } },
+                SuccessUrl = request.Domain + "checkout/success/{CHECKOUT_SESSION_ID}",
                 CancelUrl = request.Domain + "checkout/cancel",
             };
             SessionService service = new SessionService();
