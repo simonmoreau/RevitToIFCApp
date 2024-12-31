@@ -10,5 +10,6 @@ namespace Application.Common.Services
         List<SavedWorkItem> GetSavedWorkItems(string userId);
         Task UpdateSavedWorkItemStatus(WorkItemStatus workItemStatus);
         Task<SavedWorkItem> GetSavedWorkItem(string workItemId);
+        Task MarkSavedWorkItemAsCredited(string workItemId);
     }
 }

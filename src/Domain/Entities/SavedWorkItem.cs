@@ -20,6 +20,7 @@ namespace Domain.Entities
         public string? Version { get; set; }
         public string? FileName { get; set; }
         public string? ObjectKey { get; set; }
+        public bool Credited { get; set; }
         public DateTime? TimeDownloadStarted { get; set; }
         public DateTime? TimeInstructionsStarted { get; set; }
         public DateTime? TimeInstructionsEnded { get; set; }

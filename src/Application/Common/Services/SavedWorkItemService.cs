@@ -93,6 +93,22 @@ namespace Application.Common.Services
             return savedWorkItem;
         }
 
+        public async Task MarkSavedWorkItemAsCredited(string workItemId)
+        {
+            TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);
+            tableClient.CreateIfNotExists();
+
+            SavedWorkItem savedWorkItem = await tableClient.GetEntityAsync<SavedWorkItem>(_partitionKey, workItemId);
+            savedWorkItem.Credited = true;
+
+            Azure.Response response = await tableClient.UpdateEntityAsync(savedWorkItem, Azure.ETag.All);
+
+            if (response.IsError)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+        }
+
         public async Task<WorkItemStatus> GetSavedWorkItemStatus(string workItemId)
         {
             TableClient tableClient = _tableServiceClient.GetTableClient(_partitionKey);

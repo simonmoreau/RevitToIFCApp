@@ -29,16 +29,15 @@ namespace Application.WorkItems.Commands.UpdateWorkItemStatus
 
         public async Task Handle(UpdateWorkItemStatusCommand request, CancellationToken cancellationToken)
         {
-            Domain.Entities.SavedWorkItem savedWorkItemStatus = await _savedWorkItemService.GetSavedWorkItem(request.Status.Id);
+            Domain.Entities.SavedWorkItem savedWorkItem = await _savedWorkItemService.GetSavedWorkItem(request.Status.Id);
 
             await _savedWorkItemService.UpdateSavedWorkItemStatus(request.Status);
 
-            if (request.Status.Status == Status.Success)
+            if (request.Status.Status == Status.Success && !savedWorkItem.Credited)
             {
-                await _conversionCreditService.EditConversionCredits(savedWorkItemStatus.UserId, -1);
+                await _conversionCreditService.EditConversionCredits(savedWorkItem.UserId, -1);
+                await _savedWorkItemService.MarkSavedWorkItemAsCredited(request.Status.Id);
             }
-
-            
         }
     }
 }
