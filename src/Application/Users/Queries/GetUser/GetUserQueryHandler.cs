@@ -15,46 +15,26 @@ namespace Application.Users.Queries.GetUser
 {
     public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDTO>
     {
-        private readonly GraphServiceClient _graphServiceClient;
-        private readonly AzureB2CSettings _azureB2CSettings;
+        private readonly IConversionCreditService _conversionCreditService;
 
-        public GetUserQueryHandler(GraphServiceClient graphServiceClient, IOptions<AzureB2CSettings> azureB2CSettings)
+        public GetUserQueryHandler(IConversionCreditService conversionCreditService)
         {
-            _graphServiceClient = graphServiceClient;
-            _azureB2CSettings = azureB2CSettings.Value;
+            _conversionCreditService = conversionCreditService;
         }
 
         public async Task<UserDTO> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-           string conversionCreditsAttributeName = AdditionalParameterRetriever.GetConversionCreditsAttributeName(_azureB2CSettings.B2cExtensionAppClientId);
-
-           string selects = $"displayName,id,mail,mobilePhone,{conversionCreditsAttributeName}";
-
-            Microsoft.Graph.Models.User? user = await _graphServiceClient.Users[request.UserId].GetAsync((requestConfiguration) =>
-            {
-                requestConfiguration.QueryParameters.Select = new string[] {"Id", "displayName",conversionCreditsAttributeName };
-            });
-
-            if (user == null)
-            {
-                throw new NotFoundException($"The user {request.UserId} was not found.", request.UserId);
-            }
-
-            decimal credis = 0;
-            if (user.AdditionalData.ContainsKey(conversionCreditsAttributeName))
-            {
-                credis = (decimal)user.AdditionalData[conversionCreditsAttributeName];
-            }
+            Microsoft.Graph.Models.User? user = await _conversionCreditService.GetUser(request.UserId);
+            int credits = await _conversionCreditService.GetConversionCredits(request.UserId);
 
             UserDTO userDTO = new UserDTO()
             {
                 Id = user.Id,
                 Name = user.DisplayName,
-                ConversionCredits = decimal.ToInt16(credis)
-            }; 
+                ConversionCredits = decimal.ToInt16(credits)
+            };
+
             return userDTO;
         }
-
-
     }
 }

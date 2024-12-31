@@ -45,11 +45,11 @@ namespace Application.WorkItems.Commands.UpdateWorkItemStatus
 
         public static T ToEnum<T>(string str)
         {
-            var enumType = typeof(T);
-            foreach (var name in Enum.GetNames(enumType))
+            Type enumType = typeof(T);
+            foreach (string enumName in Enum.GetNames(enumType))
             {
-                var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
-                if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+                EnumMemberAttribute enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(enumName).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+                if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, enumName);
             }
             //throw exception or whatever handling you want or
             return default(T);

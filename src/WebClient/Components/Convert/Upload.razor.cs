@@ -62,6 +62,8 @@ namespace WebClient.Components.Convert
             }
 
             await Task.WhenAll(uploadTasks);
+
+            await InvokeAsync(StateHasChanged);
         }
 
         private void SetDragClass()
