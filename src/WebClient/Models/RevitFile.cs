@@ -91,8 +91,7 @@ namespace WebClient.Models
             Status = FileStatus.Uploading;
 
             // Upload the files here
-            string objectName = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("==", "");
-            string objectKey = objectName; // + Path.GetExtension(revitFile.Name);
+            string objectKey = System.Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "-").Replace("+", "_").Replace("=", "");
 
             int chunksNumber = CalculateNumberOfChunks((ulong)Size);
 
