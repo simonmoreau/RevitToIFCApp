@@ -3,7 +3,7 @@
 @attribute [Authorize]
 @page "/convert"
 
-<PageTitle>Convert</PageTitle>
+<h1 class="mb-4">Convert</h1>
 
 @if (User == null)
 {
@@ -16,4 +16,8 @@ else
 
 <Upload></Upload>
 
-<WorkItemsList></WorkItemsList>
+<div class="mt-4">
+    <h1 class="mb-4">History</h1>
+    <WorkItemsList></WorkItemsList>
+</div>
+
