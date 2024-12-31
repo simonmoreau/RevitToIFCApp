@@ -100,9 +100,10 @@ namespace Application.Common.Services
 
             SavedWorkItem savedWorkItem = await tableClient.GetEntityAsync<SavedWorkItem>(_partitionKey, workItemId);
 
+            string statusName = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(savedWorkItem.Status);
             WorkItemStatus status = new WorkItemStatus()
             {
-                Status = WorkItemStatusDTO.ToEnum<Status>(savedWorkItem.Status),
+                Status = WorkItemStatusDTO.ToEnum<Status>(statusName),
                 Progress = savedWorkItem.Progress,
                 ReportUrl = savedWorkItem.ReportUrl,
                 Id = savedWorkItem.WorkItemId,
