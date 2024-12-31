@@ -37,6 +37,7 @@ builder.Services.AddMsalAuthentication(options =>
     options.ProviderOptions.LoginMode = "redirect";
 });
 
+
 builder.Services.AddMudServices();
 
 
