@@ -7,6 +7,7 @@ using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Web;
 using Stripe;
@@ -22,6 +23,12 @@ namespace WebApp.Controllers
     [Route("[controller]")]
     public class ConversionCreditsController : BaseController
     {
+        private readonly StripeSettings _stripeSettings;
+        public ConversionCreditsController(IOptions<StripeSettings> stripeSettings)
+        {
+            _stripeSettings = stripeSettings.Value;
+        }
+
         [HttpGet]
         [Authorize]
         [Route("checkout")]
@@ -49,16 +56,13 @@ namespace WebApp.Controllers
         {
             string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
-            // Use the secret provided by Stripe CLI for local testing
-            // or your webhook endpoint's secret.
-            const string secret = "whsec_34d5e059746a28d1bfbd6b14527498fffb43e862ab68e4cf10e849d6932a6fc2";
 
             try
             {
                 Stripe.Event stripeEvent = EventUtility.ConstructEvent(
                   json,
                   Request.Headers["Stripe-Signature"],
-                  secret
+                  _stripeSettings.WebhookSecret
                 );
 
                 // If on SDK version < 46, use class Events instead of EventTypes
