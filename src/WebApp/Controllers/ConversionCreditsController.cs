@@ -4,6 +4,7 @@ using Application.ConversionCredits.Commands.FulfillCheckout;
 using Application.ForgeApplications.Commands.CreateActivity;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Autodesk.Forge.DesignAutomation.Model;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
@@ -32,11 +33,11 @@ namespace WebApp.Controllers
 
         [HttpPost]
         [Route("fulfill")]
-        public async Task<string> FulfillCheckoutSession([FromBody] string sessionId)
+        public async Task<ActionResult<ConversionCheckoutSession>> FulfillCheckoutSession([FromBody] string sessionId)
         {
-            string result = await Mediator.Send(new FulfillCheckoutCommand(sessionId));
+            ConversionCheckoutSession conversionCheckoutSession = await Mediator.Send(new FulfillCheckoutCommand(sessionId));
 
-            return result;
+            return Ok(conversionCheckoutSession);
         }
     }
 }

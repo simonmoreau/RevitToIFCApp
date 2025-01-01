@@ -15,5 +15,9 @@
 		<PackageReference Include="OpenMcdf" Version="2.3.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
+
 
 </Project>

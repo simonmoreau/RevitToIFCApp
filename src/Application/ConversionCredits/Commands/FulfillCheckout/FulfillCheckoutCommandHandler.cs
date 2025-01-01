@@ -17,7 +17,7 @@ using Application.Common.Services;
 
 namespace Application.ConversionCredits.Commands.FulfillCheckout
 {
-    public class FulfillCheckoutCommandHandler : IRequestHandler<FulfillCheckoutCommand, string>
+    public class FulfillCheckoutCommandHandler : IRequestHandler<FulfillCheckoutCommand, ConversionCheckoutSession>
     {
         private readonly ILogger _logger;
         private readonly StripeSettings _stripeSettings;
@@ -33,7 +33,7 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
             _checkoutService = checkoutService;
         }
 
-        public async Task<string> Handle(FulfillCheckoutCommand request, CancellationToken cancellationToken)
+        public async Task<ConversionCheckoutSession> Handle(FulfillCheckoutCommand request, CancellationToken cancellationToken)
         {
             // Set your secret key. Remember to switch to your live secret key in production.
             // See your keys here: https://dashboard.stripe.com/apikeys
@@ -44,7 +44,7 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
             ConversionCheckoutSession? conversionCheckoutSession = await _checkoutService.GetCheckoutSession(request.SessionId);
             if (conversionCheckoutSession != null)
             {
-                return conversionCheckoutSession.RowKey;
+                return conversionCheckoutSession;
             }
             else
             {
@@ -72,7 +72,8 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
                 if (userId == null)
                 {
                     await _checkoutService.UpdateCheckoutSessionStatus(request.SessionId, ConversionCheckoutStatus.Failed);
-                    return request.SessionId;
+                    conversionCheckoutSession.Status = ConversionCheckoutStatus.Failed;
+                    return conversionCheckoutSession;
                 }
 
                 // TODO: Perform fulfillment of the line items
@@ -82,9 +83,10 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
                 // TODO: Record/save fulfillment status for this
                 // Checkout Session
                 await _checkoutService.UpdateCheckoutSessionStatus(request.SessionId,ConversionCheckoutStatus.Complete);
+                conversionCheckoutSession.Status = ConversionCheckoutStatus.Complete;
             }
 
-            return checkoutSession.PaymentStatus;
+            return conversionCheckoutSession;
         }
     }
 }

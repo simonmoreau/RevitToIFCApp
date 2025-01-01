@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+﻿using Domain.Entities;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Text;
 using System.Text.Json;
 using WebClient.Models;
@@ -121,7 +122,7 @@ namespace WebClient.Services
 
         }
 
-        public async Task<string> FullfilCheckoutSession(string sessionId)
+        public async Task<ConversionCheckoutSession> FullfilCheckoutSession(string sessionId)
         {
             JsonSerializerOptions options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
@@ -134,7 +135,7 @@ namespace WebClient.Services
                 throw new Exception("Wrong response");
             }
 
-            return await JsonSerializer.DeserializeAsync<string>(await response.Content.ReadAsStreamAsync());
+            return await JsonSerializer.DeserializeAsync<ConversionCheckoutSession>(await response.Content.ReadAsStreamAsync());
 
         }
 
