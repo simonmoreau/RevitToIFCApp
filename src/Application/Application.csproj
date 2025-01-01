@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.0.1" />
     <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="3.1.0" />
-    <PackageReference Include="Stripe.net" Version="45.8.0" />
+    <PackageReference Include="Stripe.net" Version="47.2.0" />
   </ItemGroup>
 
   <ItemGroup>

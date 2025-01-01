@@ -11,7 +11,6 @@ using Azure.Identity;
 using Microsoft.Graph;
 using Application.Common.Services;
 using Microsoft.Identity.Web;
-using Stripe;
 using Azure.Security.KeyVault;
 
 namespace Application;
