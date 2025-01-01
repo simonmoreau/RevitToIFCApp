@@ -71,14 +71,24 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
                 string? userId = checkoutSession.Metadata.GetValueOrDefault<string, string>("user_id");
                 if (userId == null)
                 {
-                    await _checkoutService.UpdateCheckoutSessionStatus(request.SessionId, ConversionCheckoutStatus.Failed);
-                    conversionCheckoutSession.Status = ConversionCheckoutStatus.Failed;
-                    return conversionCheckoutSession;
+                    return await FailedFullfilment(request, conversionCheckoutSession);
                 }
 
                 // TODO: Perform fulfillment of the line items
-                int credits = (int)checkoutSession.LineItems.First().Price.UnitAmount / 100;
-                await _conversionCreditService.EditConversionCredits(userId, credits);
+                string? productId = checkoutSession.LineItems.FirstOrDefault()?.Price.Id;
+                if (productId == null)
+                {
+                    return await FailedFullfilment(request, conversionCheckoutSession);
+                }
+
+                if (!_stripeSettings.Products.ContainsKey(productId))
+                {
+                    return await FailedFullfilment(request, conversionCheckoutSession);
+                }
+
+                StripeProduct stripeProduct = _stripeSettings.Products[productId];
+
+                await _conversionCreditService.EditConversionCredits(userId, stripeProduct.Quantity);
 
                 // TODO: Record/save fulfillment status for this
                 // Checkout Session
@@ -86,6 +96,13 @@ namespace Application.ConversionCredits.Commands.FulfillCheckout
                 conversionCheckoutSession.Status = ConversionCheckoutStatus.Complete;
             }
 
+            return conversionCheckoutSession;
+        }
+
+        private async Task<ConversionCheckoutSession> FailedFullfilment(FulfillCheckoutCommand request, ConversionCheckoutSession? conversionCheckoutSession)
+        {
+            await _checkoutService.UpdateCheckoutSessionStatus(request.SessionId, ConversionCheckoutStatus.Failed);
+            conversionCheckoutSession.Status = ConversionCheckoutStatus.Failed;
             return conversionCheckoutSession;
         }
     }
