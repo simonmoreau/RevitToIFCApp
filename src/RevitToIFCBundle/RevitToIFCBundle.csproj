@@ -5,7 +5,7 @@
 		<OutputType>Library</OutputType>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<!-- Create the configuration to buid various versions of Revit -->
-		<Configurations>Debug;2025;2024;2023;2022</Configurations>
+		<Configurations>Debug;2027;2026;2025;2024;2023;2022</Configurations>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<Platforms>x64</Platforms>
 		<NuGetAudit>false</NuGetAudit>
@@ -27,14 +27,19 @@
          Instead of building all versions above,
          we just put ONE version below and switch to 'Debug' configuration
       -->
-		<RevitVersion>2025</RevitVersion>
+		<RevitVersion>2027</RevitVersion>
 		<StartAction>Program</StartAction>
-		<StartProgram>$(ProgramW6432)\Autodesk\Revit 2025\Revit.exe</StartProgram>
+		<StartProgram>$(ProgramW6432)\Autodesk\Revit 2027\Revit.exe</StartProgram>
 		<RevitNugetVersion>$(RevitVersion).*</RevitNugetVersion>
 	</PropertyGroup>
 
 	<Choose>
-		<When Condition=" '$(RevitVersion)'=='2025' ">
+		<When Condition="'$(RevitVersion)' == '2027'">
+			<PropertyGroup>
+				<TargetFramework>net10.0-windows</TargetFramework>
+			</PropertyGroup>
+		</When>
+		<When Condition="'$(RevitVersion)' == '2025' Or '$(RevitVersion)' == '2026'">
 			<PropertyGroup>
 				<TargetFramework>net8.0-windows</TargetFramework>
 			</PropertyGroup>

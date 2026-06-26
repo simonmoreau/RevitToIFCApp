@@ -27,7 +27,7 @@ namespace Application.ForgeApplications.Commands.CreateForgeApplication
 
 
             // check if ZIP with bundle is here
-            string packageZipPath = @$"C:\Users\smoreau\Github\RevitToIFCApp\src\RevitToIFCBundle\bin\{request.RevitVersion}\RevitToIFCBundle{request.RevitVersion}.zip";
+            string packageZipPath = @$"C:\Users\smoreau\Github\BIM42\RevitToIFCApp\src\RevitToIFCBundle\bin\Debug\RevitToIFCBundle{request.RevitVersion}.zip";
             if (!System.IO.File.Exists(packageZipPath))
             {
                 throw new Exception("Appbundle not found at " + packageZipPath);

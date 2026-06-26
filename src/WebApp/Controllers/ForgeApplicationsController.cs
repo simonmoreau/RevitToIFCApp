@@ -49,7 +49,7 @@ namespace WebApp.Controllers
             {
                 AppBundle appBundleId = await Mediator.Send(new CreateForgeApplicationCommand()
                 {
-                    RevitVersion = "2024"
+                    RevitVersion = "2027"
                 });
 
                 if (appBundleId == null)
@@ -71,7 +71,7 @@ namespace WebApp.Controllers
         {
             try
             {
-                string[] revitVersions = ["2022", "2023", "2024", "2025"];
+                string[] revitVersions = ["2026", "2027"];
 
                 List<string> creationIds = new List<string>();
                 foreach (string version in revitVersions)
