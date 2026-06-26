@@ -1,12 +1,7 @@
 ﻿using MediatR;
-using Autodesk.Oss.Model;
-using Autodesk.Oss;
 using Microsoft.Extensions.Logging;
-using Autodesk.Authentication.Model;
 using Microsoft.Extensions.Options;
 using Domain.Entities;
-using Autodesk.Authentication;
-using System.Text.Json;
 using Stripe.Checkout;
 using Stripe;
 

@@ -5,15 +5,10 @@ using Autodesk.Authentication.Model;
 using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss;
-using Autodesk.Oss.Model;
-using Azure.Data.Tables;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Graph.Models;
-using System;
-using System.Runtime.Serialization;
 using System.Text.Json;
 
 namespace Application.WorkItems.Commands.CreateWorkItem

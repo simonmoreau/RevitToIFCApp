@@ -1,6 +1,4 @@
-﻿using Infrastructure;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
 namespace WebApp
 {

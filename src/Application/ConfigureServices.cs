@@ -2,7 +2,6 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Autodesk.Forge.DesignAutomation;
-using Microsoft.Extensions.Azure;
 using Autodesk.Oss;
 using Autodesk.SDKManager;
 using Autodesk.Authentication;
@@ -10,8 +9,6 @@ using Domain.Entities;
 using Azure.Identity;
 using Microsoft.Graph;
 using Application.Common.Services;
-using Microsoft.Identity.Web;
-using Azure.Security.KeyVault;
 
 namespace Application;
 

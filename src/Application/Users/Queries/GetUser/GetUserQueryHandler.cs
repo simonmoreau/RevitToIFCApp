@@ -1,15 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Services;
-using Application.WorkItems.Queries.GetWorkItem;
-using Domain.Entities;
+﻿using Application.Common.Services;
 using MediatR;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Users.Queries.GetUser
 {

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Application.ForgeApplications.Commands.CreateForgeApplication;
 using Application.ForgeApplications.Commands.CreateActivity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Identity.Web;
 
 
 namespace WebApp.Controllers

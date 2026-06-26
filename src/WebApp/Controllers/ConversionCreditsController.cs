@@ -1,14 +1,9 @@
-﻿using Application.Activities.Queries.ListActivities;
-using Application.ConversionCredits.Commands.CreateCheckoutSession;
+﻿using Application.ConversionCredits.Commands.CreateCheckoutSession;
 using Application.ConversionCredits.Commands.FulfillCheckout;
-using Application.ForgeApplications.Commands.CreateActivity;
-using Application.ForgeApplications.Commands.CreateForgeApplication;
-using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.Graph.Models;
 using Microsoft.Identity.Web;
 using Stripe;
 using Stripe.Checkout;

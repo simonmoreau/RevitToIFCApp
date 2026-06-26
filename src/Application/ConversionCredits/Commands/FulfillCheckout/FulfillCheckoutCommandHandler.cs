@@ -1,12 +1,5 @@
-﻿using Application.Files.Commands.CompleteUpload;
-using MediatR;
-using Microsoft.Extensions.Azure;
+﻿using MediatR;
 using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Stripe.Checkout;
 using Application.ConversionCredits.Commands.CreateCheckoutSession;
 using Domain.Entities;

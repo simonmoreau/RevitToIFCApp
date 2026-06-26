@@ -4,7 +4,6 @@ using Autodesk.Authentication;
 using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
 using Autodesk.Oss;
-using Azure.Data.Tables;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;

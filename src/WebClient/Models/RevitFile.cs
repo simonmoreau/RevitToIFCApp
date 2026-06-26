@@ -1,7 +1,5 @@
-﻿using Autodesk.Forge.DesignAutomation.Model;
-using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using System.Timers;
-using WebClient.Models;
 using WebClient.Services;
 
 namespace WebClient.Models

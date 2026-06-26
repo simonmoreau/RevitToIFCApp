@@ -1,7 +1,6 @@
 ﻿using Autodesk.Forge.DesignAutomation.Model;
 using Domain.Entities;
 using MediatR;
-using Microsoft.Graph.Models;
 
 namespace Application.WorkItems.Commands.CreateWorkItem
 {

@@ -1,6 +1,4 @@
-﻿using Application.Activities.Queries.ListActivities;
-using Application.Users.Queries.GetAllUsers;
-using Application.Users.Queries.GetUser;
+﻿using Application.Users.Queries.GetUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;

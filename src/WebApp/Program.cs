@@ -1,10 +1,6 @@
 
 using Application;
-using Infrastructure;
 using Microsoft.Identity.Web;
-using Stripe;
-using Azure.Security.KeyVault;
-using Microsoft.Extensions.Configuration;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 
@@ -24,7 +20,7 @@ namespace WebApp
 
 
             // Add services to the container.
-            if (builder.Environment.IsDevelopment())
+            if (!builder.Environment.IsDevelopment())
             {
                 builder.Services.AddDevAzureServices(builder);
             }
@@ -34,7 +30,6 @@ namespace WebApp
             }
             
             builder.Services.AddApplicationServices(builder.Configuration);
-            builder.Services.AddInfrastructureServices(builder.Configuration);
 
             builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAdB2C");
 
@@ -50,17 +45,6 @@ namespace WebApp
             if (app.Environment.IsDevelopment())
             {
                 app.UseWebAssemblyDebugging();
-            }
-
-            if (app.Environment.IsDevelopment())
-            {
-                // Initialise and seed database
-                using (IServiceScope scope = app.Services.CreateScope())
-                {
-                    DbContextInitialiser ApPInitialiser = scope.ServiceProvider.GetRequiredService<DbContextInitialiser>();
-                    await ApPInitialiser.InitialiseAsync();
-                    await ApPInitialiser.SeedAsync();
-                }
             }
 
             // Configure the HTTP request pipeline.
