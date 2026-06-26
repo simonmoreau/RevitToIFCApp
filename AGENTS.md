@@ -2,10 +2,10 @@
 
 ## Architecture
 
-- **Clean Architecture** monolith: `Domain` → `Application` (MediatR CQRS) → `Infrastructure` (EF Core) → `WebApp` (ASP.NET 8 API) + `WebClient` (Blazor WASM, MudBlazor)
+- **Clean Architecture** monolith: `Domain` → `Application` (MediatR CQRS) → `WebApp` (ASP.NET 8 API) + `WebClient` (Blazor WASM, MudBlazor)
 - All projects target `net8.0` except `RevitToIFCBundle` (per-Revit-version: `net10.0-windows`/`net8.0-windows`/`net48`)
 - **RevitToIFCBundle** (`src/RevitToIFCBundle/`): IExternalDBApplication plugin for Autodesk Design Automation. Build with `-c 2027` / `2026` / etc. to target a Revit version. PostBuild.ps1 copies DLL to Revit addin folder and zips the bundle.
-- **Infrastructure DB**: `ConfigureServices.cs:12` uses **InMemory** (`UseInMemoryDatabase`) always. `DependencyInjection.cs` registers SQL Server but is not wired into the DI pipeline — don't add migrations unless you switch to SQL Server.
+- All persistence is via **Azure Table Storage** (`CheckoutService`, `ConversionCreditService`, `SavedWorkItemService`).
 - **Auth**: Azure AD B2C + MSAL for Blazor WASM. WebApp validates JWTs via `MicrosoftIdentityWebApiAuthentication`. WebClient uses `MsalAuthentication` with redirect login mode.
 - **Forge/APS**: Two SDK versions — `Autodesk.Forge.DesignAutomation` v6.0.1 (WebApp) and v5.1.2 (Application). Uses OSS (Object Storage Service) + Design Automation APIs.
 - **Payments**: Stripe. Price tiers in `StripeSettings.Products` (from config). Checkout sessions stored in Azure Table Storage.
@@ -43,11 +43,11 @@ No lint/format/typecheck scripts configured. CI pushes to master deploy via GitH
 
 ## Testing Quirks
 
-- `ApplicationTest` uses `AppContextFactory` (InMemory DB, seeded with sample `Objet` entities). Tests use `QueryTestFixture` (collection fixture `QueryCollection`) or `CommandTestBase` (per-test setup/teardown).
+- `BaseTestClass` is a skeleton (extends `IAsyncLifetime`). New tests use `[Collection("DBContext")]` and inherit from `BaseTestClass`.
 - No integration or E2E tests.
 - RevitToIFCBundle is untestable outside Design Automation runtime.
 
 ## Startup
 
-- `WebApp/Program.cs`: dev → `AddDevAzureServices` (Table Storage via `DefaultAzureCredential`), prod → `AddAzureServices` (Key Vault + managed identity). Dev also seeds the InMemory DB via `DbContextInitialiser`.
+- `WebApp/Program.cs`: Azure service condition is **inverted** — production (`!IsDevelopment`) calls `AddDevAzureServices` (Table Storage via `DefaultAzureCredential`), while dev calls `AddAzureServices` (Key Vault + managed identity).
 - `WebClient/Program.cs`: In dev, API calls go to same origin; in prod, uses `APIAdress` config key.
