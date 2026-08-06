@@ -1,10 +1,6 @@
 ﻿using Application.Common.Services;
-using Application.Files.Queries.GetUploadUrl;
-using Autodesk.Authentication;
 using Autodesk.Authentication.Model;
-using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
-using Autodesk.Oss;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,23 +11,19 @@ namespace Application.WorkItems.Commands.CreateWorkItem
 {
     public class CreateWorkItemCommandHandler : IRequestHandler<CreateWorkItemCommand, WorkItemStatus>
     {
-        private readonly DesignAutomationClient _designAutomationClient;
+        private readonly IAutodeskPlatformService _autodeskPlatformService;
         private readonly ISavedWorkItemService _savedWorkItemService;
         private readonly IConversionCreditService _conversionCreditService;
-        private readonly OssClient _ossClient;
-        private readonly ILogger<GetUploadUrlQueryHandler> _logger;
-        private readonly AuthenticationClient _authenticationClient;
+        private readonly ILogger<CreateWorkItemCommandHandler> _logger;
         private readonly ForgeConfiguration _forgeConfiguration;
 
-        public CreateWorkItemCommandHandler(DesignAutomationClient designAutomationClient,ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient,
+        public CreateWorkItemCommandHandler(IAutodeskPlatformService autodeskPlatformService, ILogger<CreateWorkItemCommandHandler> logger,
+            IOptions<ForgeConfiguration> forgeConfiguration,
             ISavedWorkItemService savedWorkItemService, IConversionCreditService conversionCreditService)
         {
-            _ossClient = ossClient;
+            _autodeskPlatformService = autodeskPlatformService;
             _logger = logger;
-            _authenticationClient = authenticationClient;
             _forgeConfiguration = forgeConfiguration.Value;
-            _designAutomationClient = designAutomationClient;
             _savedWorkItemService = savedWorkItemService;
             _conversionCreditService = conversionCreditService;
         }
@@ -44,12 +36,12 @@ namespace Application.WorkItems.Commands.CreateWorkItem
             {
                 return new WorkItemStatus()
                 {
-                    Status = Autodesk.Forge.DesignAutomation.Model.Status.FailedInstructions,
+                    Status = Status.FailedInstructions,
                     Progress = "You don't have enought credits to convert this file."
                 };
             }
 
-            TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite, Scopes.DataRead });
+            string accessToken = await _autodeskPlatformService.GetAccessTokenAsync(new List<Scopes> { Scopes.DataWrite, Scopes.DataRead });
 
             string inputBucketKey = _forgeConfiguration.InputBucketKey;
             string outputBucketKey = _forgeConfiguration.OutputBucketKey;
@@ -63,45 +55,38 @@ namespace Application.WorkItems.Commands.CreateWorkItem
 
             string objectKey = request.ObjectKey;
 
-            // prepare workitem arguments
-            // 1. input file
             XrefTreeArgument inputFileArgument = new XrefTreeArgument()
             {
-                //Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", inputBucketKey, ),
                 Url = $"urn:adsk.objects:os.object:{inputBucketKey}/{objectKey}.rvt",
                 Verb = Verb.Get,
                 Headers = new Dictionary<string, string>()
                 {
-                    {"Authorization", "Bearer " + twoLeggedToken.AccessToken }
+                    {"Authorization", "Bearer " + accessToken }
                 }
             };
 
-            // 2. input json
             string propertiesJson = JsonSerializer.Serialize(request.ConversionProperties);
             XrefTreeArgument inputJsonArgument = new XrefTreeArgument()
             {
                 Url = "data:application/json, " + (propertiesJson.Replace("\"", "'"))
             };
 
-            // 3. output file
             XrefTreeArgument outputFileArgument = new XrefTreeArgument()
             {
                 Url = $"urn:adsk.objects:os.object:{outputBucketKey}/{objectKey}.ifc",
                 Verb = Verb.Put,
                 Headers = new Dictionary<string, string>()
                 {
-                    {"Authorization", "Bearer " + twoLeggedToken.AccessToken }
+                    {"Authorization", "Bearer " + accessToken }
                 }
             };
 
-            // 3. onComplete callback
             XrefTreeArgument onCompleteArgument = new XrefTreeArgument()
             {
                 Url = $"{_forgeConfiguration.CallbackUrl}/callback/oncomplete",
                 Verb = Verb.Post
             };
 
-            // prepare & submit workitem
             WorkItem workItemSpec = new WorkItem()
             {
                 ActivityId = activityId,
@@ -114,12 +99,11 @@ namespace Application.WorkItems.Commands.CreateWorkItem
                 }
             };
 
-            WorkItemStatus workItemStatus = await _designAutomationClient.CreateWorkItemAsync(workItemSpec);
+            WorkItemStatus workItemStatus = await _autodeskPlatformService.CreateWorkItemAsync(workItemSpec);
 
             await _savedWorkItemService.CreateSavedWorkItemStatus(workItemStatus, request.UserId, request.RevitVersion, request.ObjectKey, request.ConversionProperties.FileName);
 
             return workItemStatus;
-
         }
 
         private string BuildActiviyName(string revitVersion)

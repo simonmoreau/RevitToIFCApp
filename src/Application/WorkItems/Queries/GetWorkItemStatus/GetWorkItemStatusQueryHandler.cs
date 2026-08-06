@@ -1,33 +1,15 @@
 ﻿using Application.Common.Services;
-using Application.Files.Queries.GetUploadUrl;
-using Autodesk.Authentication;
-using Autodesk.Forge.DesignAutomation;
 using Autodesk.Forge.DesignAutomation.Model;
-using Autodesk.Oss;
-using Domain.Entities;
 using MediatR;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Application.WorkItems.Queries.GetWorkItemStatus
 {
     public class GetWorkItemStatusQueryHandler : IRequestHandler<GetWorkItemStatusQuery, WorkItemStatus>
     {
-        private readonly DesignAutomationClient _designAutomationClient;
         private readonly ISavedWorkItemService _savedWorkItemService;
-        private readonly OssClient _ossClient;
-        private readonly ILogger<GetUploadUrlQueryHandler> _logger;
-        private readonly AuthenticationClient _authenticationClient;
-        private readonly ForgeConfiguration _forgeConfiguration;
 
-        public GetWorkItemStatusQueryHandler(DesignAutomationClient designAutomationClient, ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient, ISavedWorkItemService savedWorkItemService)
+        public GetWorkItemStatusQueryHandler(ISavedWorkItemService savedWorkItemService)
         {
-            _ossClient = ossClient;
-            _logger = logger;
-            _authenticationClient = authenticationClient;
-            _forgeConfiguration = forgeConfiguration.Value;
-            _designAutomationClient = designAutomationClient;
             _savedWorkItemService = savedWorkItemService;
         }
 
@@ -38,7 +20,6 @@ namespace Application.WorkItems.Queries.GetWorkItemStatus
             WorkItemStatus workItemStatus = await _savedWorkItemService.GetSavedWorkItemStatus(id);
 
             return workItemStatus;
-
         }
     }
 }

@@ -26,6 +26,7 @@ public static class ConfigureServices
         services.AddDesignAutomation(configuration);
         services.AddOss(configuration);
         services.AddTransient<OssClient>();
+        services.AddSingleton<IAutodeskPlatformService, AutodeskPlatformService>();
         services.AddSingleton<ISavedWorkItemService, SavedWorkItemService>();
         services.AddSingleton<IConversionCreditService, ConversionCreditService>();
         services.AddSingleton<ICheckoutService, CheckoutService>();

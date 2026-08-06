@@ -1,54 +1,43 @@
-﻿using MediatR;
-using Autodesk.Oss.Model;
+﻿using Application.Common.Services;
 using Autodesk.Oss;
-using Microsoft.Extensions.Logging;
-using Autodesk.Authentication.Model;
-using Microsoft.Extensions.Options;
+using Autodesk.Oss.Model;
 using Domain.Entities;
-using Autodesk.Authentication;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Application.Files.Queries.GetUploadUrl
 {
     public class GetUploadUrlQueryHandler : IRequestHandler<GetUploadUrlQuery, Signeds3uploadResponse>
     {
-        private readonly OssClient _ossClient;
+        private readonly IAutodeskPlatformService _autodeskPlatformService;
         private readonly ILogger _logger;
-        private readonly AuthenticationClient _authenticationClient;
         private readonly ForgeConfiguration _forgeConfiguration;
 
-        private readonly string _accessTokenExpiredMessage = "Access token provided is invalid or expired.";
-        private readonly string _forbiddenMessage = "403 (Forbidden)";
-
-        public GetUploadUrlQueryHandler(ILogger<GetUploadUrlQueryHandler> logger, AuthenticationClient authenticationClient, 
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient)
+        public GetUploadUrlQueryHandler(ILogger<GetUploadUrlQueryHandler> logger, IAutodeskPlatformService autodeskPlatformService,
+            IOptions<ForgeConfiguration> forgeConfiguration)
         {
-            _ossClient = ossClient;
+            _autodeskPlatformService = autodeskPlatformService;
             _logger = logger;
-            _authenticationClient = authenticationClient;
             _forgeConfiguration = forgeConfiguration.Value;
         }
 
         public async Task<Signeds3uploadResponse> Handle(GetUploadUrlQuery request, CancellationToken cancellationToken)
         {
-            TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataWrite });
-
             string bucketKey = _forgeConfiguration.InputBucketKey;
             string objectKey = request.ObjectKey + ".rvt";
-            string projectScope = "data:write";
             string requestIdPrefix = "";
-            string uploadKey = null;
+            string? uploadKey = null;
 
             string requestId = HandleRequestId(requestIdPrefix, bucketKey, objectKey);
 
             Signeds3uploadResponse signedUrlResponse = await GetUploadUrlsWithRetry(
-                bucketKey, objectKey, request.ChunksNumber, uploadKey,
-                twoLeggedToken.AccessToken, projectScope, requestId);
+                bucketKey, objectKey, request.ChunksNumber, uploadKey, requestId);
 
-            
             return signedUrlResponse;
         }
 
-        private async Task<Signeds3uploadResponse> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, string uploadKey, string accessToken, string projectScope, string requestId)
+        private async Task<Signeds3uploadResponse> GetUploadUrlsWithRetry(string bucketKey, string objectKey, int numberOfChunks, string? uploadKey, string requestId)
         {
             int attemptCount = 0;
 
@@ -58,14 +47,11 @@ namespace Application.Files.Queries.GetUploadUrl
 
                 try
                 {
-                    Signeds3uploadResponse response = await _ossClient.SignedS3UploadAsync(
-                          bucketKey: bucketKey,
-                          objectKey: objectKey,
-                          parts: numberOfChunks,
-                          uploadKey: uploadKey,
-                          accessToken: accessToken,
-                          minutesExpiration:15,
-                          xAdsAcmScopes: projectScope);
+                    Signeds3uploadResponse response = await _autodeskPlatformService.SignedS3UploadAsync(
+                        bucketKey: bucketKey,
+                        objectKey: objectKey,
+                        parts: numberOfChunks,
+                        uploadKey: uploadKey);
 
                     return response;
                 }
@@ -74,7 +60,6 @@ namespace Application.Files.Queries.GetUploadUrl
                     _logger.LogWarning("{requestId} Error: {errorMessage}", requestId, e.Message);
                     throw;
                 }
-                //} while (attemptCount < _maxRetryOnTokenExpiry);
             } while (attemptCount < 10);
 
             throw new OssApiException($"{requestId} Error: Fail getting upload urls after maximum retry");
@@ -84,7 +69,6 @@ namespace Application.Files.Queries.GetUploadUrl
         {
             string requestId = !string.IsNullOrEmpty(parentRequestId) ? parentRequestId : Guid.NewGuid().ToString();
             requestId = requestId + ":" + GenerateSdkRequestId(bucketKey, objectKey);
-            //_forgeService.Client.DefaultRequestHeaders.Add("x-ads-request-id", requestId);
             return requestId;
         }
 
@@ -92,13 +76,5 @@ namespace Application.Files.Queries.GetUploadUrl
         {
             return bucketKey + "/" + objectKey;
         }
-
-    }
-
-    static class Constants
-    {
-        public const int MaxRetry = 5;
-        public const ulong ChunkSize = 5 * 1024 * 1024;
-        public const int BatchSize = 25;
     }
 }

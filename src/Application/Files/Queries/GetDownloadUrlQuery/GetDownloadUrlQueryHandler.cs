@@ -1,46 +1,35 @@
-﻿using MediatR;
+﻿using Application.Common.Services;
 using Autodesk.Oss.Model;
-using Autodesk.Oss;
-using Microsoft.Extensions.Logging;
-using Autodesk.Authentication.Model;
-using Microsoft.Extensions.Options;
 using Domain.Entities;
-using Autodesk.Authentication;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Application.Files.Queries.GetDownloadUrlQuery
 {
     public class GetDownloadUrlQueryHandler : IRequestHandler<GetDownloadUrlQuery, Signeds3downloadResponse>
     {
-        private readonly OssClient _ossClient;
+        private readonly IAutodeskPlatformService _autodeskPlatformService;
         private readonly ILogger _logger;
-        private readonly AuthenticationClient _authenticationClient;
         private readonly ForgeConfiguration _forgeConfiguration;
 
-        private readonly string _accessTokenExpiredMessage = "Access token provided is invalid or expired.";
-        private readonly string _forbiddenMessage = "403 (Forbidden)";
-
-        public GetDownloadUrlQueryHandler(ILogger<GetDownloadUrlQueryHandler> logger, AuthenticationClient authenticationClient,
-            IOptions<ForgeConfiguration> forgeConfiguration, OssClient ossClient)
+        public GetDownloadUrlQueryHandler(ILogger<GetDownloadUrlQueryHandler> logger, IAutodeskPlatformService autodeskPlatformService,
+            IOptions<ForgeConfiguration> forgeConfiguration)
         {
-            _ossClient = ossClient;
+            _autodeskPlatformService = autodeskPlatformService;
             _logger = logger;
-            _authenticationClient = authenticationClient;
             _forgeConfiguration = forgeConfiguration.Value;
         }
 
         public async Task<Signeds3downloadResponse> Handle(GetDownloadUrlQuery request, CancellationToken cancellationToken)
         {
-            TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.DataRead });
-
             string bucketKey = _forgeConfiguration.OutputBucketKey;
             string objectKey = request.ObjectKey + ".ifc";
             string outputFileName = Path.GetFileNameWithoutExtension(request.FileName) + ".ifc";
 
-            Signeds3downloadResponse signedUrl = await _ossClient.SignedS3DownloadAsync(
-                twoLeggedToken.AccessToken, bucketKey, objectKey,
-                responseContentDisposition: $"attachment; filename=\"{outputFileName}\"",
-                minutesExpiration: 60,
-                throwOnError:false);
+            Signeds3downloadResponse signedUrl = await _autodeskPlatformService.SignedS3DownloadAsync(
+                bucketKey, objectKey,
+                responseContentDisposition: $"attachment; filename=\"{outputFileName}\"");
 
             if (signedUrl == null)
             {
@@ -49,8 +38,5 @@ namespace Application.Files.Queries.GetDownloadUrlQuery
 
             return signedUrl;
         }
-
     }
-
-
 }

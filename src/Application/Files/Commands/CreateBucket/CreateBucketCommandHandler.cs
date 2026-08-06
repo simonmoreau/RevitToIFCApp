@@ -1,53 +1,41 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Domain.Entities;
-using Autodesk.Authentication;
-using Autodesk.Oss.Http;
+﻿using Application.Common.Services;
 using Autodesk.Oss.Model;
-using Autodesk.Authentication.Model;
+using Domain.Entities;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Application.Files.Commands.CreateBucket
 {
     public class CreateBucketCommandHandler : IRequestHandler<CreateBucketCommand, string>
     {
-        private readonly IBucketsApi _bucketsApi;
+        private readonly IAutodeskPlatformService _autodeskPlatformService;
         private readonly ILogger<CreateBucketCommandHandler> _logger;
-        private readonly AuthenticationClient _authenticationClient;
-        private readonly IConfiguration _configuration;
         private readonly ForgeConfiguration _forgeConfiguration;
 
-        public CreateBucketCommandHandler(ILogger<CreateBucketCommandHandler> logger, AuthenticationClient authenticationClient,
-    IConfiguration configuration, IOptions<ForgeConfiguration> forgeConfiguration, IBucketsApi bucketsApi)
+        public CreateBucketCommandHandler(ILogger<CreateBucketCommandHandler> logger, IAutodeskPlatformService autodeskPlatformService,
+            IOptions<ForgeConfiguration> forgeConfiguration)
         {
-            _bucketsApi = bucketsApi;
+            _autodeskPlatformService = autodeskPlatformService;
             _logger = logger;
-            _authenticationClient = authenticationClient;
-            _configuration = configuration;
             _forgeConfiguration = forgeConfiguration.Value;
-
         }
 
         public async Task<string> Handle(CreateBucketCommand request, CancellationToken cancellationToken)
         {
-            TwoLeggedToken twoLeggedToken = await _authenticationClient.GetTwoLeggedTokenAsync(_forgeConfiguration.ClientId, _forgeConfiguration.ClientSecret, new List<Scopes> { Scopes.BucketCreate });
-
-            await CreateBucket(twoLeggedToken, _forgeConfiguration.InputBucketKey);
-            await CreateBucket(twoLeggedToken, _forgeConfiguration.OutputBucketKey);
+            await CreateBucket(_forgeConfiguration.InputBucketKey);
+            await CreateBucket(_forgeConfiguration.OutputBucketKey);
 
             return _forgeConfiguration.OutputBucketKey;
         }
 
-        private async Task<string> CreateBucket(TwoLeggedToken twoLeggedToken, string bucketKey)
+        private async Task<string> CreateBucket(string bucketKey)
         {
             CreateBucketsPayload payload = new CreateBucketsPayload();
             payload.BucketKey = bucketKey;
             payload.PolicyKey = PolicyKey.Temporary;
 
-            Autodesk.Forge.Core.ApiResponse<Bucket> response = await _bucketsApi.CreateBucketAsync(payload, Region.EMEA, twoLeggedToken.AccessToken);
-
-            Bucket bucket = response.Content;
+            Bucket bucket = await _autodeskPlatformService.CreateBucketAsync(payload, Region.EMEA);
 
             return bucket.BucketKey;
         }
